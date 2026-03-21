@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UBI — Employee Training Portal</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Plus Jakarta Sans', sans-serif; background: #F0F4FA; color: #1A2340; }
+.topbar { background:#003087; color:white; padding:0 30px; height:58px; display:flex; align-items:center; justify-content:space-between; position:sticky; top:0; z-index:100; }
+.topbar-left { display:flex; align-items:center; gap:12px; }
+.topbar-title { font-size:15px; font-weight:800; }
+.topbar-right { display:flex; align-items:center; gap:12px; }
+.user-chip { background:rgba(255,255,255,0.15); border-radius:20px; padding:4px 14px; font-size:12px; font-weight:600; }
+.logout-btn { background:#C0392B; color:white; border:none; padding:8px 16px; border-radius:8px; font-size:12px; font-weight:700; cursor:pointer; font-family:inherit; }
+.logout-btn:hover { background:#A93226; }
+.content { padding:26px 30px; max-width:900px; margin:0 auto; }
+.welcome-card { background:linear-gradient(135deg,#003087,#1A4FAB); border-radius:16px; padding:24px 28px; color:white; margin-bottom:24px; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:16px; }
+.welcome-text h2 { font-size:20px; font-weight:800; }
+.welcome-text p { font-size:13px; opacity:0.8; margin-top:4px; }
+.welcome-stats { display:flex; gap:20px; }
+.wstat { text-align:center; }
+.wstat-val { font-size:24px; font-weight:800; }
+.wstat-lbl { font-size:11px; opacity:0.7; margin-top:2px; }
+.card { background:white; border-radius:14px; border:1px solid #DDE4F0; padding:22px 24px; margin-bottom:20px; }
+.card-title { font-size:15px; font-weight:800; margin-bottom:16px; }
+.prog-card { background:white; border-radius:14px; border:1px solid #DDE4F0; padding:20px 24px; margin-bottom:16px; cursor:pointer; transition:all 0.2s; }
+.prog-card:hover { border-color:#003087; box-shadow:0 4px 16px rgba(0,48,135,0.1); }
+.prog-name { font-size:15px; font-weight:700; color:#003087; }
+.prog-dept { font-size:11px; color:#6B7A99; margin-top:3px; }
+.prog-status { padding:4px 12px; border-radius:20px; font-size:11px; font-weight:700; }
+.status-pending { background:#FFF0EE; color:#C0392B; }
+.status-done { background:#E6F9F0; color:#1A7F4B; }
+.steps { display:flex; gap:8px; margin-bottom:20px; flex-wrap:wrap; }
+.step { flex:1; min-width:100px; padding:12px; border-radius:10px; background:#F0F4FA; border:2px solid transparent; text-align:center; transition:all 0.2s; }
+.step.active { background:#EAF1FF; border-color:#003087; }
+.step.done { background:#E6F9F0; border-color:#1A7F4B; }
+.step-num { font-size:18px; font-weight:800; color:#003087; }
+.step-lbl { font-size:11px; color:#6B7A99; margin-top:2px; }
+.content-box { background:#F8FBFF; border-radius:12px; border:1px solid #DDE4F0; padding:20px 24px; margin-bottom:16px; line-height:1.8; font-size:14px; }
+.content-box h3 { font-size:16px; font-weight:800; color:#003087; margin-bottom:12px; }
+.content-box ul { padding-left:20px; }
+.content-box li { margin-bottom:8px; }
+.question-box { background:white; border-radius:12px; border:1px solid #DDE4F0; padding:20px 24px; margin-bottom:16px; }
+.question-num { font-size:11px; font-weight:700; color:#6B7A99; text-transform:uppercase; letter-spacing:0.5px; margin-bottom:6px; }
+.question-text { font-size:14px; font-weight:700; color:#1A2340; margin-bottom:14px; }
+.options { display:flex; flex-direction:column; gap:8px; }
+.option { display:flex; align-items:center; gap:10px; padding:10px 14px; border-radius:8px; border:1.5px solid #DDE4F0; cursor:pointer; transition:all 0.2s; font-size:13px; }
+.option:hover { border-color:#003087; background:#EAF1FF; }
+.option.selected { border-color:#003087; background:#EAF1FF; }
+.option.correct { border-color:#1A7F4B; background:#E6F9F0; color:#1A7F4B; font-weight:700; }
+.option.wrong { border-color:#C0392B; background:#FFF0EE; color:#C0392B; }
+.assignment-box textarea { width:100%; padding:14px; border:1.5px solid #DDE4F0; border-radius:10px; font-size:14px; font-family:inherit; outline:none; resize:vertical; min-height:150px; color:#1A2340; }
+.assignment-box textarea:focus { border-color:#003087; }
+.btn-primary { background:#003087; color:white; border:none; padding:12px 28px; border-radius:10px; font-size:14px; font-weight:700; font-family:inherit; cursor:pointer; transition:all 0.2s; }
+.btn-primary:hover { background:#1A4FAB; }
+.btn-back { background:#F0F4FA; color:#1A2340; border:none; padding:8px 16px; border-radius:8px; font-size:13px; font-weight:600; font-family:inherit; cursor:pointer; }
+.result-card { background:linear-gradient(135deg,#003087,#1A4FAB); border-radius:16px; padding:30px; color:white; text-align:center; margin-bottom:20px; }
+.result-points { font-size:60px; font-weight:800; }
+.result-label { font-size:14px; opacity:0.8; margin-top:4px; }
+.result-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-top:20px; }
+.result-item { background:rgba(255,255,255,0.15); border-radius:10px; padding:14px; }
+.result-item-val { font-size:22px; font-weight:800; }
+.result-item-lbl { font-size:11px; opacity:0.7; margin-top:2px; }
+.badge-display { display:inline-flex; align-items:center; gap:8px; padding:8px 20px; border-radius:30px; font-size:16px; font-weight:700; margin:16px 0; }
+.page { display:none; }
+.page.active { display:block; }
+.prog-wrap { background:#EEF2FA; border-radius:8px; height:8px; overflow:hidden; margin-top:10px; }
+.prog-bar { height:100%; border-radius:8px; transition:width 0.5s; }
+.info-banner { background:#EAF1FF; border-radius:10px; padding:14px 18px; margin-bottom:16px; }
+.info-banner-title { font-size:13px; font-weight:700; color:#003087; }
+.info-banner-sub { font-size:12px; color:#6B7A99; margin-top:2px; }
+</style>
+</head>
+<body>
+
+<!-- TOPBAR -->
+<div class="topbar">
+  <div class="topbar-left">
+    <span style="font-size:20px;">🏦</span>
+    <span class="topbar-title">Union Bank — Employee Training Portal</span>
+  </div>
+  <div class="topbar-right">
+    <span class="user-chip" id="user-chip">Welcome!</span>
+    <button class="logout-btn" onclick="logout()">🚪 Logout</button>
+  </div>
+</div>
+
+<div class="content">
+
+  <!-- PAGE 1: PROGRAMS -->
+  <div class="page active" id="page-programs">
+    <div class="welcome-card">
+      <div class="welcome-text">
+        <h2 id="welcome-msg">Welcome!</h2>
+        <p id="welcome-sub">Complete training programs to earn points and badges!</p>
+      </div>
+      <div class="welcome-stats">
+        <div class="wstat"><div class="wstat-val" id="my-points">0</div><div class="wstat-lbl">My Points</div></div>
+        <div class="wstat"><div class="wstat-val" id="my-badge">🎖️</div><div class="wstat-lbl">My Badge</div></div>
+        <div class="wstat"><div class="wstat-val" id="prog-done">0/0</div><div class="wstat-lbl">Completed</div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-title">📚 Available Training Programs</div>
+      <div id="program-list"></div>
+    </div>
+  </div>
+
+  <!-- PAGE 2: TRAINING -->
+  <div class="page" id="page-training">
+    <div class="card">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;">
+        <button class="btn-back" onclick="showPage('programs')">← Back</button>
+        <div>
+          <div style="font-size:16px;font-weight:800;color:#003087" id="training-title"></div>
+          <div style="font-size:12px;color:#6B7A99" id="training-dept"></div>
+        </div>
+      </div>
+
+      <!-- STEPS -->
+      <div class="steps">
+        <div class="step active" id="step1"><div class="step-num">1</div><div class="step-lbl">📖 Content</div></div>
+        <div class="step" id="step2"><div class="step-num">2</div><div class="step-lbl">📝 Assessment</div></div>
+        <div class="step" id="step3"><div class="step-num">3</div><div class="step-lbl">📋 Assignment</div></div>
+        <div class="step" id="step4"><div class="step-num">4</div><div class="step-lbl">🏆 Result</div></div>
+      </div>
+
+      <!-- STEP 1: CONTENT -->
+      <div id="section-content">
+        <div class="content-box" id="training-content"></div>
+        <div style="display:flex;align-items:center;gap:12px;margin-top:16px;padding:14px;background:#FFFBE6;border-radius:10px;">
+          <input type="checkbox" id="content-check" style="width:18px;height:18px;accent-color:#003087;cursor:pointer;flex-shrink:0;">
+          <label for="content-check" style="font-size:14px;font-weight:600;cursor:pointer;">I have read and understood the training content completely</label>
+        </div>
+        <div style="margin-top:16px;">
+          <button class="btn-primary" onclick="goToAssessment()">Continue to Assessment →</button>
+        </div>
+      </div>
+
+      <!-- STEP 2: ASSESSMENT -->
+      <div id="section-assessment" style="display:none;">
+        <div class="info-banner">
+          <div class="info-banner-title">📝 Assessment — 5 Questions</div>
+          <div class="info-banner-sub">Select the correct answer. Each correct answer = 60 marks (max 300)!</div>
+        </div>
+        <div id="questions-list"></div>
+        <button class="btn-primary" onclick="submitAssessment()">Submit Assessment →</button>
+      </div>
+
+      <!-- STEP 3: ASSIGNMENT -->
+      <div id="section-assignment" style="display:none;">
+        <div class="info-banner">
+          <div class="info-banner-title">📋 Assignment Submission</div>
+          <div class="info-banner-sub">Write a detailed answer. Minimum 50 words required! (max 300 marks)</div>
+        </div>
+        <div class="question-box">
+          <div class="question-text" id="assignment-question"></div>
+          <div class="assignment-box">
+            <textarea id="assignment-answer" placeholder="Write your answer here... (minimum 50 words)" oninput="updateWordCount()"></textarea>
+          </div>
+          <div style="font-size:12px;margin-top:6px;" id="word-count">Word count: 0 / 50 minimum</div>
+        </div>
+        <button class="btn-primary" onclick="submitAssignment()">Submit Assignment →</button>
+      </div>
+
+      <!-- STEP 4: RESULT -->
+      <div id="section-result" style="display:none;">
+        <div class="result-card">
+          <div style="font-size:14px;opacity:0.8;margin-bottom:8px;">🎉 Training Completed Successfully!</div>
+          <div class="result-points" id="result-points">0</div>
+          <div class="result-label">Total Points Earned</div>
+          <div class="badge-display" id="result-badge"></div>
+          <div class="result-grid">
+            <div class="result-item"><div class="result-item-val" id="res-comp">0</div><div class="result-item-lbl">Completion Score<br>(max 200)</div></div>
+            <div class="result-item"><div class="result-item-val" id="res-assess">0</div><div class="result-item-lbl">Assessment Score<br>(max 300)</div></div>
+            <div class="result-item"><div class="result-item-val" id="res-assign">0</div><div class="result-item-lbl">Assignment Score<br>(max 300)</div></div>
+          </div>
+        </div>
+        <div style="background:white;border-radius:14px;border:1px solid #DDE4F0;padding:20px;margin-bottom:20px;">
+          <div style="font-size:14px;font-weight:700;margin-bottom:10px;">📊 Score Breakdown</div>
+          <div style="font-size:13px;color:#6B7A99;line-height:2;">
+            ✅ <strong>Completion Score (200 pts):</strong> You completed the training content<br>
+            📝 <strong>Assessment Score (<span id="assess-detail">0</span>/300 pts):</strong> Based on your MCQ answers<br>
+            📋 <strong>Assignment Score (<span id="assign-detail">0</span>/300 pts):</strong> Based on your written answer<br>
+            ⚠️ <strong>Performance Score (200 pts):</strong> Will be calculated by HR based on your work performance
+          </div>
+        </div>
+        <div style="text-align:center;">
+          <button class="btn-primary" onclick="showPage('programs')">← Back to Programs</button>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+</div>
+
+<script>
+const API = 'https://script.google.com/macros/s/AKfycbzZwpWwyPtAXJvOMD9ic7xfH7-31uheI8g_gRnv2dmOtZ7vlY-0CpurCSr184JbKb0Mow/exec';
+
+// CHECK LOGIN
+const userData = localStorage.getItem('ubi_user');
+if(!userData){window.location.href='login.html';}
+const currentUser = JSON.parse(userData||'{}');
+if(currentUser.isHR){window.location.href='index.html';}
+
+// DEFAULT PROGRAMS
+const DEFAULT_PROGRAMS = [
+  {
+    id:'TP001',name:'Customer Service Excellence',dept:'Operations',
+    content:`<h3>Customer Service Excellence</h3>
+    <p>Customer service is the backbone of banking operations. As a Union Bank employee, your role is to provide exceptional service to every customer.</p>
+    <ul>
+      <li><strong>Greeting Customers:</strong> Always greet customers with a smile and professional attitude. First impressions matter greatly in banking.</li>
+      <li><strong>Active Listening:</strong> Listen carefully to customer needs without interrupting. Understand their requirements before offering solutions.</li>
+      <li><strong>Problem Resolution:</strong> Handle customer complaints calmly and efficiently. Escalate issues when necessary without delay.</li>
+      <li><strong>Product Knowledge:</strong> Stay updated on all bank products and services to provide accurate information to customers.</li>
+      <li><strong>Follow Up:</strong> Always follow up with customers after resolving their issues to ensure complete satisfaction.</li>
+    </ul>
+    <p><strong>Key Principle:</strong> Every customer interaction is an opportunity to build trust and loyalty for Union Bank of India.</p>`,
+    questions:[
+      {q:'What is the most important aspect of customer service in banking?',options:['Speed of service','Building trust and loyalty','Selling maximum products','Minimizing interaction time'],correct:1},
+      {q:'What should you do when a customer complains?',options:['Ignore the complaint','Argue with the customer','Handle calmly and find solution','Transfer immediately'],correct:2},
+      {q:'Why is product knowledge important?',options:['To impress managers','To provide accurate information to customers','To get promotions faster','To avoid work'],correct:1},
+      {q:'What does active listening mean?',options:['Listening while doing other work','Interrupting to give quick answers','Listening carefully without interrupting','Nodding without understanding'],correct:2},
+      {q:'When should you follow up with a customer?',options:['Never','Only when they call again','After resolving their issues','Once a year only'],correct:2}
+    ],
+    assignment:'Describe a situation where you provided excellent customer service. What steps were taken and what was the outcome? How will you apply the learnings in your daily work at Union Bank?'
+  },
+  {
+    id:'TP002',name:'Compliance & Regulatory Training',dept:'Compliance',
+    content:`<h3>Compliance & Regulatory Training</h3>
+    <p>Compliance is critical in banking to ensure legal and ethical operations. Union Bank follows strict RBI guidelines and internal policies.</p>
+    <ul>
+      <li><strong>KYC Norms:</strong> Know Your Customer (KYC) is mandatory for all account openings. Verify customer identity documents carefully.</li>
+      <li><strong>AML Guidelines:</strong> Anti-Money Laundering policies must be followed strictly. Report suspicious transactions immediately.</li>
+      <li><strong>Data Privacy:</strong> Customer data is strictly confidential. Never share customer information with unauthorized persons.</li>
+      <li><strong>RBI Regulations:</strong> Stay updated on Reserve Bank of India guidelines. Non-compliance leads to serious penalties.</li>
+      <li><strong>Internal Audit:</strong> Maintain accurate records for audit purposes. All transactions must be properly documented.</li>
+    </ul>
+    <p><strong>Key Principle:</strong> Compliance is not optional — it is a fundamental responsibility of every bank employee.</p>`,
+    questions:[
+      {q:'What does KYC stand for?',options:['Keep Your Cash','Know Your Customer','Keep Your Compliance','Know Your Credit'],correct:1},
+      {q:'What should you do when you notice a suspicious transaction?',options:['Ignore it','Report it immediately','Wait and watch','Ask the customer directly'],correct:1},
+      {q:'Which organization regulates banks in India?',options:['SEBI','IRDAI','Reserve Bank of India','Ministry of Finance'],correct:2},
+      {q:'Why is customer data privacy important?',options:['To increase profits','It is not important','To protect customers and maintain trust','To reduce workload'],correct:2},
+      {q:'What is the purpose of internal audit?',options:['To punish employees','To maintain accurate records and ensure compliance','To reduce staff','To increase salaries'],correct:1}
+    ],
+    assignment:'Explain the importance of KYC compliance in banking. What are the consequences of non-compliance? How do you ensure proper KYC verification in your daily work?'
+  },
+  {
+    id:'TP003',name:'Digital Banking',dept:'Technology',
+    content:`<h3>Digital Banking</h3>
+    <p>Digital banking is transforming how customers interact with Union Bank. Understanding digital channels is essential for every employee.</p>
+    <ul>
+      <li><strong>Mobile Banking:</strong> Guide customers to use UBI mobile app for transactions, balance enquiry and fund transfers.</li>
+      <li><strong>Internet Banking:</strong> Help customers register and use net banking for online transactions.</li>
+      <li><strong>UPI Payments:</strong> Explain UPI payment system and help customers link their accounts for instant payments.</li>
+      <li><strong>Cybersecurity:</strong> Educate customers about online frauds, phishing attacks and safe banking practices.</li>
+      <li><strong>Digital Onboarding:</strong> Assist customers with video KYC and digital account opening processes.</li>
+    </ul>
+    <p><strong>Key Principle:</strong> Digital banking improves customer convenience. Embrace technology to serve customers better.</p>`,
+    questions:[
+      {q:'What is the main benefit of mobile banking for customers?',options:['Higher interest rates','Convenience and 24/7 access','Free gifts','No charges'],correct:1},
+      {q:'What does UPI stand for?',options:['United Payment Interface','Unified Payments Interface','Universal Payment Integration','Unique Payment Identification'],correct:1},
+      {q:'What should customers be educated about in digital banking?',options:['How to avoid using the bank','Online frauds and safe banking practices','How to close accounts','Switching to other banks'],correct:1},
+      {q:'What is video KYC used for?',options:['Video calling friends','Digital account opening','Watching training videos','Online shopping'],correct:1},
+      {q:'Which is the safest practice in digital banking?',options:['Sharing OTP with friends','Using same password everywhere','Never sharing OTP and using strong passwords','Clicking all links in emails'],correct:2}
+    ],
+    assignment:'How can digital banking improve customer experience at Union Bank? Describe 3 ways you can help customers adopt digital banking. What challenges do customers face and how would you address them?'
+  },
+  {
+    id:'TP004',name:'Credit Training',dept:'Credit',
+    content:`<h3>Credit Training</h3>
+    <p>Credit assessment is a critical skill for bank employees. Understanding credit risk helps Union Bank make informed lending decisions.</p>
+    <ul>
+      <li><strong>Credit Assessment:</strong> Evaluate borrower's repayment capacity based on income, assets and liabilities.</li>
+      <li><strong>CIBIL Score:</strong> Check credit score before approving loans. Score above 750 indicates good credit history.</li>
+      <li><strong>Loan Documentation:</strong> Ensure all required documents are collected and verified before loan processing.</li>
+      <li><strong>NPA Management:</strong> Monitor loan accounts regularly to identify potential Non-Performing Assets early.</li>
+      <li><strong>Recovery Process:</strong> Follow proper recovery procedures for overdue accounts while maintaining customer relationships.</li>
+    </ul>
+    <p><strong>Key Principle:</strong> Sound credit decisions protect the bank from financial losses while helping deserving customers access credit.</p>`,
+    questions:[
+      {q:'What CIBIL score indicates good credit history?',options:['Above 300','Above 500','Above 750','Above 900'],correct:2},
+      {q:'What does NPA stand for?',options:['New Payment Account','Non-Performing Asset','National Payment Authority','Net Profit Analysis'],correct:1},
+      {q:'What is the first step in credit assessment?',options:['Approving the loan','Evaluating repayment capacity','Disbursing funds','Collecting documents'],correct:1},
+      {q:'Why is loan documentation important?',options:['To create paperwork','To verify borrower details and protect the bank','To delay processing','To confuse customers'],correct:1},
+      {q:'What should be done with overdue loan accounts?',options:['Ignore them','Write them off immediately','Follow proper recovery procedures','Close the account'],correct:2}
+    ],
+    assignment:'Explain the credit appraisal process at Union Bank. What are the key factors you consider when evaluating a loan application? How do you balance customer service with risk management in credit decisions?'
+  },
+  {
+    id:'TP005',name:'Risk Management',dept:'Risk',
+    content:`<h3>Risk Management in Banking</h3>
+    <p>Risk management is essential to protect Union Bank from financial, operational and reputational risks.</p>
+    <ul>
+      <li><strong>Credit Risk:</strong> Risk of borrower defaulting on loan repayments. Mitigated through proper credit assessment.</li>
+      <li><strong>Operational Risk:</strong> Risk from failed processes, systems or human errors. Mitigated through proper controls and training.</li>
+      <li><strong>Market Risk:</strong> Risk from changes in interest rates, exchange rates and market prices.</li>
+      <li><strong>Liquidity Risk:</strong> Risk of not having enough funds to meet obligations. Managed through asset-liability management.</li>
+      <li><strong>Reputation Risk:</strong> Risk of damage to bank image due to negative events. Mitigated through ethical conduct and compliance.</li>
+    </ul>
+    <p><strong>Key Principle:</strong> Every employee is a risk manager. Identifying and reporting risks early prevents major losses.</p>`,
+    questions:[
+      {q:'What is credit risk in banking?',options:['Risk of interest rate changes','Risk of borrower defaulting on loans','Risk of system failures','Risk of staff shortage'],correct:1},
+      {q:'How is operational risk mitigated?',options:['By ignoring errors','Through proper controls and training','By reducing staff','By closing branches'],correct:1},
+      {q:'What is liquidity risk?',options:['Risk of having too much money','Risk of not having enough funds to meet obligations','Risk of currency changes','Risk of customer complaints'],correct:1},
+      {q:'What causes reputation risk?',options:['Good customer service','Negative events and unethical conduct','Profitable operations','Strong compliance'],correct:1},
+      {q:'Who is responsible for risk management in a bank?',options:['Only the Risk Department','Only senior management','Every employee','Only auditors'],correct:2}
+    ],
+    assignment:'Identify 3 potential risks in your daily work at Union Bank. For each risk, explain how it can occur and what steps you take to mitigate it. Why is it important for every employee to understand risk management?'
+  }
+];
+
+// STATE
+let currentProgram = null;
+let allPrograms = [];
+let assessmentAnswers = [];
+let assessmentScore = 0;
+let completionScore = 0;
+let assignmentScore = 0;
+
+// HELPERS
+function getBadge(pts){
+  if(pts>=1000)return{name:'Platinum',icon:'💎',color:'#3A3AFF',bg:'#F0F0FF'};
+  if(pts>=750)return{name:'Gold',icon:'🥇',color:'#B8860B',bg:'#FFFBE6'};
+  if(pts>=500)return{name:'Silver',icon:'🥈',color:'#546E7A',bg:'#F0F4F8'};
+  if(pts>=250)return{name:'Bronze',icon:'🥉',color:'#A0522D',bg:'#FDF0E6'};
+  return{name:'—',icon:'🎖️',color:'#999',bg:'#F5F5F5'};
+}
+
+// PAGE
+function showPage(id){
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.getElementById('page-'+id).classList.add('active');
+  if(id==='programs')loadPrograms();
+}
+
+// LOGOUT
+function logout(){
+  localStorage.removeItem('ubi_user');
+  window.location.href='login.html';
+}
+
+// LOAD USER
+function loadUser(){
+  document.getElementById('user-chip').textContent='👤 '+currentUser.name;
+  document.getElementById('welcome-msg').textContent='Welcome, '+currentUser.name+'! 👋';
+  document.getElementById('welcome-sub').textContent=(currentUser.role||'Employee')+' • '+(currentUser.branch||'Union Bank of India');
+  loadPrograms();
+}
+
+// LOAD PROGRAMS — combines default + HR added programs
+function loadPrograms(){
+  const saved=JSON.parse(localStorage.getItem('added_programs')||'[]');
+  allPrograms=[...DEFAULT_PROGRAMS,...saved];
+  const list=document.getElementById('program-list');
+  list.innerHTML='';
+  const key='completed_'+(currentUser.userId||currentUser.email);
+  const completed=JSON.parse(localStorage.getItem(key)||'[]');
+  let totalPoints=0;
+  completed.forEach(id=>{totalPoints+=Number(localStorage.getItem('pts_'+id)||0);});
+  const b=getBadge(totalPoints);
+  document.getElementById('my-points').textContent=totalPoints;
+  document.getElementById('my-badge').textContent=b.icon;
+  document.getElementById('prog-done').textContent=completed.length+'/'+allPrograms.length;
+  allPrograms.forEach(p=>{
+    const isDone=completed.includes(p.id);
+    const pts=isDone?Number(localStorage.getItem('pts_'+p.id)||0):0;
+    list.innerHTML+=`
+    <div class="prog-card" onclick="startTraining('${p.id}')">
+      <div style="display:flex;align-items:center;justify-content:space-between;">
+        <div>
+          <div class="prog-name">${p.name}</div>
+          <div class="prog-dept">${p.dept} Department</div>
+          ${isDone?`<div style="font-size:12px;color:#1A7F4B;font-weight:600;margin-top:4px;">✅ Points earned: ${pts}</div>`:''}
+        </div>
+        <span class="prog-status ${isDone?'status-done':'status-pending'}">${isDone?'✅ Completed':'⏳ Pending'}</span>
+      </div>
+      <div class="prog-wrap"><div class="prog-bar" style="background:${isDone?'#1A7F4B':'#DDE4F0'};width:${isDone?'100':'0'}%"></div></div>
+    </div>`;
+  });
+}
+
+// START TRAINING
+function startTraining(progId){
+  currentProgram=allPrograms.find(p=>p.id===progId);
+  if(!currentProgram)return;
+  document.getElementById('training-title').textContent=currentProgram.name;
+  document.getElementById('training-dept').textContent=currentProgram.dept+' Department';
+  document.getElementById('training-content').innerHTML=currentProgram.content;
+  document.getElementById('content-check').checked=false;
+  document.getElementById('assignment-answer').value='';
+  document.getElementById('word-count').textContent='Word count: 0 / 50 minimum';
+  document.getElementById('word-count').style.color='#C0392B';
+  assessmentAnswers=new Array(currentProgram.questions.length).fill(-1);
+  assessmentScore=0;completionScore=0;assignmentScore=0;
+  showSection('content');updateSteps(1);
+  showPage('training');
+}
+
+// SHOW SECTION
+function showSection(name){
+  ['content','assessment','assignment','result'].forEach(s=>{
+    document.getElementById('section-'+s).style.display=s===name?'block':'none';
+  });
+}
+
+// UPDATE STEPS
+function updateSteps(active){
+  for(let i=1;i<=4;i++){
+    const el=document.getElementById('step'+i);
+    el.className='step'+(i===active?' active':i<active?' done':'');
+  }
+}
+
+// GO TO ASSESSMENT
+function goToAssessment(){
+  if(!document.getElementById('content-check').checked){
+    alert('⚠️ Please tick the checkbox to confirm you have read the training content!');
+    return;
+  }
+  completionScore=200;
+  buildQuestions();
+  showSection('assessment');
+  updateSteps(2);
+}
+
+// BUILD QUESTIONS
+function buildQuestions(){
+  const list=document.getElementById('questions-list');
+  list.innerHTML='';
+  currentProgram.questions.forEach((q,qi)=>{
+    list.innerHTML+=`
+    <div class="question-box">
+      <div class="question-num">Question ${qi+1} of ${currentProgram.questions.length}</div>
+      <div class="question-text">${q.q}</div>
+      <div class="options">
+        ${q.options.map((opt,oi)=>`
+          <label class="option" id="opt-${qi}-${oi}" onclick="selectAnswer(${qi},${oi})">
+            <input type="radio" name="q${qi}" value="${oi}" style="accent-color:#003087;">
+            ${opt}
+          </label>
+        `).join('')}
+      </div>
+    </div>`;
+  });
+}
+
+// SELECT ANSWER
+function selectAnswer(qi,oi){
+  assessmentAnswers[qi]=oi;
+  currentProgram.questions[qi].options.forEach((_,i)=>{
+    document.getElementById('opt-'+qi+'-'+i).classList.remove('selected');
+  });
+  document.getElementById('opt-'+qi+'-'+oi).classList.add('selected');
+}
+
+// SUBMIT ASSESSMENT
+function submitAssessment(){
+  const unanswered=assessmentAnswers.filter(a=>a===-1).length;
+  if(unanswered>0){alert('⚠️ Please answer all '+unanswered+' remaining question(s)!');return;}
+  let correct=0;
+  currentProgram.questions.forEach((q,qi)=>{
+    const selected=assessmentAnswers[qi];
+    document.getElementById('opt-'+qi+'-'+selected).classList.remove('selected');
+    if(selected===q.correct){
+      correct++;
+      document.getElementById('opt-'+qi+'-'+selected).classList.add('correct');
+    }else{
+      document.getElementById('opt-'+qi+'-'+selected).classList.add('wrong');
+      document.getElementById('opt-'+qi+'-'+q.correct).classList.add('correct');
+    }
+  });
+  assessmentScore=correct*60;
+  setTimeout(()=>{
+    document.getElementById('assignment-question').textContent=currentProgram.assignment;
+    showSection('assignment');
+    updateSteps(3);
+  },2500);
+}
+
+// WORD COUNT
+function updateWordCount(){
+  const words=document.getElementById('assignment-answer').value.trim().split(/\s+/).filter(w=>w).length;
+  const el=document.getElementById('word-count');
+  el.textContent='Word count: '+words+' / 50 minimum';
+  el.style.color=words>=50?'#1A7F4B':'#C0392B';
+}
+
+// SUBMIT ASSIGNMENT
+function submitAssignment(){
+  const answer=document.getElementById('assignment-answer').value.trim();
+  const words=answer.split(/\s+/).filter(w=>w).length;
+  if(words<50){alert('⚠️ Please write at least 50 words! Current count: '+words);return;}
+  assignmentScore=Math.min(300,Math.round((words/150)*300));
+  saveScoreAndShow();
+}
+
+// SAVE SCORE AND SHOW RESULT
+async function saveScoreAndShow(){
+  const totalPoints=completionScore+assessmentScore+assignmentScore;
+  const b=getBadge(totalPoints);
+  document.getElementById('result-points').textContent=totalPoints;
+  document.getElementById('res-comp').textContent=completionScore;
+  document.getElementById('res-assess').textContent=assessmentScore;
+  document.getElementById('res-assign').textContent=assignmentScore;
+  document.getElementById('assess-detail').textContent=assessmentScore;
+  document.getElementById('assign-detail').textContent=assignmentScore;
+  document.getElementById('result-badge').innerHTML=b.icon+' '+b.name+' Badge';
+  document.getElementById('result-badge').style.background=b.bg;
+  document.getElementById('result-badge').style.color=b.color;
+
+  // Save to localStorage
+  const key='completed_'+(currentUser.userId||currentUser.email);
+  const completed=JSON.parse(localStorage.getItem(key)||'[]');
+  if(!completed.includes(currentProgram.id)){
+    completed.push(currentProgram.id);
+    localStorage.setItem(key,JSON.stringify(completed));
+  }
+  localStorage.setItem('pts_'+currentProgram.id,totalPoints);
+
+  // Save to Google Sheet
+  try{
+    await fetch(API,{
+      method:'POST',
+      body:JSON.stringify({
+        action:'submitScore',
+        name:currentUser.name,
+        userId:currentUser.userId||'',
+        program:currentProgram.name,
+        comp:100,
+        compScore:completionScore,
+        assessScore:assessmentScore,
+        assignScore:assignmentScore,
+        totalPoints:totalPoints
+      })
+    });
+  }catch(err){
+    console.log('Score saved locally. Google Sheet save failed.');
+  }
+
+  showSection('result');
+  updateSteps(4);
+}
+
+// INIT
+loadUser();
+</script>
+</body>
+</html>
