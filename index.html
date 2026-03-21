@@ -649,10 +649,10 @@ async function loadLiveScores(){
     if(data.success&&data.data&&data.data.length){
       data.data.forEach(s=>{
   // Calculate correct total points
-  const compScore = 200;
-  const assessScore = Number(s.assessScore)||0;
-  const assignScore = Number(s.assignScore)||0;
-  const totalPts = Number(s.totalPoints)||0;
+const assessScore = Number(s.assessScore)||0;
+const assignScore = Number(s.assignScore)||0;
+const totalPts = Number(s.totalPoints)||0;
+const displayPts = totalPts > 500 ? totalPts : 200 + assessScore + assignScore;
 
   // Use stored total if available otherwise calculate
   const displayPts = totalPts > 100 ? totalPts : compScore + assessScore + assignScore;
