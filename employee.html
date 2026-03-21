@@ -526,19 +526,20 @@ async function saveScoreAndShow(){
   // Save to Google Sheet
   try{
     await fetch(API,{
-      method:'POST',
-      body:JSON.stringify({
-        action:'submitScore',
-        name:currentUser.name,
-        userId:currentUser.userId||'',
-        program:currentProgram.name,
-        comp:100,
-        compScore:completionScore,
-        assessScore:assessmentScore,
-        assignScore:assignmentScore,
-        totalPoints:totalPoints
-      })
-    });
+  method:'POST',
+  body:JSON.stringify({
+    action:'submitScore',
+    name:currentUser.name,
+    userId:currentUser.userId||'',
+    program:currentProgram.name,
+    comp:100,
+    compScore:completionScore,
+    assessScore:assessmentScore,
+    assignScore:assignmentScore,
+    totalPoints:totalPoints
+  })
+});
+console.log('Score saved to Google Sheet: '+totalPoints+' points');
   }catch(err){
     console.log('Score saved locally. Google Sheet save failed.');
   }
