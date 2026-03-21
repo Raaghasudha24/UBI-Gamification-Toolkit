@@ -515,7 +515,37 @@ buildEmployees();
 // ===== PROGRAMS =====
 const progs=[...new Set(POINTS.map(p=>p.prog))];
 const pt=document.getElementById('prog-body');
-progs.forEach(pg=>{const rows=POINTS.filter(p=>p.prog===pg),avg2=Math.round(rows.reduce((s,p)=>s+p.points,0)/rows.length);pt.innerHTML+=`<tr><td style="font-weight:600">${pg}</td><td style="color:#6B7A99">—</td><td>${rows.length}</td><td><span style="font-weight:700;color:${ptsColor(avg2)}">${avg2}</span></td><td style="font-weight:700;color:#003087">1000</td></tr>`;});
+const PROG_DEPT = {
+  'Sales & Marketing':'Marketing',
+  'Compliance & Regulatory Training':'Compliance',
+  'Credit Training':'Credit',
+  'Karmayogi':'HRM',
+  'Welcoming Program':'Operations',
+  'Customer Orientation & Excellence':'Operations',
+  'Welcomming wellness':'HRM',
+  'Risk Management in practice':'Risk',
+  'Basics of Credit Monitoring':'Credit',
+  'Comprehensive Operational Resource Efficiency':'Operations',
+  'Digital Banking':'Technology',
+  'Agriculture Lending Excellence (ALEXA)':'Credit',
+  'Appraisal tools':'Credit',
+  'Diagnosis & Cure of Stressed Assets':'Credit',
+  'Training in NRI Banking':'Operations',
+  'Pragati for Women Employees':'HRM',
+  'Training related to MS Office':'Technology'
+};
+progs.forEach(pg=>{
+  const rows=POINTS.filter(p=>p.prog===pg);
+  const avg2=Math.round(rows.reduce((s,p)=>s+p.points,0)/rows.length);
+  const dept=PROG_DEPT[pg]||'General';
+  pt.innerHTML+=`<tr>
+    <td style="font-weight:600">${pg}</td>
+    <td><span class="badge" style="background:#EAF1FF;color:#1A56DB">${dept}</span></td>
+    <td>${rows.length}</td>
+    <td><span style="font-weight:700;color:${ptsColor(avg2)}">${avg2}</span></td>
+    <td style="font-weight:700;color:#003087">1000</td>
+  </tr>`;
+});
 
 // ===== POINTS LOG =====
 function buildPointsLog(data){const tb=document.getElementById('pl-body');tb.innerHTML='';(data||POINTS).forEach(p=>{const ic=p.impPct>=20?'#1A7F4B':p.impPct>=0?'#B8860B':'#C0392B';tb.innerHTML+=`<tr onclick="openModal('${p.uid}')"><td style="font-weight:600">${p.name}</td><td style="font-size:11px;color:#6B7A99">${p.prog}</td><td>${p.comp}%</td><td>${p.preTotal}</td><td>${p.postTotal}</td><td style="font-weight:700;color:${ic}">${p.impPct.toFixed(1)}%</td><td>${p.perfScore.toFixed(1)}</td><td><span style="font-weight:800;color:${ptsColor(p.points)};font-size:15px">${p.points}</span></td></tr>`;});}
@@ -618,18 +648,28 @@ async function loadLiveScores(){
     tbody.innerHTML='';
     if(data.success&&data.data&&data.data.length){
       data.data.forEach(s=>{
-        const b=getBadge(s.totalPoints);
-        tbody.innerHTML+=`<tr>
-          <td style="font-weight:600">${s.name}</td>
-          <td style="font-size:11px;color:#6B7A99">${s.program}</td>
-          <td>${s.comp}%</td>
-          <td>${s.assessScore}</td>
-          <td>${s.assignScore}</td>
-          <td><span style="font-weight:800;color:${ptsColor(s.totalPoints)};font-size:15px">${s.totalPoints}</span></td>
-          <td><span class="badge" style="background:${b.bg};color:${b.color}">${b.icon} ${b.name}</span></td>
-          <td style="font-size:11px;color:#6B7A99">${s.date||'—'}</td>
-        </tr>`;
-      });
+  // Calculate correct total points
+  const compScore = 200;
+  const assessScore = Number(s.assessScore)||0;
+  const assignScore = Number(s.assignScore)||0;
+  const totalPts = Number(s.totalPoints)||0;
+
+  // Use stored total if available otherwise calculate
+  const displayPts = totalPts > 100 ? totalPts : compScore + assessScore + assignScore;
+  const b = getBadge(displayPts);
+
+  tbody.innerHTML+=`<tr>
+    <td style="font-weight:600">${s.name}</td>
+    <td style="font-size:11px;color:#6B7A99">${s.program}</td>
+    <td>${s.comp||100}%</td>
+    <td style="font-weight:600">${assessScore}</td>
+    <td style="font-weight:600">${assignScore}</td>
+    <td><span style="font-weight:800;color:${ptsColor(displayPts)};font-size:15px">${displayPts}</span></td>
+    <td><span class="badge" style="background:${b.bg};color:${b.color}">${b.icon} ${b.name}</span></td>
+    <td style="font-size:11px;color:#6B7A99">${s.date||'—'}</td>
+  </tr>`;
+});
+
     }else{
       tbody.innerHTML='<tr><td colspan="8" style="text-align:center;color:#6B7A99;padding:20px">No scores yet. Employees need to complete training first!</td></tr>';
     }
