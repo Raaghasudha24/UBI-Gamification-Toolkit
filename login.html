@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>UBI Gamification Toolkit — Login</title>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: 'Plus Jakarta Sans', sans-serif; background: linear-gradient(135deg, #003087 0%, #1A4FAB 50%, #003087 100%); min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 20px; }
+.login-box { background: white; border-radius: 20px; width: 100%; max-width: 460px; padding: 40px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); }
+.logo-section { text-align: center; margin-bottom: 30px; }
+.logo-section img { width: 160px; margin-bottom: 12px; }
+.logo-section .app-name { font-size: 20px; font-weight: 800; color: #003087; }
+.logo-section .app-sub { font-size: 12px; color: #6B7A99; margin-top: 3px; }
+.tabs { display: flex; background: #F0F4FA; border-radius: 10px; padding: 4px; margin-bottom: 24px; }
+.tab { flex: 1; padding: 10px; text-align: center; font-size: 13px; font-weight: 600; cursor: pointer; border-radius: 8px; color: #6B7A99; transition: all 0.2s; }
+.tab.active { background: white; color: #003087; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+.form { display: none; }
+.form.active { display: block; }
+.form-group { margin-bottom: 16px; }
+.form-label { font-size: 12px; font-weight: 600; color: #6B7A99; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; display: block; }
+.form-input { width: 100%; padding: 12px 14px; border: 1.5px solid #DDE4F0; border-radius: 10px; font-size: 14px; font-family: inherit; outline: none; transition: border 0.2s; color: #1A2340; }
+.form-input:focus { border-color: #003087; }
+.form-select { width: 100%; padding: 12px 14px; border: 1.5px solid #DDE4F0; border-radius: 10px; font-size: 14px; font-family: inherit; outline: none; background: white; color: #1A2340; cursor: pointer; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.btn { width: 100%; padding: 14px; background: #003087; color: white; border: none; border-radius: 10px; font-size: 15px; font-weight: 700; font-family: inherit; cursor: pointer; transition: all 0.2s; margin-top: 8px; }
+.btn:hover { background: #1A4FAB; }
+.hr-divider { text-align: center; margin: 20px 0; position: relative; }
+.hr-divider::before { content: ''; position: absolute; top: 50%; left: 0; right: 0; height: 1px; background: #DDE4F0; }
+.hr-divider span { background: white; padding: 0 12px; font-size: 12px; color: #6B7A99; position: relative; }
+.btn-hr { width: 100%; padding: 12px; background: #F0F4FA; color: #003087; border: 1.5px solid #DDE4F0; border-radius: 10px; font-size: 14px; font-weight: 700; font-family: inherit; cursor: pointer; }
+.btn-hr:hover { background: #EAF1FB; }
+.msg { padding: 12px 14px; border-radius: 10px; font-size: 13px; font-weight: 600; margin-bottom: 16px; display: none; }
+.msg.success { background: #E6F9F0; color: #1A7F4B; display: block; }
+.msg.error { background: #FFF0EE; color: #C0392B; display: block; }
+.loading { display: none; text-align: center; padding: 10px; color: #6B7A99; font-size: 13px; }
+.loading.show { display: block; }
+.hint { background: #EAF1FF; border-radius: 8px; padding: 10px 14px; font-size: 12px; color: #1A56DB; margin-top: 12px; line-height: 1.6; }
+</style>
+</head>
+<body>
+<div class="login-box">
+
+  <!-- LOGO -->
+  <div class="logo-section">
+    <img src="logo.png" alt="Union Bank" onerror="this.style.display='none'">
+    <div class="app-name">🏦 Union Bank of India</div>
+    <div class="app-sub">HR Gamification Toolkit</div>
+    <div class="app-sub">Training Performance System</div>
+  </div>
+
+  <!-- TABS -->
+  <div class="tabs">
+    <div class="tab active" onclick="switchTab('signin')">Sign In</div>
+    <div class="tab" onclick="switchTab('signup')">Sign Up</div>
+  </div>
+
+  <div class="msg" id="msg"></div>
+  <div class="loading" id="loading">⏳ Please wait...</div>
+
+  <!-- SIGN IN -->
+  <div class="form active" id="form-signin">
+    <div class="form-group">
+      <label class="form-label">Full Name</label>
+      <input type="text" class="form-input" id="si-name" placeholder="Enter your full name">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Password</label>
+      <input type="password" class="form-input" id="si-pass" placeholder="Enter your password">
+    </div>
+    <button class="btn" onclick="signIn()">Sign In →</button>
+    <div class="hint">
+      💡 <strong>Existing employees:</strong> Enter your full name and use your <strong>Employee ID</strong> as password<br>
+      Example: Name = <em>Sinthiya</em> | Password = <em>617161</em>
+    </div>
+    <div class="hr-divider"><span>HR Login</span></div>
+    <button class="btn-hr" onclick="hrLogin()">🏢 Login as HR</button>
+  </div>
+
+  <!-- SIGN UP -->
+  <div class="form" id="form-signup">
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Full Name</label>
+        <input type="text" class="form-input" id="su-name" placeholder="Your full name">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Employee ID</label>
+        <input type="text" class="form-input" id="su-userid" placeholder="Employee ID">
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Branch</label>
+        <select class="form-select" id="su-branch">
+          <option value="">Select Branch</option>
+          <option>Coimbatore</option>
+          <option>Dharmapuri</option>
+          <option>Chennai</option>
+          <option>Trichy</option>
+          <option>Salem</option>
+          <option>Madurai</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Role</label>
+        <select class="form-select" id="su-role">
+          <option value="">Select Role</option>
+          <option>Manager</option>
+          <option>Senior Manager</option>
+          <option>Assistant Manager</option>
+          <option>Manager (Marketing)</option>
+          <option>Senior Manager (HRM)</option>
+          <option>Senior Manager (BRM)</option>
+          <option>SM (Risk Management)</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-row">
+      <div class="form-group">
+        <label class="form-label">Password</label>
+        <input type="password" class="form-input" id="su-pass" placeholder="Min 6 characters">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Confirm Password</label>
+        <input type="password" class="form-input" id="su-confirm" placeholder="Confirm password">
+      </div>
+    </div>
+    <button class="btn" onclick="signUp()">Create Account →</button>
+  </div>
+
+</div>
+
+<script>
+const API = 'https://script.google.com/macros/s/AKfycbzZwpWwyPtAXJvOMD9ic7xfH7-31uheI8g_gRnv2dmOtZ7vlY-0CpurCSr184JbKb0Mow/exec';
+const HR_PASSWORD = 'hr@ubi2026';
+
+const EMPLOYEES = [
+  {userId:'629483',name:'Kala G Nath',branch:'Coimbatore',role:'Manager'},
+  {userId:'631756',name:'P M SENTHIL KUMAR',branch:'Dharmapuri',role:'Manager'},
+  {userId:'617161',name:'Sinthiya',branch:'Coimbatore',role:'Manager'},
+  {userId:'777037',name:'Suganya M',branch:'Coimbatore',role:'Manager (Marketing)'},
+  {userId:'660857',name:'Mythili A R',branch:'Coimbatore',role:'Senior Manager (HRM)'},
+  {userId:'667682',name:'Peter Bala Sigh David',branch:'Coimbatore',role:'Asst Manager'},
+  {userId:'866616',name:'Rajkumar Vagolu',branch:'Coimbatore',role:'Assistant Manager'},
+  {userId:'780560',name:'Gogulakrishnan',branch:'Coimbatore',role:'Assistant Manager'},
+  {userId:'521620',name:'Divya Jeesmol Jose',branch:'Coimbatore',role:'Assistant Manager'},
+  {userId:'595759',name:'Harsha Haridas',branch:'Coimbatore',role:'Assistant Manager'},
+  {userId:'671524',name:'Treesa Mary',branch:'Coimbatore',role:'Assistant Manager'},
+  {userId:'651674',name:'Manju V Ravindran',branch:'Coimbatore',role:'Assistant Manager'},
+  {userId:'782691',name:'Karthikeyan P',branch:'Coimbatore',role:'Assistant Manager'},
+  {userId:'853648',name:'Abhinav Mishra',branch:'Coimbatore',role:'Asst Manager (Marketing)'},
+  {userId:'900447',name:'Hrithik Kumar',branch:'Coimbatore',role:'Asst Manager (Technical)'},
+  {userId:'631657',name:'Sivakumaran S',branch:'Coimbatore',role:'Manager'},
+  {userId:'507405',name:'Sivakumar S',branch:'Coimbatore',role:'Manager'},
+  {userId:'773314',name:'RamaGopalan Kannan',branch:'Coimbatore',role:'Manager'},
+  {userId:'830500',name:'Padmanab Sayuj T D',branch:'Coimbatore',role:'Manager'},
+  {userId:'678986',name:'Chekrala Ganesh',branch:'Coimbatore',role:'Manager'},
+  {userId:'705878',name:'Mohanraj K',branch:'Coimbatore',role:'Manager'},
+  {userId:'645596',name:'Edil S',branch:'Coimbatore',role:'Manager'},
+  {userId:'777370',name:'Anandhi M',branch:'Coimbatore',role:'Manager (Marketing)'},
+  {userId:'777504',name:'Rithvikaa Kripanithi',branch:'Coimbatore',role:'Manager (Marketing)'},
+  {userId:'763445',name:'Abhiraami Nagarjan',branch:'Coimbatore',role:'Senior Manager'},
+  {userId:'548643',name:'Krishnan M',branch:'Coimbatore',role:'Senior Manager'},
+  {userId:'640719',name:'Queeni Hermina J',branch:'Coimbatore',role:'Senior Manager'},
+  {userId:'639394',name:'Rethika R',branch:'Coimbatore',role:'Senior Manager'},
+  {userId:'391078',name:'Radhakrishnan',branch:'Coimbatore',role:'Senior Manager'},
+  {userId:'715110',name:'Neeraj Kumar P',branch:'Coimbatore',role:'Senior Manager'},
+  {userId:'599218',name:'Vishnu C',branch:'Coimbatore',role:'Senior Manager'},
+  {userId:'632498',name:'Smitha Rakesh',branch:'Coimbatore',role:'Senior Manager'},
+  {userId:'658624',name:'Nantha Kumar V',branch:'Coimbatore',role:'Senior Manager (BRM)'},
+  {userId:'660867',name:'Dhivyaa Evangaline A',branch:'Coimbatore',role:'Senior Manager (HRM)'},
+  {userId:'601920',name:'Joyce Jinesh',branch:'Coimbatore',role:'Senior Manager (Security)'},
+  {userId:'455044',name:'Tina Thankam Varghese',branch:'Coimbatore',role:'SM (Risk Management)'},
+  {userId:'226992',name:'Vinoth Kumar',branch:'Dharmapuri',role:'Senior Manager (HRM)'}
+];
+
+// NEW SIGNUPS stored in localStorage
+function getNewUsers(){
+  return JSON.parse(localStorage.getItem('new_users')||'[]');
+}
+
+function switchTab(tab){
+  document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));
+  document.querySelectorAll('.form').forEach(f=>f.classList.remove('active'));
+  document.querySelector(`.tab[onclick="switchTab('${tab}')"]`).classList.add('active');
+  document.getElementById('form-'+tab).classList.add('active');
+  hideMsg();
+}
+function showMsg(text,type){const m=document.getElementById('msg');m.textContent=text;m.className='msg '+type;}
+function hideMsg(){document.getElementById('msg').className='msg';}
+function showLoading(show){document.getElementById('loading').className=show?'loading show':'loading';}
+
+// HR LOGIN
+function hrLogin(){
+  const name=document.getElementById('si-name').value.trim();
+  const pass=document.getElementById('si-pass').value.trim();
+  if(pass===HR_PASSWORD){
+    localStorage.setItem('ubi_user',JSON.stringify({
+      name:'HR Admin',role:'HR',isHR:true
+    }));
+    window.location.href='index.html';
+  } else {
+    showMsg('Wrong HR password!','error');
+  }
+}
+
+// SIGN IN
+function signIn(){
+  const name = document.getElementById('si-name').value.trim();
+  const pass = document.getElementById('si-pass').value.trim();
+
+  if(!name || !pass){
+    showMsg('Please enter your name and password!','error');
+    return;
+  }
+
+  // Check HR
+  if(pass === HR_PASSWORD){
+    localStorage.setItem('ubi_user',JSON.stringify({
+      name:'HR Admin',role:'HR',isHR:true
+    }));
+    window.location.href='index.html';
+    return;
+  }
+
+  // Check existing 37 employees — name match + password = userId
+  const emp = EMPLOYEES.find(e =>
+    e.name.toLowerCase().trim() === name.toLowerCase().trim() &&
+    e.userId === pass.trim()
+  );
+
+  if(emp){
+    localStorage.setItem('ubi_user',JSON.stringify({
+      userId: emp.userId,
+      name: emp.name,
+      branch: emp.branch,
+      role: emp.role,
+      isHR: false
+    }));
+    showMsg('✅ Login successful! Redirecting...','success');
+    setTimeout(()=>window.location.href='employee.html',1000);
+    return;
+  }
+
+  // Check new signups from localStorage
+  const newUsers = getNewUsers();
+  const newUser = newUsers.find(u =>
+    u.name.toLowerCase().trim() === name.toLowerCase().trim() &&
+    u.password === pass.trim()
+  );
+
+  if(newUser){
+    localStorage.setItem('ubi_user',JSON.stringify({
+      userId: newUser.userId,
+      name: newUser.name,
+      branch: newUser.branch,
+      role: newUser.role,
+      isHR: false
+    }));
+    showMsg('✅ Login successful! Redirecting...','success');
+    setTimeout(()=>window.location.href='employee.html',1000);
+    return;
+  }
+
+  showMsg('❌ Name or password is incorrect! Try again.','error');
+}
+
+// SIGN UP
+function signUp(){
+  const name = document.getElementById('su-name').value.trim();
+  const userId = document.getElementById('su-userid').value.trim();
+  const branch = document.getElementById('su-branch').value;
+  const role = document.getElementById('su-role').value;
+  const pass = document.getElementById('su-pass').value.trim();
+  const conf = document.getElementById('su-confirm').value.trim();
+
+  if(!name||!userId||!branch||!role||!pass||!conf){
+    showMsg('Please fill all fields!','error');return;
+  }
+  if(pass!==conf){showMsg('Passwords do not match!','error');return;}
+  if(pass.length<4){showMsg('Password must be at least 4 characters!','error');return;}
+
+  // Check if name already exists
+  const exists = EMPLOYEES.find(e=>e.name.toLowerCase()===name.toLowerCase());
+  if(exists){showMsg('This name is already registered! Please sign in.','error');return;}
+
+  const newUsers = getNewUsers();
+  const dupName = newUsers.find(u=>u.name.toLowerCase()===name.toLowerCase());
+  if(dupName){showMsg('This name is already registered! Please sign in.','error');return;}
+
+  // Save new user
+  newUsers.push({userId,name,branch,role,password:pass});
+  localStorage.setItem('new_users',JSON.stringify(newUsers));
+  showMsg('✅ Account created! Please sign in now.','success');
+  setTimeout(()=>switchTab('signin'),2000);
+}
+
+// CHECK IF ALREADY LOGGED IN
+const existing = localStorage.getItem('ubi_user');
+if(existing){
+  const u = JSON.parse(existing);
+  if(u.isHR) window.location.href='index.html';
+  else window.location.href='employee.html';
+}
+</script>
+</body>
+</html>
