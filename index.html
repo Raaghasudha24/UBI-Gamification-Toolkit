@@ -108,9 +108,9 @@ tbody td { padding:11px 14px; vertical-align:middle; }
     <div class="nav-item" onclick="showPage('skillgap')">🎯 Skill Gap</div>
     <div class="nav-item" onclick="showPage('branch')">🏢 Branch Report</div>
     <div class="nav-item" onclick="showPage('insights')">💡 HR Insights</div>
-    <div class="nav-item" onclick="showPage('livescores')">🔴 Live Scores</div>
+    <div class="nav-item" onclick="showPage('certificates')')">🎖️ Certificates</div>
   </div>
-  <div class="sb-footer">Union Bank of India<br>Coimbatore & Dharmapuri<br>© 2024 HR Gamification Toolkit</div>
+  <div class="sb-footer">Union Bank of India<br>© 2026 HR Gamification Toolkit</div>
 </div>
 
 <!-- MAIN -->
@@ -247,7 +247,12 @@ tbody td { padding:11px 14px; vertical-align:middle; }
       <div style="font-size:15px;font-weight:800;margin-bottom:14px;">📌 HR Recommendations</div>
       <div id="rec-list"></div>
     </div>
-
+<!-- PAGE: CERTIFICATES -->
+<div class="page" id="page-certificates">
+  <div style="font-size:16px;font-weight:800;color:#003087;margin-bottom:6px;">🎖️ All Employee Certificates</div>
+  <div style="font-size:12px;color:#6B7A99;margin-bottom:20px;">HR can view and print any employee certificate</div>
+  <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:20px;" id="hr-cert-grid"></div>
+</div>
     <!-- PAGE 10: LIVE SCORES -->
     <div class="page" id="page-livescores">
       <div class="live-score-card">
@@ -462,7 +467,8 @@ function getBranch(uid){const e=EMPLOYEES.find(x=>x.id===uid);return e?e.branch:
 const LEADERBOARD=[...POINTS].sort((a,b)=>b.points-a.points).map((p,i)=>({...p,rank:i+1}));
 
 // ===== NAVIGATION =====
-const PAGE_TITLES={dashboard:'📊 HR Dashboard',leaderboard:'🏆 Leaderboard',employees:'👥 Employee Directory',programs:'📚 Training Programs',pointslog:'📋 Points Log',addprogram:'➕ Add Training Program',skillgap:'🎯 Skill Gap Analysis',branch:'🏢 Branch Report',insights:'💡 HR Insights',livescores:'🔴 Live Employee Scores'};
+const PAGE_TITLES={dashboard:'📊 HR Dashboard',leaderboard:'🏆 Leaderboard',employees:'👥 Employee Directory',programs:'📚 Training Programs',pointslog:'📋 Points Log',addprogram:'➕ Add Training Program',skillgap:'🎯 Skill Gap Analysis',branch:'🏢 Branch Report',insights:'💡 HR Insights',livescores:'🔴 Live Employee Scores',
+certificates:'🎖️ Employee Certificates'};
 function showPage(id){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
@@ -471,6 +477,7 @@ function showPage(id){
   document.getElementById('page-title').textContent=PAGE_TITLES[id];
   if(id==='livescores')loadLiveScores();
   if(id==='addprogram')loadAddedPrograms();
+  if(id==='certificates')buildHRCertificates();
 }
 
 // ===== WINNER POPUP =====
@@ -747,6 +754,82 @@ insights.forEach(ins=>{ig.innerHTML+=`<div class="insight-card"><div style="font
 const recs=[{title:'🥇 Reward Top 3 Performers',text:'RamaGopalan Kannan (802), Abhinav Mishra (798), Divya Jeesmol Jose (764) — Recommend for recognition awards and certificates.'},{title:'📋 Schedule Re-training for Bottom Performers',text:'Smitha Rakesh (109 pts) and Krishnan M (279 pts) show negative improvement. Schedule one-on-one coaching.'},{title:'💡 Focus Training on Weak Skills',text:'Design targeted workshops for Timeliness/Productivity and Knowledge Application.'},{title:'🏢 Cross-Branch Learning Program',text:'Organize knowledge sharing sessions between Coimbatore and Dharmapuri branches.'},{title:'📊 Use Points as Promotion Criteria',text:'Employees with Gold badge (750+ pts) and Level 4-5 are ready for higher responsibilities.'}];
 const rl=document.getElementById('rec-list');
 recs.forEach(r=>{rl.innerHTML+=`<div class="rec-card"><div style="font-size:13px;font-weight:700;margin-bottom:4px">${r.title}</div><div style="font-size:12px;color:#6B7A99;line-height:1.6">${r.text}</div></div>`;});
+
+// ===== HR CERTIFICATE GALLERY =====
+function buildHRCertificates(){
+  const grid=document.getElementById('hr-cert-grid');
+  if(!grid)return;
+  grid.innerHTML='';
+  LEADERBOARD.forEach((p,idx)=>{
+    const emp=EMPLOYEES.find(e=>e.id===p.uid);
+    const b=getBadge(p.points);
+    const s=getStatus(p.points);
+    const today=new Date().toLocaleDateString('en-IN',{day:'numeric',month:'long',year:'numeric'});
+    grid.innerHTML+=`
+    <div style="background:white;border-radius:16px;border:6px solid #F5A623;padding:28px 22px;text-align:center;position:relative;">
+      <div style="position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,#F5A623,#FFD700,#F5A623);border-radius:10px 10px 0 0;"></div>
+      <div style="position:absolute;top:8px;left:8px;width:24px;height:24px;border-top:3px solid #F5A623;border-left:3px solid #F5A623;border-radius:3px 0 0 0;"></div>
+      <div style="position:absolute;top:8px;right:8px;width:24px;height:24px;border-top:3px solid #F5A623;border-right:3px solid #F5A623;border-radius:0 3px 0 0;"></div>
+      <div style="position:absolute;bottom:8px;left:8px;width:24px;height:24px;border-bottom:3px solid #F5A623;border-left:3px solid #F5A623;border-radius:0 0 0 3px;"></div>
+      <div style="position:absolute;bottom:8px;right:8px;width:24px;height:24px;border-bottom:3px solid #F5A623;border-right:3px solid #F5A623;border-radius:0 0 3px 0;"></div>
+      <div style="font-size:10px;font-weight:700;color:#6B7A99;letter-spacing:2px;text-transform:uppercase;margin-bottom:4px;">Union Bank of India</div>
+      <div style="font-size:16px;font-weight:800;color:#003087;margin-bottom:3px;">Certificate of Excellence</div>
+      <div style="width:36px;height:2px;background:linear-gradient(90deg,#F5A623,#FFD700);margin:7px auto;border-radius:2px;"></div>
+      <div style="font-size:11px;color:#6B7A99;margin-bottom:7px;">This is to certify that</div>
+      <div style="font-size:17px;font-weight:800;color:#003087;margin-bottom:3px;">${p.name}</div>
+      <div style="font-size:10px;color:#6B7A99;margin-bottom:12px;">${emp?emp.role:'Manager'} • ${emp?emp.branch:'Coimbatore'}</div>
+      <div style="font-size:10px;color:#6B7A99;margin-bottom:3px;">has successfully attended</div>
+      <div style="font-size:12px;font-weight:700;color:#003087;margin-bottom:12px;">${p.prog}</div>
+      <div style="display:flex;justify-content:center;gap:10px;margin-bottom:12px;">
+        <div style="background:#EAF1FF;border-radius:8px;padding:8px 12px;"><div style="font-size:16px;font-weight:800;color:${ptsColor(p.points)};">${p.points}</div><div style="font-size:9px;color:#6B7A99;">Points</div></div>
+        <div style="background:#FFFBE6;border-radius:8px;padding:8px 12px;"><div style="font-size:16px;">${b.icon}</div><div style="font-size:9px;color:#6B7A99;">${b.name}</div></div>
+        <div style="background:#E6F9F0;border-radius:8px;padding:8px 12px;"><div style="font-size:16px;font-weight:800;color:#003087;">#${p.rank}</div><div style="font-size:9px;color:#6B7A99;">Rank</div></div>
+      </div>
+      <div style="display:flex;justify-content:space-between;padding-top:10px;border-top:1px solid #DDE4F0;font-size:9px;color:#6B7A99;margin-bottom:10px;">
+        <div><div>Date of Issue</div><div style="font-weight:700;color:#003087;">${today}</div></div>
+        <div style="font-size:14px;">🏦</div>
+        <div style="text-align:right;"><div>Authorized by</div><div style="font-weight:700;color:#003087;">HR Department</div></div>
+      </div>
+      <button onclick="printHRCert(${idx})" style="background:#003087;color:white;border:none;padding:8px 18px;border-radius:8px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;width:100%;">🖨️ Print Certificate</button>
+    </div>`;
+  });
+}
+
+function printHRCert(idx){
+  const p=LEADERBOARD[idx];
+  const emp=EMPLOYEES.find(e=>e.id===p.uid);
+  const b=getBadge(p.points);
+  const today=new Date().toLocaleDateString('en-IN',{day:'numeric',month:'long',year:'numeric'});
+  const w=window.open('','_blank');
+  w.document.write(`<html><head><title>Certificate - ${p.name}</title><style>
+  body{margin:0;display:flex;justify-content:center;align-items:center;min-height:100vh;font-family:sans-serif;background:#f0f0f0;}
+  .cert{background:white;border:8px solid #F5A623;padding:50px 40px;max-width:620px;width:100%;text-align:center;position:relative;}
+  @media print{body{background:white;}.cert{border:8px solid #F5A623;}}
+  </style></head><body>
+  <div class="cert">
+    <div style="font-size:12px;font-weight:700;color:#6B7A99;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px;">Union Bank of India</div>
+    <div style="font-size:26px;font-weight:800;color:#003087;margin-bottom:4px;">Certificate of Excellence</div>
+    <div style="width:50px;height:3px;background:linear-gradient(90deg,#F5A623,#FFD700);margin:10px auto;border-radius:2px;"></div>
+    <div style="font-size:13px;color:#6B7A99;margin-bottom:14px;">This is to certify that</div>
+    <div style="font-size:26px;font-weight:800;color:#003087;margin-bottom:6px;">${p.name}</div>
+    <div style="font-size:12px;color:#6B7A99;margin-bottom:18px;">${emp?emp.role:'Manager'} • ${emp?emp.branch:'Coimbatore'}</div>
+    <div style="font-size:13px;color:#6B7A99;margin-bottom:6px;">has successfully completed the training program</div>
+    <div style="font-size:15px;font-weight:700;color:#003087;margin-bottom:18px;">${p.prog}</div>
+    <div style="display:flex;justify-content:center;gap:24px;margin-bottom:20px;">
+      <div style="background:#EAF1FF;border-radius:10px;padding:12px 20px;"><div style="font-size:24px;font-weight:800;color:#003087;">${p.points}</div><div style="font-size:10px;color:#6B7A99;">Total Points</div></div>
+      <div style="background:#FFFBE6;border-radius:10px;padding:12px 20px;"><div style="font-size:24px;">${b.icon}</div><div style="font-size:10px;color:#6B7A99;">${b.name} Badge</div></div>
+      <div style="background:#E6F9F0;border-radius:10px;padding:12px 20px;"><div style="font-size:24px;font-weight:800;color:#1A7F4B;">#${p.rank}</div><div style="font-size:10px;color:#6B7A99;">Overall Rank</div></div>
+    </div>
+    <div style="display:flex;justify-content:space-between;align-items:flex-end;padding-top:18px;border-top:1px solid #DDE4F0;">
+      <div style="text-align:left;"><div style="font-size:11px;color:#6B7A99;">Date of Issue</div><div style="font-size:12px;font-weight:700;color:#003087;">${today}</div></div>
+      <div style="font-size:20px;">🏦</div>
+      <div style="text-align:right;"><div style="font-size:11px;color:#6B7A99;">Authorized by</div><div style="font-size:12px;font-weight:700;color:#003087;">HR Department</div><div style="font-size:10px;color:#6B7A99;">Union Bank of India</div></div>
+    </div>
+  </div>
+  <script>window.onload=function(){window.print();}<\/script>
+  </body></html>`);
+  w.document.close();
+}
 
 // SHOW WINNER POPUP AFTER 1 SECOND
 setTimeout(showWinnerPopup,1000);
