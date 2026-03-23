@@ -84,6 +84,12 @@ tbody td { padding:11px 14px; vertical-align:middle; }
 .btn-primary { background:#003087; color:white; border:none; padding:12px 24px; border-radius:10px; font-size:14px; font-weight:700; font-family:inherit; cursor:pointer; }
 .btn-primary:hover { background:#1A4FAB; }
 .live-score-card { background:linear-gradient(135deg,#003087,#1A4FAB); border-radius:14px; padding:20px 24px; color:white; margin-bottom:20px; }
+.loading-overlay { display:flex; align-items:center; justify-content:center; padding:40px; }
+.spinner { width:32px; height:32px; border:3px solid #DDE4F0; border-top:3px solid #003087; border-radius:50%; animation:spin 0.8s linear infinite; margin-right:12px; }
+@keyframes spin { to { transform:rotate(360deg); } }
+.source-tag { display:inline-flex; align-items:center; gap:4px; padding:2px 8px; border-radius:20px; font-size:10px; font-weight:700; }
+.source-live { background:#E6F9F0; color:#1A7F4B; }
+.source-base { background:#EAF1FF; color:#003087; }
 </style>
 </head>
 <body>
@@ -109,15 +115,15 @@ tbody td { padding:11px 14px; vertical-align:middle; }
     <div class="nav-item" onclick="showPage('livescores')">🔴 Live Scores</div>
     <div class="nav-item" onclick="showPage('certificates')">🎖️ Certificates</div>
   </div>
-  <div class="sb-footer">Union Bank of India<br>© 2026 HR Gamification Toolkit</div>
+  <div class="sb-footer">Union Bank of India<br>HR Gamification Toolkit<br>© 2024 All Rights Reserved</div>
 </div>
 
 <div class="main">
   <div class="topbar">
     <div class="topbar-title" id="page-title">📊 HR Dashboard</div>
     <div class="topbar-right">
-      <span class="chip">🏦 2 Branches</span>
-      <span class="chip" style="background:#E6F9F0;color:#1A7F4B;">37 Employees</span>
+      <span class="chip" id="chip-branches">🏦 Loading...</span>
+      <span class="chip" id="chip-employees" style="background:#E6F9F0;color:#1A7F4B;">👥 Loading...</span>
       <span class="chip" style="background:#FFFBE6;color:#B8860B;">Max 1000 pts</span>
       <button class="logout-btn" onclick="hrLogout()">🚪 Logout</button>
     </div>
@@ -126,25 +132,28 @@ tbody td { padding:11px 14px; vertical-align:middle; }
 
     <!-- DASHBOARD -->
     <div class="page active" id="page-dashboard">
-      <div class="stat-grid">
-        <div class="stat-card"><div class="stat-label">📅 Today</div><div style="font-size:16px;font-weight:800;color:#003087;margin-top:4px;" id="live-date">—</div><div style="font-size:13px;color:#1A7F4B;font-weight:600;margin-top:2px;" id="live-time">—</div></div>
-        <div class="stat-card"><div class="stat-label">📊 Training Effectiveness</div><div class="stat-value" id="t-eff">—</div><div class="stat-sub">post vs pre score ratio</div></div>
-        <div class="stat-card"><div class="stat-label">🏆 Rank 1 Employee</div><div style="font-size:16px;font-weight:800;color:#B8860B;margin-top:4px;" id="rank1-name">—</div><div style="font-size:12px;color:#1A7F4B;font-weight:600;margin-top:2px;" id="rank1-pts">—</div></div>
-        <div class="stat-card"><div class="stat-label">⚠️ Needs Improvement</div><div class="stat-value" style="color:#C0392B" id="need-count">—</div><div class="stat-sub red">employees below 500 pts</div></div>
-      </div>
-      <div class="chart-grid">
-        <div class="chart-box"><div class="chart-title">🍩 Performance Status</div><div style="position:relative;height:220px"><canvas id="c-perf"></canvas></div></div>
-        <div class="chart-box"><div class="chart-title">📊 Branch Average Points</div><div style="position:relative;height:220px"><canvas id="c-br"></canvas></div></div>
-        <div class="chart-box"><div class="chart-title">🏅 Badge Distribution</div><div style="position:relative;height:220px"><canvas id="c-badge"></canvas></div></div>
-        <div class="chart-box"><div class="chart-title">📈 Score Components</div><div style="position:relative;height:220px"><canvas id="c-comp"></canvas></div></div>
-      </div>
-      <div class="chart-grid">
-        <div class="chart-box"><div class="chart-title">🏢 All Branches Performance</div><div style="position:relative;height:250px"><canvas id="c-allbr"></canvas></div></div>
-        <div class="chart-box"><div class="chart-title">👥 Employee Performance (Low to High)</div><div style="position:relative;height:250px"><canvas id="c-emp"></canvas></div></div>
-      </div>
-      <div class="card">
-        <div style="font-size:15px;font-weight:800;margin-bottom:16px;">⭐ Top 5 Performers</div>
-        <div class="table-wrap"><table><thead><tr><th>Rank</th><th>Employee</th><th>Branch</th><th>Points</th><th>Badge</th><th>Status</th></tr></thead><tbody id="top5-body"></tbody></table></div>
+      <div id="dash-loading" class="loading-overlay"><div class="spinner"></div><span style="color:#6B7A99;font-size:14px;">Loading live data from Google Sheets...</span></div>
+      <div id="dash-content" style="display:none;">
+        <div class="stat-grid">
+          <div class="stat-card"><div class="stat-label">📅 Today</div><div style="font-size:16px;font-weight:800;color:#003087;margin-top:4px;" id="live-date">—</div><div style="font-size:13px;color:#1A7F4B;font-weight:600;margin-top:2px;" id="live-time">—</div></div>
+          <div class="stat-card"><div class="stat-label">📊 Training Effectiveness</div><div class="stat-value" id="t-eff">—</div><div class="stat-sub">post vs pre score ratio</div></div>
+          <div class="stat-card"><div class="stat-label">🏆 Rank 1 Employee</div><div style="font-size:16px;font-weight:800;color:#B8860B;margin-top:4px;" id="rank1-name">—</div><div style="font-size:12px;color:#1A7F4B;font-weight:600;margin-top:2px;" id="rank1-pts">—</div></div>
+          <div class="stat-card"><div class="stat-label">⚠️ Needs Improvement</div><div class="stat-value" style="color:#C0392B" id="need-count">—</div><div class="stat-sub red">employees below 500 pts</div></div>
+        </div>
+        <div class="chart-grid">
+          <div class="chart-box"><div class="chart-title">🍩 Performance Status</div><div style="position:relative;height:220px"><canvas id="c-perf"></canvas></div></div>
+          <div class="chart-box"><div class="chart-title">📊 Branch Average Points</div><div style="position:relative;height:220px"><canvas id="c-br"></canvas></div></div>
+          <div class="chart-box"><div class="chart-title">🏅 Badge Distribution</div><div style="position:relative;height:220px"><canvas id="c-badge"></canvas></div></div>
+          <div class="chart-box"><div class="chart-title">📈 Score Components (Avg)</div><div style="position:relative;height:220px"><canvas id="c-comp"></canvas></div></div>
+        </div>
+        <div class="chart-grid">
+          <div class="chart-box"><div class="chart-title">🏢 All Branches Performance</div><div style="position:relative;height:250px"><canvas id="c-allbr"></canvas></div></div>
+          <div class="chart-box"><div class="chart-title">👥 Employee Performance (Low to High)</div><div style="position:relative;height:250px"><canvas id="c-emp"></canvas></div></div>
+        </div>
+        <div class="card">
+          <div style="font-size:15px;font-weight:800;margin-bottom:16px;">⭐ Top 5 Performers</div>
+          <div class="table-wrap"><table><thead><tr><th>Rank</th><th>Employee</th><th>Branch</th><th>Points</th><th>Badge</th><th>Status</th><th>Source</th></tr></thead><tbody id="top5-body"></tbody></table></div>
+        </div>
       </div>
     </div>
 
@@ -152,19 +161,19 @@ tbody td { padding:11px 14px; vertical-align:middle; }
     <div class="page" id="page-leaderboard">
       <div class="toolbar">
         <div class="search-wrap"><span class="search-icon">🔍</span><input type="text" id="lb-search" placeholder="Search employee..." oninput="filterLeaderboard()"></div>
-        <select class="filter-select" id="lb-branch" onchange="filterLeaderboard()"><option value="">All Branches</option><option>Coimbatore</option><option>Dharmapuri</option></select>
+        <select class="filter-select" id="lb-branch" onchange="filterLeaderboard()"><option value="">All Branches</option></select>
         <select class="filter-select" id="lb-status" onchange="filterLeaderboard()"><option value="">All Status</option><option>Excellent Performer</option><option>Good Performer</option><option>Needs Improvement</option></select>
       </div>
-      <div class="card"><div class="table-wrap"><table><thead><tr><th>Rank</th><th>Employee</th><th>Branch</th><th>Program</th><th>Points</th><th>Progress</th><th>Badge</th><th>Level</th><th>Status</th><th>Certificate</th></tr></thead><tbody id="lb-body"></tbody></table></div></div>
+      <div class="card"><div class="table-wrap"><table><thead><tr><th>Rank</th><th>Employee</th><th>Branch</th><th>Program</th><th>Points</th><th>Progress</th><th>Badge</th><th>Level</th><th>Status</th><th>Source</th></tr></thead><tbody id="lb-body"></tbody></table></div></div>
     </div>
 
     <!-- EMPLOYEES -->
     <div class="page" id="page-employees">
       <div class="toolbar">
         <div class="search-wrap"><span class="search-icon">🔍</span><input type="text" id="emp-search" placeholder="Search employee..." oninput="filterEmployees()"></div>
-        <select class="filter-select" id="emp-branch" onchange="filterEmployees()"><option value="">All Branches</option><option>Coimbatore</option><option>Dharmapuri</option></select>
+        <select class="filter-select" id="emp-branch" onchange="filterEmployees()"><option value="">All Branches</option></select>
       </div>
-      <div class="card"><div class="table-wrap"><table><thead><tr><th>Employee</th><th>User ID</th><th>Branch</th><th>Role</th><th>Points</th><th>Badge</th><th>Status</th></tr></thead><tbody id="emp-body"></tbody></table></div></div>
+      <div class="card"><div class="table-wrap"><table><thead><tr><th>Employee</th><th>User ID</th><th>Branch</th><th>Role</th><th>Points</th><th>Badge</th><th>Status</th><th>Source</th></tr></thead><tbody id="emp-body"></tbody></table></div></div>
     </div>
 
     <!-- PROGRAMS -->
@@ -178,7 +187,7 @@ tbody td { padding:11px 14px; vertical-align:middle; }
     <!-- POINTS LOG -->
     <div class="page" id="page-pointslog">
       <div class="toolbar"><div class="search-wrap"><span class="search-icon">🔍</span><input type="text" id="pl-search" placeholder="Search..." oninput="filterPointsLog()"></div></div>
-      <div class="card"><div class="table-wrap"><table><thead><tr><th>Employee</th><th>Program</th><th>Completion %</th><th>Pre Score</th><th>Post Score</th><th>Improvement %</th><th>Perf Score</th><th>Total Points</th></tr></thead><tbody id="pl-body"></tbody></table></div></div>
+      <div class="card"><div class="table-wrap"><table><thead><tr><th>Employee</th><th>Branch</th><th>Program</th><th>Completion</th><th>Pre Score</th><th>Post Score</th><th>Improvement %</th><th>Perf Score</th><th>Total Points</th><th>Source</th></tr></thead><tbody id="pl-body"></tbody></table></div></div>
     </div>
 
     <!-- ADD PROGRAM -->
@@ -208,7 +217,7 @@ tbody td { padding:11px 14px; vertical-align:middle; }
         <div class="stat-card"><div class="stat-label">Avg Improvement</div><div class="stat-value" id="sg-imp">—</div><div class="stat-sub">percentage</div></div>
         <div class="stat-card"><div class="stat-label">Training Effectiveness</div><div class="stat-value" id="sg-eff">—</div><div class="stat-sub">post/pre ratio</div></div>
       </div>
-      <div class="card"><div style="font-size:15px;font-weight:800;margin-bottom:16px;">Skill-wise Gap Analysis</div><div class="gap-grid" id="gap-grid"></div></div>
+      <div class="card"><div style="font-size:15px;font-weight:800;margin-bottom:16px;">Skill-wise Gap Analysis (Base 37 Employees)</div><div class="gap-grid" id="gap-grid"></div></div>
       <div class="card">
         <div style="font-size:15px;font-weight:800;margin-bottom:6px;">👥 Individual Skill Gap</div>
         <div style="font-size:12px;color:#6B7A99;margin-bottom:16px;">Click any employee to see personal skill analysis</div>
@@ -231,7 +240,7 @@ tbody td { padding:11px 14px; vertical-align:middle; }
     <div class="page" id="page-insights">
       <div class="card" style="border-left:4px solid #003087;margin-bottom:20px;">
         <div style="font-size:15px;font-weight:800;margin-bottom:8px;">💡 What This Toolkit Tells HR</div>
-        <p style="font-size:13px;color:#6B7A99;line-height:1.8;">The Gamification Toolkit transforms traditional training evaluation into a data-driven decision support system. Instead of just tracking attendance, it measures <strong>actual learning outcomes</strong>, <strong>performance improvement</strong>, and <strong>skill development</strong>.</p>
+        <p style="font-size:13px;color:#6B7A99;line-height:1.8;">The Gamification Toolkit transforms traditional training evaluation into a data-driven decision support system. It measures <strong>actual learning outcomes</strong>, <strong>performance improvement</strong>, and <strong>skill development</strong> — including new employees who sign up and complete training.</p>
       </div>
       <div class="insight-grid" id="insight-grid"></div>
       <div style="font-size:15px;font-weight:800;margin-bottom:14px;">📌 HR Recommendations</div>
@@ -242,25 +251,25 @@ tbody td { padding:11px 14px; vertical-align:middle; }
     <div class="page" id="page-livescores">
       <div class="live-score-card">
         <div style="font-size:16px;font-weight:800;margin-bottom:4px;">🔴 Live Employee Training Scores</div>
-        <div style="font-size:12px;opacity:0.8;">Real-time scores from employees who completed training programs</div>
+        <div style="font-size:12px;opacity:0.8;">All scores submitted by employees — includes new signups and original 37 employees</div>
         <button onclick="loadLiveScores()" style="margin-top:12px;background:rgba(255,255,255,0.2);border:1px solid rgba(255,255,255,0.4);color:white;padding:8px 18px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;">🔄 Refresh Scores</button>
       </div>
       <div class="card">
         <div style="font-size:15px;font-weight:800;margin-bottom:16px;">Employee Completion Records</div>
         <div id="live-scores-loading" style="text-align:center;padding:20px;color:#6B7A99;">⏳ Loading scores...</div>
-        <div class="table-wrap" id="live-scores-wrap" style="display:none;"><table><thead><tr><th>Employee</th><th>Program</th><th>Completion %</th><th>Assessment</th><th>Assignment</th><th>Total Points</th><th>Badge</th><th>Date</th></tr></thead><tbody id="live-scores-body"></tbody></table></div>
+        <div class="table-wrap" id="live-scores-wrap" style="display:none;"><table><thead><tr><th>Employee</th><th>User ID</th><th>Branch</th><th>Program</th><th>Completion</th><th>Assessment</th><th>Assignment</th><th>Total Points</th><th>Badge</th><th>Date</th></tr></thead><tbody id="live-scores-body"></tbody></table></div>
       </div>
     </div>
 
     <!-- CERTIFICATES -->
-<div class="page" id="page-certificates">
-  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
-    <div style="font-size:16px;font-weight:800;color:#003087;">🎖️ All Employee Certificates</div>
-    <button onclick="buildHRCertificates()" style="background:#003087;color:white;border:none;padding:8px 18px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;">🔄 Refresh</button>
-  </div>
-  <div style="font-size:12px;color:#6B7A99;margin-bottom:20px;">🔴 Green border = newly completed by employees live | 🟡 Gold border = existing 37 employees</div>
-  <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:20px;" id="hr-cert-grid"></div>
-</div>
+    <div class="page" id="page-certificates">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+        <div style="font-size:16px;font-weight:800;color:#003087;">🎖️ All Employee Certificates</div>
+        <button onclick="buildHRCertificates()" style="background:#003087;color:white;border:none;padding:8px 18px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;">🔄 Refresh</button>
+      </div>
+      <div style="font-size:12px;color:#6B7A99;margin-bottom:20px;">🟢 Green border = Live submissions from Google Sheet | 🟡 Gold border = Original 37 employees</div>
+      <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:20px;" id="hr-cert-grid"></div>
+    </div>
 
   </div>
 </div>
@@ -271,7 +280,7 @@ tbody td { padding:11px 14px; vertical-align:middle; }
     <div class="modal-header"><div><div class="modal-name" id="modal-name"></div><div class="modal-role" id="modal-role"></div></div><button class="modal-close" onclick="closeModal()">×</button></div>
     <div class="modal-stats" id="modal-stats"></div>
     <div style="font-size:15px;font-weight:800;margin-bottom:12px;">📚 Training History</div>
-    <div class="table-wrap"><table><thead><tr><th>Program</th><th>Completion %</th><th>Pre Score</th><th>Post Score</th><th>Improvement</th><th>Points</th><th>Status</th></tr></thead><tbody id="modal-history"></tbody></table></div>
+    <div class="table-wrap"><table><thead><tr><th>Program</th><th>Completion</th><th>Pre Score</th><th>Post Score</th><th>Improvement</th><th>Points</th><th>Status</th></tr></thead><tbody id="modal-history"></tbody></table></div>
   </div>
 </div>
 
@@ -348,13 +357,18 @@ tbody td { padding:11px 14px; vertical-align:middle; }
 <canvas id="confetti-canvas" style="position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:998;display:none;"></canvas>
 
 <script>
-const API='https://script.google.com/macros/s/AKfycbzZwpWwyPtAXJvOMD9ic7xfH7-31uheI8g_gRnv2dmOtZ7vlY-0CpurCSr184JbKb0Mow/exec';
-function hrLogout(){localStorage.removeItem('ubi_user');window.location.href='login.html';}
-const _u=localStorage.getItem('ubi_user');
-if(!_u){window.location.href='login.html';}
-else{const _p=JSON.parse(_u);if(!_p.isHR)window.location.href='login.html';}
+// ─── AUTH ───────────────────────────────────────────────
+const API = 'https://script.google.com/macros/s/AKfycbzZwpWwyPtAXJvOMD9ic7xfH7-31uheI8g_gRnv2dmOtZ7vlY-0CpurCSr184JbKb0Mow/exec';
+(function(){
+  const u = localStorage.getItem('ubi_user');
+  if(!u){ window.location.href='login.html'; return; }
+  const p = JSON.parse(u);
+  if(!p.isHR){ window.location.href='login.html'; }
+})();
+function hrLogout(){ localStorage.removeItem('ubi_user'); window.location.href='login.html'; }
 
-const EMPLOYEES=[
+// ─── STATIC BASE DATA (Original 37 employees) ───────────
+const BASE_EMPLOYEES = [
   {id:'629483',name:'Kala G Nath',branch:'Coimbatore',role:'Manager'},
   {id:'631756',name:'P M SENTHIL KUMAR',branch:'Dharmapuri',role:'Manager'},
   {id:'617161',name:'Sinthiya',branch:'Coimbatore',role:'Manager'},
@@ -394,7 +408,7 @@ const EMPLOYEES=[
   {id:'226992',name:'Vinoth Kumar',branch:'Dharmapuri',role:'Senior Manager (HRM)'}
 ];
 
-const POINTS=[
+const BASE_POINTS = [
   {uid:'629483',name:'Kala G Nath',prog:'Sales & Marketing',comp:0,preTotal:73,postTotal:73,impPct:0,perfScore:0,points:0,preDoc:14,preCust:17,preComp:18,preProd:7,preKnow:17,postDoc:14,postCust:17,postComp:18,postProd:7,postKnow:17},
   {uid:'631756',name:'P M SENTHIL KUMAR',prog:'Compliance & Regulatory Training',comp:78,preTotal:46,postTotal:60,impPct:30.43,perfScore:200,points:686,preDoc:3,preCust:10,preComp:9,preProd:14,preKnow:10,postDoc:10,postCust:12,postComp:13,postProd:16,postKnow:9},
   {uid:'617161',name:'Sinthiya',prog:'Credit Training',comp:45,preTotal:62,postTotal:75,impPct:20.97,perfScore:139.78,points:632,preDoc:19,preCust:15,preComp:13,preProd:3,preKnow:12,postDoc:20,postCust:15,postComp:12,postProd:15,postKnow:13},
@@ -434,33 +448,800 @@ const POINTS=[
   {uid:'226992',name:'Vinoth Kumar',prog:'Training related to MS Office',comp:29,preTotal:21,postTotal:43,impPct:104.76,perfScore:200,points:501,preDoc:3,preCust:2,preComp:11,preProd:1,preKnow:4,postDoc:8,postCust:6,postComp:13,postProd:7,postKnow:9}
 ];
 
-function getBadge(pts){if(pts>=1000)return{name:'Platinum',icon:'💎',color:'#3A3AFF',bg:'#F0F0FF'};if(pts>=750)return{name:'Gold',icon:'🥇',color:'#B8860B',bg:'#FFFBE6'};if(pts>=500)return{name:'Silver',icon:'🥈',color:'#546E7A',bg:'#F0F4F8'};if(pts>=250)return{name:'Bronze',icon:'🥉',color:'#A0522D',bg:'#FDF0E6'};return{name:'—',icon:'🎖️',color:'#999',bg:'#F5F5F5'};}
-function getStatus(pts){if(pts>=750)return{label:'Excellent Performer',color:'#1A7F4B',bg:'#E6F9F0'};if(pts>=500)return{label:'Good Performer',color:'#1A56DB',bg:'#EAF1FF'};return{label:'Needs Improvement',color:'#C0392B',bg:'#FFF0EE'};}
+// ─── GLOBAL STATE (merged: base + live) ─────────────────
+let ALL_EMPLOYEES = [...BASE_EMPLOYEES]; // will be augmented with new signups
+let ALL_POINTS = [...BASE_POINTS];       // will be augmented with live scores
+let LIVE_SCORES = [];                    // raw data from Google Sheet
+let LEADERBOARD = [];
+let chartsBuilt = false;
+let dashCharts = {};
+
+// ─── HELPERS ────────────────────────────────────────────
+function getBadge(pts){
+  if(pts>=1000)return{name:'Platinum',icon:'💎',color:'#3A3AFF',bg:'#F0F0FF'};
+  if(pts>=750)return{name:'Gold',icon:'🥇',color:'#B8860B',bg:'#FFFBE6'};
+  if(pts>=500)return{name:'Silver',icon:'🥈',color:'#546E7A',bg:'#F0F4F8'};
+  if(pts>=250)return{name:'Bronze',icon:'🥉',color:'#A0522D',bg:'#FDF0E6'};
+  return{name:'—',icon:'🎖️',color:'#999',bg:'#F5F5F5'};
+}
+function getStatus(pts){
+  if(pts>=750)return{label:'Excellent Performer',color:'#1A7F4B',bg:'#E6F9F0'};
+  if(pts>=500)return{label:'Good Performer',color:'#1A56DB',bg:'#EAF1FF'};
+  return{label:'Needs Improvement',color:'#C0392B',bg:'#FFF0EE'};
+}
 function ptsColor(pts){return pts>=750?'#1A7F4B':pts>=500?'#B8860B':'#C0392B';}
 function getInitials(name){return name.trim().split(' ').slice(0,2).map(w=>w[0]).join('').toUpperCase();}
 function getAvatarColor(name){const c=['#003087','#1A7F4B','#B8860B','#6B2FA0','#C0392B'];let h=0;for(let x of name)h=(h+x.charCodeAt(0))%c.length;return c[h];}
 function getLevel(pts){return pts>=900?5:pts>=750?4:pts>=600?3:pts>=500?2:1;}
-function getBranch(uid){const e=EMPLOYEES.find(x=>x.id===uid);return e?e.branch:'Coimbatore';}
-const LEADERBOARD=[...POINTS].sort((a,b)=>b.points-a.points).map((p,i)=>({...p,rank:i+1}));
+function getEmpById(uid){return ALL_EMPLOYEES.find(e=>e.id===uid);}
+function getBranchByUid(uid){const e=getEmpById(uid);return e?e.branch:'Unknown';}
 
-const PAGE_TITLES={dashboard:'📊 HR Dashboard',leaderboard:'🏆 Leaderboard',employees:'👥 Employee Directory',programs:'📚 Training Programs',pointslog:'📋 Points Log',addprogram:'➕ Add Training Program',skillgap:'🎯 Skill Gap Analysis',branch:'🏢 Branch Report',insights:'💡 HR Insights',livescores:'🔴 Live Employee Scores',certificates:'🎖️ Employee Certificates'};
+// ─── FETCH LIVE SCORES AND MERGE ────────────────────────
+async function fetchAndMergeData(){
+  try{
+    const res = await fetch(API+'?action=getScores&t='+Date.now());
+    const data = await res.json();
+    if(data.success && data.data && data.data.length){
+      LIVE_SCORES = data.data;
+    } else {
+      LIVE_SCORES = [];
+    }
+  } catch(e){
+    LIVE_SCORES = [];
+    console.warn('Could not fetch live scores:', e);
+  }
+
+  // Reset to base data
+  ALL_EMPLOYEES = [...BASE_EMPLOYEES];
+  ALL_POINTS = [...BASE_POINTS];
+
+  // For each live score, check if employee is new (not in base)
+  LIVE_SCORES.forEach(s => {
+    const name = (s.name||'').trim();
+    const userId = (s.userId||'').trim();
+    const program = (s.program||'').trim();
+    if(!name) return;
+
+    // Check if this employee exists in base
+    const inBase = BASE_EMPLOYEES.find(e =>
+      e.name.toLowerCase() === name.toLowerCase() ||
+      (userId && e.id === userId)
+    );
+
+    // If new employee, add to ALL_EMPLOYEES
+    if(!inBase){
+      const alreadyAdded = ALL_EMPLOYEES.find(e =>
+        e.name.toLowerCase() === name.toLowerCase() ||
+        (userId && e.id === userId)
+      );
+      if(!alreadyAdded){
+        ALL_EMPLOYEES.push({
+          id: userId || ('NEW_'+name.replace(/\s/g,'_')),
+          name: name,
+          branch: s.branch || 'Other',
+          role: s.role || 'Employee',
+          isNew: true
+        });
+      }
+    }
+
+    // Check if this score already exists in base points
+    const inBasePoints = BASE_POINTS.find(p =>
+      (p.uid === userId || p.name.toLowerCase() === name.toLowerCase()) &&
+      p.prog === program
+    );
+
+    if(!inBasePoints){
+      // Add live score as a new POINTS entry
+      const assessScore = Number(s.assessScore)||0;
+      const assignScore = Number(s.assignScore)||0;
+      const compScore = Number(s.compScore)||200;
+      const totalPts = Number(s.totalPoints)||0;
+      const pts = totalPts > 0 ? totalPts : (compScore + assessScore + assignScore);
+      const empId = userId || ('NEW_'+name.replace(/\s/g,'_'));
+
+      // Remove older entry for same employee+program if exists in ALL_POINTS (dedup)
+      const existingIdx = ALL_POINTS.findIndex(p =>
+        (p.uid === empId || p.name.toLowerCase() === name.toLowerCase()) &&
+        p.prog === program
+      );
+      if(existingIdx > -1) ALL_POINTS.splice(existingIdx, 1);
+
+      ALL_POINTS.push({
+        uid: empId,
+        name: name,
+        prog: program || 'Training Program',
+        comp: Number(s.comp)||100,
+        preTotal: 50, // default — live scores don't have pre/post breakdown
+        postTotal: Math.round(50 + (assessScore/300)*50),
+        impPct: assessScore > 0 ? Math.round((assessScore/300)*50) : 10,
+        perfScore: 0,
+        points: pts,
+        preDoc:10,preCust:10,preComp:10,preProd:10,preKnow:10,
+        postDoc:Math.round(10+(assessScore/300)*10),
+        postCust:Math.round(10+(assignScore/300)*10),
+        postComp:10,postProd:10,postKnow:10,
+        isLive: true,
+        date: s.date || ''
+      });
+    }
+  });
+
+  // Rebuild leaderboard
+  LEADERBOARD = [...ALL_POINTS]
+    .sort((a,b) => b.points - a.points)
+    .map((p,i) => ({...p, rank:i+1}));
+}
+
+// ─── PAGE NAVIGATION ────────────────────────────────────
+const PAGE_TITLES = {
+  dashboard:'📊 HR Dashboard',leaderboard:'🏆 Leaderboard',employees:'👥 Employee Directory',
+  programs:'📚 Training Programs',pointslog:'📋 Points Log',addprogram:'➕ Add Training Program',
+  skillgap:'🎯 Skill Gap Analysis',branch:'🏢 Branch Report',insights:'💡 HR Insights',
+  livescores:'🔴 Live Employee Scores',certificates:'🎖️ Employee Certificates'
+};
 
 function showPage(id){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
   document.getElementById('page-'+id).classList.add('active');
-  document.querySelector('.nav-item[onclick="showPage(\''+id+'\')"]').classList.add('active');
-  document.getElementById('page-title').textContent=PAGE_TITLES[id];
-  if(id==='livescores')loadLiveScores();
-  if(id==='addprogram')loadAddedPrograms();
-  if(id==='certificates')buildHRCertificates();
+  const navEl = document.querySelector(`.nav-item[onclick="showPage('${id}')"]`);
+  if(navEl) navEl.classList.add('active');
+  document.getElementById('page-title').textContent = PAGE_TITLES[id]||id;
+  if(id==='livescores') loadLiveScores();
+  if(id==='addprogram') loadAddedPrograms();
+  if(id==='certificates') buildHRCertificates();
+  if(id==='leaderboard') buildLeaderboard();
+  if(id==='employees') buildEmployees();
+  if(id==='pointslog') buildPointsLog();
+  if(id==='programs') buildPrograms();
+  if(id==='skillgap') buildSkillGap();
+  if(id==='branch') buildBranch();
+  if(id==='insights') buildInsights();
 }
 
+// ─── DATETIME ───────────────────────────────────────────
+function updateDateTime(){
+  const now=new Date();
+  const dateEl=document.getElementById('live-date');
+  const timeEl=document.getElementById('live-time');
+  if(dateEl) dateEl.textContent=now.toLocaleDateString('en-IN',{weekday:'long',year:'numeric',month:'long',day:'numeric'});
+  if(timeEl) timeEl.textContent=now.toLocaleTimeString('en-IN');
+}
+updateDateTime();
+setInterval(updateDateTime,1000);
+
+// ─── DASHBOARD ──────────────────────────────────────────
+function buildDashboard(){
+  const dashLoad = document.getElementById('dash-loading');
+  const dashContent = document.getElementById('dash-content');
+  if(dashLoad) dashLoad.style.display='none';
+  if(dashContent) dashContent.style.display='block';
+
+  const uniqueBranches = [...new Set(ALL_EMPLOYEES.map(e=>e.branch))];
+  document.getElementById('chip-branches').textContent = '🏦 '+uniqueBranches.length+' Branches';
+  document.getElementById('chip-employees').textContent = '👥 '+ALL_EMPLOYEES.length+' Employees';
+
+  if(ALL_POINTS.length === 0) return;
+
+  const avgPre = ALL_POINTS.reduce((s,p)=>s+p.preTotal,0)/ALL_POINTS.length;
+  const avgPost = ALL_POINTS.reduce((s,p)=>s+p.postTotal,0)/ALL_POINTS.length;
+  document.getElementById('t-eff').textContent = Math.round((avgPost/avgPre)*100)+'%';
+
+  const rank1 = LEADERBOARD[0];
+  if(rank1){
+    document.getElementById('rank1-name').textContent = rank1.name.split(' ').slice(0,2).join(' ');
+    document.getElementById('rank1-pts').textContent = '⭐ '+rank1.points+' points';
+  }
+  document.getElementById('need-count').textContent = ALL_POINTS.filter(p=>p.points<500).length;
+
+  // Top 5
+  const t5 = document.getElementById('top5-body');
+  t5.innerHTML = '';
+  LEADERBOARD.slice(0,5).forEach(p=>{
+    const b=getBadge(p.points), s=getStatus(p.points);
+    const srcTag = p.isLive
+      ? '<span class="source-tag source-live">🟢 Live</span>'
+      : '<span class="source-tag source-base">🔵 Base</span>';
+    t5.innerHTML+=`<tr onclick="openModal('${p.uid}')">
+      <td><span style="font-weight:${p.rank===1?900:600};color:${p.rank===1?'#F5A623':'#6B7A99'};font-size:${p.rank===1?'16px':'13px'}">${p.rank===1?'⭐ 1':p.rank}</span></td>
+      <td><div style="display:flex;align-items:center;gap:9px"><div style="width:30px;height:30px;border-radius:50%;background:${getAvatarColor(p.name)};color:white;font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center">${getInitials(p.name)}</div><span style="font-weight:600">${p.name}</span></div></td>
+      <td>${getBranchByUid(p.uid)}</td>
+      <td style="font-weight:800;color:${ptsColor(p.points)};font-size:15px">${p.points}</td>
+      <td><span class="badge" style="background:${b.bg};color:${b.color}">${b.icon} ${b.name}</span></td>
+      <td><span class="badge" style="background:${s.bg};color:${s.color}">${s.label}</span></td>
+      <td>${srcTag}</td>
+    </tr>`;
+  });
+
+  buildCharts();
+}
+
+function buildCharts(){
+  // Destroy old charts
+  Object.values(dashCharts).forEach(c=>{try{c.destroy();}catch(e){}});
+  dashCharts = {};
+
+  const exc=ALL_POINTS.filter(p=>p.points>=750).length;
+  const good=ALL_POINTS.filter(p=>p.points>=500&&p.points<750).length;
+  const need=ALL_POINTS.filter(p=>p.points<500).length;
+
+  dashCharts.perf = new Chart(document.getElementById('c-perf'),{type:'doughnut',data:{labels:['Excellent (≥750)','Good (500-749)','Needs Improvement (<500)'],datasets:[{data:[exc,good,need],backgroundColor:['#1A7F4B','#1A56DB','#C0392B'],borderWidth:3,borderColor:'#fff'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{font:{size:11},boxWidth:12}}}}});
+
+  const branchNames = [...new Set(ALL_EMPLOYEES.map(e=>e.branch))];
+  const branchAvgs = branchNames.map(br=>{
+    const emps = ALL_POINTS.filter(p=>getBranchByUid(p.uid)===br);
+    return emps.length ? Math.round(emps.reduce((s,p)=>s+p.points,0)/emps.length) : 0;
+  });
+  const branchColors = ['#003087','#F5A623','#1A7F4B','#6B2FA0','#C0392B','#1A56DB'];
+  dashCharts.br = new Chart(document.getElementById('c-br'),{type:'bar',data:{labels:branchNames,datasets:[{data:branchAvgs,backgroundColor:branchColors.slice(0,branchNames.length),borderRadius:8,barThickness:40}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,max:1000}}}});
+
+  const badgeNames=['Platinum','Gold','Silver','Bronze','—'];
+  const badgeCounts=badgeNames.map(n=>ALL_POINTS.filter(p=>getBadge(p.points).name===n).length);
+  dashCharts.badge = new Chart(document.getElementById('c-badge'),{type:'bar',data:{labels:badgeNames,datasets:[{data:badgeCounts,backgroundColor:['#3A3AFF','#B8860B','#546E7A','#A0522D','#999'],borderRadius:6}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}}}});
+
+  const avgPre=Math.round(ALL_POINTS.reduce((s,p)=>s+p.preTotal,0)/ALL_POINTS.length);
+  const avgPost=Math.round(ALL_POINTS.reduce((s,p)=>s+p.postTotal,0)/ALL_POINTS.length);
+  const avgComp=Math.round(ALL_POINTS.reduce((s,p)=>s+(p.comp*2),0)/ALL_POINTS.length);
+  const avgPerf=Math.round(ALL_POINTS.filter(p=>p.perfScore>0).reduce((s,p)=>s+p.perfScore,0)/(ALL_POINTS.filter(p=>p.perfScore>0).length||1));
+  dashCharts.comp = new Chart(document.getElementById('c-comp'),{type:'bar',data:{labels:['Completion','Pre Score','Post Score','Perf Score'],datasets:[{data:[avgComp,avgPre,avgPost,avgPerf],backgroundColor:['#003087','#C0392B','#1A7F4B','#6B2FA0'],borderRadius:6}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}}}});
+
+  dashCharts.allbr = new Chart(document.getElementById('c-allbr'),{type:'bar',data:{labels:branchNames,datasets:[{data:branchAvgs,backgroundColor:branchColors.slice(0,branchNames.length),borderRadius:8,barThickness:50}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,max:1000}}}});
+
+  const sortedEmps = [...ALL_POINTS].sort((a,b)=>a.points-b.points);
+  dashCharts.emp = new Chart(document.getElementById('c-emp'),{type:'bar',data:{labels:sortedEmps.map(p=>p.name.split(' ')[0]),datasets:[{data:sortedEmps.map(p=>p.points),backgroundColor:sortedEmps.map(p=>p.points>=750?'#1A7F4B':p.points>=500?'#F5A623':'#C0392B'),borderRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:function(c){return sortedEmps[c.dataIndex].name+': '+c.raw+' pts';}}}},scales:{y:{beginAtZero:true,max:1000},x:{ticks:{font:{size:9},maxRotation:45}}}}});
+}
+
+// ─── LEADERBOARD ────────────────────────────────────────
+function buildLeaderboard(data){
+  // Populate branch filter
+  const brFilter = document.getElementById('lb-branch');
+  const currentBr = brFilter.value;
+  brFilter.innerHTML = '<option value="">All Branches</option>';
+  [...new Set(ALL_EMPLOYEES.map(e=>e.branch))].forEach(br=>{
+    brFilter.innerHTML += `<option ${currentBr===br?'selected':''}>${br}</option>`;
+  });
+
+  const tb = document.getElementById('lb-body');
+  tb.innerHTML = '';
+  (data||LEADERBOARD).forEach(p=>{
+    const b=getBadge(p.points), s=getStatus(p.points);
+    const pct=Math.min(100,Math.round(p.points/10));
+    const barColor=p.points>=750?'#1A7F4B':p.points>=500?'#F5A623':'#C0392B';
+    const srcTag = p.isLive
+      ? '<span class="source-tag source-live">🟢 Live</span>'
+      : '<span class="source-tag source-base">🔵 Base</span>';
+    tb.innerHTML+=`<tr onclick="openModal('${p.uid}')">
+      <td><span style="font-weight:${p.rank===1?900:600};color:${p.rank===1?'#F5A623':'#6B7A99'}">${p.rank===1?'⭐ 1':p.rank}</span></td>
+      <td><div style="display:flex;align-items:center;gap:9px"><div style="width:28px;height:28px;border-radius:50%;background:${getAvatarColor(p.name)};color:white;font-size:10px;font-weight:800;display:flex;align-items:center;justify-content:center">${getInitials(p.name)}</div><span style="font-weight:600">${p.name}</span></div></td>
+      <td>${getBranchByUid(p.uid)}</td>
+      <td style="font-size:11px;color:#6B7A99">${p.prog}</td>
+      <td><span style="font-weight:800;color:${ptsColor(p.points)};font-size:15px">${p.points}</span></td>
+      <td><div style="display:flex;align-items:center;gap:7px"><div class="prog-wrap"><div class="prog-bar" style="background:${barColor};width:${pct}%"></div></div><span style="font-size:11px;color:#6B7A99">${pct}%</span></div></td>
+      <td><span class="badge" style="background:${b.bg};color:${b.color}">${b.icon} ${b.name}</span></td>
+      <td style="font-weight:700;color:#003087">${getLevel(p.points)}</td>
+      <td><span class="badge" style="background:${s.bg};color:${s.color}">${s.label}</span></td>
+      <td>${srcTag}</td>
+    </tr>`;
+  });
+}
+function filterLeaderboard(){
+  const q=document.getElementById('lb-search').value.toLowerCase();
+  const br=document.getElementById('lb-branch').value;
+  const st=document.getElementById('lb-status').value;
+  buildLeaderboard(LEADERBOARD.filter(p=>
+    (!q||p.name.toLowerCase().includes(q))&&
+    (!br||getBranchByUid(p.uid)===br)&&
+    (!st||getStatus(p.points).label===st)
+  ));
+}
+
+// ─── EMPLOYEES ──────────────────────────────────────────
+function buildEmployees(data){
+  const brFilter = document.getElementById('emp-branch');
+  const currentBr = brFilter.value;
+  brFilter.innerHTML = '<option value="">All Branches</option>';
+  [...new Set(ALL_EMPLOYEES.map(e=>e.branch))].forEach(br=>{
+    brFilter.innerHTML += `<option ${currentBr===br?'selected':''}>${br}</option>`;
+  });
+
+  const tb = document.getElementById('emp-body');
+  tb.innerHTML = '';
+  (data||ALL_EMPLOYEES).forEach(u=>{
+    const pl = ALL_POINTS.find(p=>p.uid===u.id);
+    const pts = pl?pl.points:0;
+    const b=getBadge(pts), s=getStatus(pts);
+    const srcTag = u.isNew
+      ? '<span class="source-tag source-live">🟢 New Signup</span>'
+      : '<span class="source-tag source-base">🔵 Base</span>';
+    tb.innerHTML+=`<tr onclick="openModal('${u.id}')">
+      <td><div style="display:flex;align-items:center;gap:9px"><div style="width:30px;height:30px;border-radius:50%;background:${getAvatarColor(u.name)};color:white;font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center">${getInitials(u.name)}</div><span style="font-weight:600">${u.name}</span></div></td>
+      <td style="font-size:12px;color:#6B7A99;font-family:monospace">${u.id}</td>
+      <td>${u.branch}</td>
+      <td style="font-size:12px;color:#6B7A99">${u.role}</td>
+      <td><span style="font-weight:800;color:${ptsColor(pts)};font-size:15px">${pts}</span></td>
+      <td><span class="badge" style="background:${b.bg};color:${b.color}">${b.icon} ${b.name}</span></td>
+      <td><span class="badge" style="background:${s.bg};color:${s.color}">${s.label}</span></td>
+      <td>${srcTag}</td>
+    </tr>`;
+  });
+}
+function filterEmployees(){
+  const q=document.getElementById('emp-search').value.toLowerCase();
+  const br=document.getElementById('emp-branch').value;
+  buildEmployees(ALL_EMPLOYEES.filter(u=>
+    (!q||u.name.toLowerCase().includes(q)||u.id.includes(q))&&
+    (!br||u.branch===br)
+  ));
+}
+
+// ─── PROGRAMS ───────────────────────────────────────────
+const PROG_DEPT={'Sales & Marketing':'Marketing','Compliance & Regulatory Training':'Compliance','Credit Training':'Credit','Karmayogi':'HRM','Welcoming Program':'Operations','Customer Orientation & Excellence':'Operations','Welcomming wellness':'HRM','Risk Management in practice':'Risk','Basics of Credit Monitoring':'Credit','Comprehensive Operational Resource Efficiency':'Operations','Digital Banking':'Technology','Agriculture Lending Excellence (ALEXA)':'Credit','Appraisal tools':'Credit','Diagnosis & Cure of Stressed Assets':'Credit','Training in NRI Banking':'Operations','Pragati for Women Employees':'HRM','Training related to MS Office':'Technology'};
+
+function buildPrograms(){
+  const progs=[...new Set(ALL_POINTS.map(p=>p.prog))];
+  const pt=document.getElementById('prog-body');
+  pt.innerHTML='';
+  progs.forEach(pg=>{
+    const rows=ALL_POINTS.filter(p=>p.prog===pg);
+    const avg2=Math.round(rows.reduce((s,p)=>s+p.points,0)/rows.length);
+    const dept=PROG_DEPT[pg]||'General';
+    pt.innerHTML+=`<tr><td style="font-weight:600">${pg}</td><td><span class="badge" style="background:#EAF1FF;color:#1A56DB">${dept}</span></td><td>${rows.length}</td><td><span style="font-weight:700;color:${ptsColor(avg2)}">${avg2}</span></td><td style="font-weight:700;color:#003087">1000</td></tr>`;
+  });
+}
+
+// ─── POINTS LOG ─────────────────────────────────────────
+function buildPointsLog(data){
+  const tb=document.getElementById('pl-body');
+  tb.innerHTML='';
+  (data||ALL_POINTS).forEach(p=>{
+    const ic=p.impPct>=20?'#1A7F4B':p.impPct>=0?'#B8860B':'#C0392B';
+    const srcTag = p.isLive
+      ? '<span class="source-tag source-live">🟢 Live</span>'
+      : '<span class="source-tag source-base">🔵 Base</span>';
+    tb.innerHTML+=`<tr onclick="openModal('${p.uid}')">
+      <td style="font-weight:600">${p.name}</td>
+      <td style="font-size:11px;">${getBranchByUid(p.uid)}</td>
+      <td style="font-size:11px;color:#6B7A99">${p.prog}</td>
+      <td>${p.comp}%</td>
+      <td>${p.preTotal}</td>
+      <td>${p.postTotal}</td>
+      <td style="font-weight:700;color:${ic}">${typeof p.impPct==='number'?p.impPct.toFixed(1):p.impPct}%</td>
+      <td>${typeof p.perfScore==='number'?p.perfScore.toFixed(1):p.perfScore}</td>
+      <td><span style="font-weight:800;color:${ptsColor(p.points)};font-size:15px">${p.points}</span></td>
+      <td>${srcTag}</td>
+    </tr>`;
+  });
+}
+function filterPointsLog(){
+  const q=document.getElementById('pl-search').value.toLowerCase();
+  buildPointsLog(ALL_POINTS.filter(p=>p.name.toLowerCase().includes(q)||p.prog.toLowerCase().includes(q)));
+}
+
+// ─── MODAL ──────────────────────────────────────────────
+function openModal(uid){
+  const emp=getEmpById(uid);
+  const logs=ALL_POINTS.filter(p=>p.uid===uid);
+  const name = emp ? emp.name : (logs[0]?logs[0].name:uid);
+  const branch = emp ? emp.branch : getBranchByUid(uid);
+  const role = emp ? emp.role : 'Employee';
+  document.getElementById('modal-name').textContent=name;
+  document.getElementById('modal-role').textContent=role+' • '+branch;
+  const totalPts=logs.reduce((s,p)=>s+p.points,0);
+  const avgImp=logs.length?(logs.reduce((s,p)=>s+(p.impPct||0),0)/logs.length).toFixed(1):'0';
+  const rank=LEADERBOARD.findIndex(p=>p.uid===uid)+1;
+  const b=getBadge(totalPts), s=getStatus(totalPts);
+  document.getElementById('modal-stats').innerHTML=`
+    <div class="modal-stat"><div class="modal-stat-label">Total Points</div><div class="modal-stat-value" style="color:${ptsColor(totalPts)}">${totalPts}</div></div>
+    <div class="modal-stat"><div class="modal-stat-label">Rank</div><div class="modal-stat-value">${rank===1?'⭐ #1':'#'+rank}</div></div>
+    <div class="modal-stat"><div class="modal-stat-label">Badge</div><div style="margin-top:8px"><span class="badge" style="background:${b.bg};color:${b.color}">${b.icon} ${b.name}</span></div></div>
+    <div class="modal-stat"><div class="modal-stat-label">Status</div><div style="margin-top:8px"><span class="badge" style="background:${s.bg};color:${s.color}">${s.label}</span></div></div>
+    <div class="modal-stat"><div class="modal-stat-label">Avg Improvement</div><div class="modal-stat-value">${avgImp}%</div></div>
+    <div class="modal-stat"><div class="modal-stat-label">Trainings</div><div class="modal-stat-value">${logs.length}</div></div>`;
+  const hist=document.getElementById('modal-history');
+  hist.innerHTML='';
+  if(!logs.length){
+    hist.innerHTML='<tr><td colspan="7" style="text-align:center;color:#6B7A99;padding:20px">No training records found</td></tr>';
+  } else {
+    logs.forEach(p=>{
+      const st=getStatus(p.points);
+      hist.innerHTML+=`<tr>
+        <td style="font-weight:600;font-size:12px">${p.prog}</td>
+        <td>${p.comp}%</td>
+        <td>${p.preTotal}</td>
+        <td>${p.postTotal}</td>
+        <td style="font-weight:700;color:${(p.impPct||0)>=0?'#1A7F4B':'#C0392B'}">${typeof p.impPct==='number'?p.impPct.toFixed(1):0}%</td>
+        <td style="font-weight:800;color:${ptsColor(p.points)};font-size:15px">${p.points}</td>
+        <td><span class="badge" style="background:${st.bg};color:${st.color}">${st.label}</span></td>
+      </tr>`;
+    });
+  }
+  document.getElementById('modal-overlay').classList.add('open');
+}
+function closeModal(){document.getElementById('modal-overlay').classList.remove('open');}
+
+// ─── SKILL GAP ──────────────────────────────────────────
+function buildSkillGap(){
+  // Use base points for skill gap analysis (they have pre/post breakdown)
+  const sgPoints = BASE_POINTS;
+  const avgPre=Math.round(sgPoints.reduce((s,p)=>s+p.preTotal,0)/sgPoints.length);
+  const avgPost=Math.round(sgPoints.reduce((s,p)=>s+p.postTotal,0)/sgPoints.length);
+  const avgImpAll=(sgPoints.reduce((s,p)=>s+(p.impPct||0),0)/sgPoints.length).toFixed(1);
+  const eff=Math.round((avgPost/avgPre)*100);
+  document.getElementById('sg-pre').textContent=avgPre;
+  document.getElementById('sg-post').textContent=avgPost;
+  document.getElementById('sg-imp').textContent=avgImpAll+'%';
+  document.getElementById('sg-eff').textContent=eff+'%';
+
+  const skills=[
+    {name:'Accuracy in Documentation',pre:Math.round(sgPoints.reduce((s,p)=>s+p.preDoc,0)/sgPoints.length),post:Math.round(sgPoints.reduce((s,p)=>s+p.postDoc,0)/sgPoints.length)},
+    {name:'Customer Handling Quality',pre:Math.round(sgPoints.reduce((s,p)=>s+p.preCust,0)/sgPoints.length),post:Math.round(sgPoints.reduce((s,p)=>s+p.postCust,0)/sgPoints.length)},
+    {name:'Compliance Adherence',pre:Math.round(sgPoints.reduce((s,p)=>s+p.preComp,0)/sgPoints.length),post:Math.round(sgPoints.reduce((s,p)=>s+p.postComp,0)/sgPoints.length)},
+    {name:'Timeliness / Productivity',pre:Math.round(sgPoints.reduce((s,p)=>s+p.preProd,0)/sgPoints.length),post:Math.round(sgPoints.reduce((s,p)=>s+p.postProd,0)/sgPoints.length)},
+    {name:'Knowledge Application',pre:Math.round(sgPoints.reduce((s,p)=>s+p.preKnow,0)/sgPoints.length),post:Math.round(sgPoints.reduce((s,p)=>s+p.postKnow,0)/sgPoints.length)}
+  ];
+  const gg=document.getElementById('gap-grid');
+  gg.innerHTML='';
+  skills.forEach(sk=>{
+    const gap=sk.post-sk.pre, prePct=Math.round(sk.pre/20*100), postPct=Math.round(sk.post/20*100);
+    gg.innerHTML+=`<div class="gap-card">
+      <div style="font-size:13px;font-weight:700;margin-bottom:10px">${sk.name}</div>
+      <div style="font-size:11px;color:#6B7A99;margin-bottom:4px">Pre: <strong>${sk.pre}/20</strong></div>
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px"><div class="prog-wrap" style="flex:1"><div class="prog-bar" style="background:#C0392B;width:${prePct}%"></div></div><span style="font-size:11px">${prePct}%</span></div>
+      <div style="font-size:11px;color:#6B7A99;margin-bottom:4px">Post: <strong>${sk.post}/20</strong></div>
+      <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px"><div class="prog-wrap" style="flex:1"><div class="prog-bar" style="background:#1A7F4B;width:${postPct}%"></div></div><span style="font-size:11px">${postPct}%</span></div>
+      <div style="font-size:12px;font-weight:700;color:${gap>=0?'#1A7F4B':'#C0392B'}">${gap>=0?'↑ +':'↓ '}${gap} pts</div>
+    </div>`;
+  });
+
+  buildSGTable();
+  // Needs support
+  const sgb=document.getElementById('sg-body');
+  sgb.innerHTML='';
+  ALL_POINTS.filter(p=>p.points<500).sort((a,b)=>a.points-b.points).forEach(p=>{
+    sgb.innerHTML+=`<tr onclick="openSGModal('${p.uid}')">
+      <td style="font-weight:600">${p.name}</td>
+      <td>${getBranchByUid(p.uid)}</td>
+      <td style="font-size:11px;color:#6B7A99">${p.prog}</td>
+      <td><span style="font-weight:800;color:#C0392B">${p.points}</span></td>
+      <td style="color:${(p.impPct||0)>=0?'#1A7F4B':'#C0392B'};font-weight:700">${typeof p.impPct==='number'?p.impPct.toFixed(1):0}%</td>
+      <td><span class="badge" style="background:#FFF0EE;color:#C0392B">Schedule Retraining</span></td>
+    </tr>`;
+  });
+}
+function buildSGTable(data){
+  const tb=document.getElementById('sg-emp-body');
+  tb.innerHTML='';
+  (data||ALL_POINTS).forEach(p=>{
+    const s=getStatus(p.points);
+    const ic=(p.impPct||0)>=20?'#1A7F4B':(p.impPct||0)>=0?'#B8860B':'#C0392B';
+    tb.innerHTML+=`<tr onclick="openSGModal('${p.uid}')">
+      <td><div style="display:flex;align-items:center;gap:9px"><div style="width:28px;height:28px;border-radius:50%;background:${getAvatarColor(p.name)};color:white;font-size:10px;font-weight:800;display:flex;align-items:center;justify-content:center">${getInitials(p.name)}</div><span style="font-weight:600;color:#003087;text-decoration:underline">${p.name}</span></div></td>
+      <td>${getBranchByUid(p.uid)}</td>
+      <td>${p.preTotal}</td>
+      <td>${p.postTotal}</td>
+      <td style="font-weight:700;color:${ic}">${typeof p.impPct==='number'?p.impPct.toFixed(1):0}%</td>
+      <td style="font-weight:800;color:${ptsColor(p.points)}">${p.points}</td>
+      <td><span class="badge" style="background:${s.bg};color:${s.color}">${s.label}</span></td>
+    </tr>`;
+  });
+}
+function filterSkillGap(){
+  const q=document.getElementById('sg-search').value.toLowerCase();
+  buildSGTable(ALL_POINTS.filter(p=>p.name.toLowerCase().includes(q)));
+}
+function openSGModal(uid){
+  const emp=getEmpById(uid);
+  const p=ALL_POINTS.find(x=>x.uid===uid);
+  if(!p) return;
+  const name=emp?emp.name:p.name;
+  const branch=emp?emp.branch:getBranchByUid(uid);
+  const role=emp?emp.role:'Employee';
+  document.getElementById('sg-modal-name').textContent=name;
+  document.getElementById('sg-modal-role').textContent=role+' • '+branch+' • '+p.prog;
+  const s=getStatus(p.points), b=getBadge(p.points);
+  document.getElementById('sg-modal-stats').innerHTML=`
+    <div class="modal-stat"><div class="modal-stat-label">Total Points</div><div class="modal-stat-value" style="color:${ptsColor(p.points)}">${p.points}</div></div>
+    <div class="modal-stat"><div class="modal-stat-label">Pre Score</div><div class="modal-stat-value">${p.preTotal}/100</div></div>
+    <div class="modal-stat"><div class="modal-stat-label">Post Score</div><div class="modal-stat-value" style="color:#1A7F4B">${p.postTotal}/100</div></div>
+    <div class="modal-stat"><div class="modal-stat-label">Improvement</div><div class="modal-stat-value" style="color:${(p.impPct||0)>=0?'#1A7F4B':'#C0392B'}">${typeof p.impPct==='number'?p.impPct.toFixed(1):0}%</div></div>
+    <div class="modal-stat"><div class="modal-stat-label">Badge</div><div style="margin-top:8px"><span class="badge" style="background:${b.bg};color:${b.color}">${b.icon} ${b.name}</span></div></div>
+    <div class="modal-stat"><div class="modal-stat-label">Status</div><div style="margin-top:8px"><span class="badge" style="background:${s.bg};color:${s.color}">${s.label}</span></div></div>`;
+  const skillData=[
+    {name:'Accuracy in Documentation',pre:p.preDoc||10,post:p.postDoc||10},
+    {name:'Customer Handling Quality',pre:p.preCust||10,post:p.postCust||10},
+    {name:'Compliance Adherence',pre:p.preComp||10,post:p.postComp||10},
+    {name:'Timeliness / Productivity',pre:p.preProd||10,post:p.postProd||10},
+    {name:'Knowledge Application',pre:p.preKnow||10,post:p.postKnow||10}
+  ];
+  const sb=document.getElementById('sg-skill-bars');
+  sb.innerHTML='';
+  skillData.forEach(sk=>{
+    const gap=sk.post-sk.pre, prePct=Math.round(sk.pre/20*100), postPct=Math.round(sk.post/20*100);
+    const gapColor=gap>0?'#1A7F4B':gap<0?'#C0392B':'#B8860B';
+    const gapText=gap>0?'↑ Improved by '+gap:gap<0?'↓ Decreased by '+Math.abs(gap):'→ No Change';
+    sb.innerHTML+=`<div style="background:#F8FBFF;border-radius:10px;padding:16px 18px;margin-bottom:12px;border:1px solid #DDE4F0;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;"><span style="font-size:13px;font-weight:700">${sk.name}</span><span style="font-size:12px;font-weight:700;color:${gapColor}">${gapText}</span></div>
+      <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;"><span style="font-size:11px;color:#6B7A99;min-width:90px;">Pre-training:</span><div class="prog-wrap" style="flex:1"><div class="prog-bar" style="background:#C0392B;width:${prePct}%"></div></div><span style="font-size:12px;font-weight:700;min-width:50px;text-align:right">${sk.pre}/20</span></div>
+      <div style="display:flex;align-items:center;gap:10px;"><span style="font-size:11px;color:#6B7A99;min-width:90px;">Post-training:</span><div class="prog-wrap" style="flex:1"><div class="prog-bar" style="background:#1A7F4B;width:${postPct}%"></div></div><span style="font-size:12px;font-weight:700;min-width:50px;text-align:right">${sk.post}/20</span></div>
+    </div>`;
+  });
+  document.getElementById('sg-modal').classList.add('open');
+}
+function closeSGModal(){document.getElementById('sg-modal').classList.remove('open');}
+
+// ─── BRANCH REPORT ──────────────────────────────────────
+function buildBranch(){
+  const branches=[...new Set(ALL_EMPLOYEES.map(e=>e.branch))];
+  const bc=document.getElementById('branch-cards');
+  bc.innerHTML='';
+  const branchColors=['#003087','#F5A623','#1A7F4B','#6B2FA0','#C0392B'];
+  const branchAvgData=[];
+  branches.forEach((name,i)=>{
+    const col=branchColors[i%branchColors.length];
+    const emps=ALL_POINTS.filter(p=>getBranchByUid(p.uid)===name);
+    if(!emps.length) return;
+    const avg3=Math.round(emps.reduce((s,p)=>s+p.points,0)/emps.length);
+    branchAvgData.push({name,avg:avg3,col});
+    const exc2=emps.filter(p=>p.points>=750).length;
+    const good2=emps.filter(p=>p.points>=500&&p.points<750).length;
+    const need2=emps.filter(p=>p.points<500).length;
+    const ai=(emps.reduce((s,p)=>s+(p.impPct||0),0)/emps.length).toFixed(1);
+    const totalEmps=ALL_EMPLOYEES.filter(e=>e.branch===name).length;
+    bc.innerHTML+=`<div class="branch-card">
+      <div style="font-size:16px;font-weight:800;color:${col};margin-bottom:12px;display:flex;align-items:center;gap:8px"><span style="width:10px;height:10px;border-radius:50%;background:${col};display:inline-block"></span>${name} Branch</div>
+      <div class="branch-row"><span>Total Employees</span><span class="branch-val">${totalEmps}</span></div>
+      <div class="branch-row"><span>Employees with Training Data</span><span class="branch-val">${emps.length}</span></div>
+      <div class="branch-row"><span>Average Points</span><span class="branch-val" style="color:${col}">${avg3}</span></div>
+      <div class="branch-row"><span>Excellent Performers</span><span class="branch-val" style="color:#1A7F4B">${exc2}</span></div>
+      <div class="branch-row"><span>Good Performers</span><span class="branch-val" style="color:#1A56DB">${good2}</span></div>
+      <div class="branch-row"><span>Needs Improvement</span><span class="branch-val" style="color:#C0392B">${need2}</span></div>
+      <div class="branch-row"><span>Avg Improvement %</span><span class="branch-val">${ai}%</span></div>
+    </div>`;
+  });
+
+  // Destroy old chart if exists
+  if(dashCharts.br2){try{dashCharts.br2.destroy();}catch(e){}}
+  if(branchAvgData.length){
+    dashCharts.br2 = new Chart(document.getElementById('c-br2'),{type:'bar',data:{labels:branchAvgData.map(b=>b.name),datasets:[{data:branchAvgData.map(b=>b.avg),backgroundColor:branchAvgData.map(b=>b.col),borderRadius:10,barThickness:60}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,max:1000}}}});
+  }
+}
+
+// ─── HR INSIGHTS ────────────────────────────────────────
+function buildInsights(){
+  const top1=LEADERBOARD[0];
+  const needEmp=ALL_POINTS.filter(p=>p.points<500);
+  const bestImp=ALL_POINTS.reduce((a,b)=>(a.impPct||0)>(b.impPct||0)?a:b, ALL_POINTS[0]);
+  const avgImpAll=(ALL_POINTS.reduce((s,p)=>s+(p.impPct||0),0)/ALL_POINTS.length).toFixed(1);
+  const newEmployees=ALL_EMPLOYEES.filter(e=>e.isNew);
+
+  const insights=[
+    {icon:'🏆',title:'Who Are The Top Performers?',text:`<strong>${top1?top1.name:'—'}</strong> leads with <strong>${top1?top1.points:0} points</strong>. ${ALL_POINTS.filter(p=>p.points>=750).length} out of ${ALL_POINTS.length} employees are Excellent Performers. These employees can be considered for <strong>promotions, mentoring roles, or incentives</strong>.`},
+    {icon:'⚠️',title:'Who Needs Training Support?',text:`<strong>${needEmp.length} employees</strong> scored below 500 points. HR should schedule <strong>targeted re-training sessions</strong> for these employees.`},
+    {icon:'📈',title:'Is Training Actually Working?',text:`Average improvement is <strong>${avgImpAll}%</strong>. Best improver: <strong>${bestImp?bestImp.name:'—'} (${bestImp?Number(bestImp.impPct||0).toFixed(1):0}% improvement)</strong>. Training programs are showing <strong>positive impact</strong>.`},
+    {icon:'🎯',title:'Which Skills Need More Focus?',text:'Pre-training scores in <strong>Timeliness/Productivity</strong> and <strong>Knowledge Application</strong> are lower. HR should design <strong>focused workshops</strong> on these two skills.'},
+    {icon:'🆕',title:'New Employee Signups',text:newEmployees.length>0?`<strong>${newEmployees.length} new employee(s)</strong> have signed up: ${newEmployees.map(e=>'<strong>'+e.name+'</strong> ('+e.branch+')').join(', ')}. Their training progress is now tracked in this dashboard.`:'No new employee signups yet. All data is from the original 37 employees.'},
+    {icon:'🔄',title:'How Does Auto-Update Work?',text:'When employees complete training, scores are submitted to Google Sheets. The HR dashboard fetches <strong>live data on every page load</strong> — new employees and their training progress appear automatically here!'}
+  ];
+  const ig=document.getElementById('insight-grid');
+  ig.innerHTML='';
+  insights.forEach(ins=>{
+    ig.innerHTML+=`<div class="insight-card"><div style="font-size:28px;margin-bottom:10px">${ins.icon}</div><div style="font-size:14px;font-weight:800;color:#003087;margin-bottom:6px">${ins.title}</div><div style="font-size:12.5px;color:#6B7A99;line-height:1.7">${ins.text}</div></div>`;
+  });
+
+  // Dynamic recommendations based on data
+  const top3=LEADERBOARD.slice(0,3);
+  const recs=[
+    {title:'🥇 Reward Top 3 Performers',text:top3.map((p,i)=>['🥇','🥈','🥉'][i]+' '+p.name+' ('+p.points+' pts)').join(' | ')+' — Recommend for recognition awards.'},
+    {title:'📋 Schedule Re-training for Low Scorers',text:needEmp.length+' employees scored below 500 pts. Schedule one-on-one coaching sessions.'},
+    {title:'💡 Focus Training on Weak Skills',text:'Design targeted workshops for Timeliness/Productivity and Knowledge Application.'},
+    {title:'🏢 Cross-Branch Learning Program',text:'Organize knowledge sharing between '+[...new Set(ALL_EMPLOYEES.map(e=>e.branch))].join(' and ')+' branches.'},
+    {title:'📊 Use Points as Promotion Criteria',text:'Employees with Gold badge (750+ pts) and Level 4-5 are ready for higher responsibilities.'}
+  ];
+  const rl=document.getElementById('rec-list');
+  rl.innerHTML='';
+  recs.forEach(r=>{
+    rl.innerHTML+=`<div class="rec-card"><div style="font-size:13px;font-weight:700;margin-bottom:4px">${r.title}</div><div style="font-size:12px;color:#6B7A99;line-height:1.6">${r.text}</div></div>`;
+  });
+}
+
+// ─── LIVE SCORES ────────────────────────────────────────
+async function loadLiveScores(){
+  document.getElementById('live-scores-loading').style.display='block';
+  document.getElementById('live-scores-wrap').style.display='none';
+  try{
+    const res=await fetch(API+'?action=getScores&t='+Date.now());
+    const data=await res.json();
+    const tbody=document.getElementById('live-scores-body');
+    tbody.innerHTML='';
+    if(data.success&&data.data&&data.data.length){
+      data.data.forEach(s=>{
+        const assessScore=Number(s.assessScore)||0;
+        const assignScore=Number(s.assignScore)||0;
+        const compScore=Number(s.compScore)||200;
+        const totalPts=Number(s.totalPoints)||0;
+        const pts=totalPts>0?totalPts:(compScore+assessScore+assignScore);
+        const b=getBadge(pts);
+        const isBaseEmp=BASE_EMPLOYEES.find(e=>e.name.toLowerCase()===(s.name||'').toLowerCase()||(s.userId&&e.id===s.userId));
+        const empTag=isBaseEmp
+          ? '<span class="source-tag source-base">🔵 Base</span>'
+          : '<span class="source-tag source-live">🟢 New</span>';
+        tbody.innerHTML+=`<tr>
+          <td style="font-weight:600">${s.name}${empTag}</td>
+          <td style="font-size:11px;font-family:monospace">${s.userId||'—'}</td>
+          <td style="font-size:12px">${s.branch||'—'}</td>
+          <td style="font-size:11px;color:#6B7A99">${s.program||'—'}</td>
+          <td>${s.comp||100}%</td>
+          <td style="font-weight:600">${assessScore}</td>
+          <td style="font-weight:600">${assignScore}</td>
+          <td><span style="font-weight:800;color:${ptsColor(pts)};font-size:15px">${pts}</span></td>
+          <td><span class="badge" style="background:${b.bg};color:${b.color}">${b.icon} ${b.name}</span></td>
+          <td style="font-size:11px;color:#6B7A99">${s.date||'—'}</td>
+        </tr>`;
+      });
+    } else {
+      tbody.innerHTML='<tr><td colspan="10" style="text-align:center;color:#6B7A99;padding:20px">No live scores yet!</td></tr>';
+    }
+    document.getElementById('live-scores-loading').style.display='none';
+    document.getElementById('live-scores-wrap').style.display='block';
+  } catch(err){
+    document.getElementById('live-scores-loading').textContent='❌ Error loading scores. Check network.';
+  }
+}
+
+// ─── CERTIFICATES ───────────────────────────────────────
+async function buildHRCertificates(){
+  const grid=document.getElementById('hr-cert-grid');
+  if(!grid) return;
+  grid.innerHTML='<div style="text-align:center;padding:20px;color:#6B7A99;grid-column:1/-1;">⏳ Loading certificates...</div>';
+  const today=new Date().toLocaleDateString('en-IN',{day:'numeric',month:'long',year:'numeric'});
+  let liveData=[];
+  try{
+    const res=await fetch(API+'?action=getScores&t='+Date.now());
+    const data=await res.json();
+    if(data.success&&data.data) liveData=data.data;
+  } catch(e){}
+
+  grid.innerHTML='';
+
+  // Live certs first (green border)
+  liveData.forEach(function(s,idx){
+    const assessScore=Number(s.assessScore)||0;
+    const assignScore=Number(s.assignScore)||0;
+    const compScore=Number(s.compScore)||200;
+    const totalPts=Number(s.totalPoints)||0;
+    const pts=totalPts>0?totalPts:(compScore+assessScore+assignScore);
+    const b=getBadge(pts);
+    grid.innerHTML+=`<div style="background:white;border-radius:16px;border:6px solid #1A7F4B;padding:28px 22px;text-align:center;position:relative;">
+      <div style="position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,#1A7F4B,#2ECC71,#1A7F4B);border-radius:10px 10px 0 0;"></div>
+      <div style="position:absolute;top:6px;right:8px;background:#1A7F4B;color:white;border-radius:20px;padding:2px 8px;font-size:9px;font-weight:700;">🟢 LIVE</div>
+      <div style="font-size:28px;margin-bottom:4px;">🏦</div>
+      <div style="font-size:10px;font-weight:700;color:#6B7A99;letter-spacing:2px;text-transform:uppercase;margin-bottom:4px;">Union Bank of India</div>
+      <div style="font-size:15px;font-weight:800;color:#003087;margin-bottom:3px;">Certificate of Excellence</div>
+      <div style="width:36px;height:2px;background:linear-gradient(90deg,#F5A623,#FFD700);margin:7px auto;border-radius:2px;"></div>
+      <div style="font-size:11px;color:#6B7A99;margin-bottom:7px;">This is to certify that</div>
+      <div style="font-size:17px;font-weight:800;color:#003087;margin-bottom:3px;">${s.name}</div>
+      <div style="font-size:10px;color:#6B7A99;margin-bottom:12px;">ID: ${s.userId||'—'} | ${s.branch||'—'}</div>
+      <div style="font-size:10px;color:#6B7A99;margin-bottom:3px;">has successfully completed</div>
+      <div style="font-size:12px;font-weight:700;color:#003087;margin-bottom:12px;">${s.program||'Training Program'}</div>
+      <div style="display:flex;justify-content:center;gap:10px;margin-bottom:12px;">
+        <div style="background:#EAF1FF;border-radius:8px;padding:8px 12px;"><div style="font-size:16px;font-weight:800;color:${ptsColor(pts)};">${pts}</div><div style="font-size:9px;color:#6B7A99;">Points</div></div>
+        <div style="background:#FFFBE6;border-radius:8px;padding:8px 12px;"><div style="font-size:16px;">${b.icon}</div><div style="font-size:9px;color:#6B7A99;">${b.name}</div></div>
+      </div>
+      <div style="display:flex;justify-content:space-between;padding-top:10px;border-top:1px solid #DDE4F0;font-size:9px;color:#6B7A99;margin-bottom:10px;">
+        <div><div>Date</div><div style="font-weight:700;color:#003087;font-size:10px;">${s.date||today}</div></div>
+        <div style="font-size:14px;">🏦</div>
+        <div style="text-align:right;"><div>Authorized by</div><div style="font-weight:700;color:#003087;font-size:10px;">HR Dept</div></div>
+      </div>
+      <button onclick="printLiveCert(${idx})" style="background:#1A7F4B;color:white;border:none;padding:8px 18px;border-radius:8px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;width:100%;">🖨️ Print / Download</button>
+    </div>`;
+  });
+
+  // Base 37 employees certs (gold border)
+  LEADERBOARD.forEach(function(p,idx){
+    const emp=getEmpById(p.uid);
+    const b=getBadge(p.points);
+    grid.innerHTML+=`<div style="background:white;border-radius:16px;border:6px solid #F5A623;padding:28px 22px;text-align:center;position:relative;">
+      <div style="position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,#F5A623,#FFD700,#F5A623);border-radius:10px 10px 0 0;"></div>
+      <div style="font-size:28px;margin-bottom:4px;">🏦</div>
+      <div style="font-size:10px;font-weight:700;color:#6B7A99;letter-spacing:2px;text-transform:uppercase;margin-bottom:4px;">Union Bank of India</div>
+      <div style="font-size:15px;font-weight:800;color:#003087;margin-bottom:3px;">Certificate of Excellence</div>
+      <div style="width:36px;height:2px;background:linear-gradient(90deg,#F5A623,#FFD700);margin:7px auto;border-radius:2px;"></div>
+      <div style="font-size:11px;color:#6B7A99;margin-bottom:7px;">This is to certify that</div>
+      <div style="font-size:17px;font-weight:800;color:#003087;margin-bottom:3px;">${p.name}</div>
+      <div style="font-size:10px;color:#6B7A99;margin-bottom:12px;">${emp?emp.role:'Employee'} • ${emp?emp.branch:'Coimbatore'}</div>
+      <div style="font-size:10px;color:#6B7A99;margin-bottom:3px;">has successfully completed</div>
+      <div style="font-size:12px;font-weight:700;color:#003087;margin-bottom:12px;">${p.prog}</div>
+      <div style="display:flex;justify-content:center;gap:10px;margin-bottom:12px;">
+        <div style="background:#EAF1FF;border-radius:8px;padding:8px 12px;"><div style="font-size:16px;font-weight:800;color:${ptsColor(p.points)};">${p.points}</div><div style="font-size:9px;color:#6B7A99;">Points</div></div>
+        <div style="background:#FFFBE6;border-radius:8px;padding:8px 12px;"><div style="font-size:16px;">${b.icon}</div><div style="font-size:9px;color:#6B7A99;">${b.name}</div></div>
+        <div style="background:#E6F9F0;border-radius:8px;padding:8px 12px;"><div style="font-size:16px;font-weight:800;color:#003087;">#${p.rank}</div><div style="font-size:9px;color:#6B7A99;">Rank</div></div>
+      </div>
+      <div style="display:flex;justify-content:space-between;padding-top:10px;border-top:1px solid #DDE4F0;font-size:9px;color:#6B7A99;margin-bottom:10px;">
+        <div><div>Date</div><div style="font-weight:700;color:#003087;font-size:10px;">${today}</div></div>
+        <div style="font-size:14px;">🏦</div>
+        <div style="text-align:right;"><div>Authorized by</div><div style="font-weight:700;color:#003087;font-size:10px;">HR Dept</div></div>
+      </div>
+      <button onclick="printHRCert(${idx})" style="background:#003087;color:white;border:none;padding:8px 18px;border-radius:8px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;width:100%;">🖨️ Print / Download</button>
+    </div>`;
+  });
+}
+
+// ─── PRINT CERTS ────────────────────────────────────────
+function printHRCert(idx){
+  const p=LEADERBOARD[idx]; if(!p) return;
+  const emp=getEmpById(p.uid);
+  const b=getBadge(p.points);
+  const today=new Date().toLocaleDateString('en-IN',{day:'numeric',month:'long',year:'numeric'});
+  const w=window.open('','_blank');
+  w.document.write(`<html><head><title>Certificate - ${p.name}</title><style>body{margin:0;display:flex;justify-content:center;align-items:center;min-height:100vh;font-family:sans-serif;background:#f0f0f0;}.cert{background:white;border:8px solid #F5A623;padding:50px 40px;max-width:620px;width:100%;text-align:center;}@media print{body{background:white;}}</style></head><body><div class="cert">
+    <div style="font-size:40px;margin-bottom:8px;">🏦</div>
+    <div style="font-size:12px;font-weight:700;color:#6B7A99;letter-spacing:2px;text-transform:uppercase;margin-bottom:4px;">Union Bank of India</div>
+    <div style="font-size:26px;font-weight:800;color:#003087;margin-bottom:4px;">Certificate of Excellence</div>
+    <div style="width:50px;height:3px;background:linear-gradient(90deg,#F5A623,#FFD700);margin:10px auto;border-radius:2px;"></div>
+    <div style="font-size:13px;color:#6B7A99;margin-bottom:14px;">This is to certify that</div>
+    <div style="font-size:26px;font-weight:800;color:#003087;margin-bottom:6px;">${p.name}</div>
+    <div style="font-size:12px;color:#6B7A99;margin-bottom:18px;">${emp?emp.role:'Employee'} • ${emp?emp.branch:'Coimbatore'}</div>
+    <div style="font-size:13px;color:#6B7A99;margin-bottom:6px;">has successfully completed</div>
+    <div style="font-size:15px;font-weight:700;color:#003087;margin-bottom:18px;">${p.prog}</div>
+    <div style="display:flex;justify-content:center;gap:24px;margin-bottom:20px;">
+      <div style="background:#EAF1FF;border-radius:10px;padding:12px 20px;"><div style="font-size:24px;font-weight:800;color:#003087;">${p.points}</div><div style="font-size:10px;color:#6B7A99;">Total Points</div></div>
+      <div style="background:#FFFBE6;border-radius:10px;padding:12px 20px;"><div style="font-size:24px;">${b.icon}</div><div style="font-size:10px;color:#6B7A99;">${b.name} Badge</div></div>
+      <div style="background:#E6F9F0;border-radius:10px;padding:12px 20px;"><div style="font-size:24px;font-weight:800;color:#1A7F4B;">#${p.rank}</div><div style="font-size:10px;color:#6B7A99;">Overall Rank</div></div>
+    </div>
+    <div style="display:flex;justify-content:space-between;padding-top:18px;border-top:1px solid #DDE4F0;">
+      <div><div style="font-size:11px;color:#6B7A99;">Date of Issue</div><div style="font-size:12px;font-weight:700;color:#003087;">${today}</div></div>
+      <div style="font-size:20px;">🏦</div>
+      <div style="text-align:right;"><div style="font-size:11px;color:#6B7A99;">Authorized by</div><div style="font-size:12px;font-weight:700;color:#003087;">HR Department</div></div>
+    </div>
+  </div><script>window.onload=function(){window.print();}<\/script></body></html>`);
+  w.document.close();
+}
+
+async function printLiveCert(idx){
+  try{
+    const res=await fetch(API+'?action=getScores&t='+Date.now());
+    const data=await res.json();
+    if(!data.success||!data.data) return;
+    const s=data.data[idx]; if(!s) return;
+    const assessScore=Number(s.assessScore)||0;
+    const assignScore=Number(s.assignScore)||0;
+    const compScore=Number(s.compScore)||200;
+    const totalPts=Number(s.totalPoints)||0;
+    const pts=totalPts>0?totalPts:(compScore+assessScore+assignScore);
+    const b=getBadge(pts);
+    const today=new Date().toLocaleDateString('en-IN',{day:'numeric',month:'long',year:'numeric'});
+    const w=window.open('','_blank');
+    w.document.write(`<html><head><title>Certificate - ${s.name}</title><style>body{margin:0;display:flex;justify-content:center;align-items:center;min-height:100vh;font-family:sans-serif;background:#f0f0f0;}.cert{background:white;border:8px solid #1A7F4B;padding:50px 40px;max-width:620px;width:100%;text-align:center;}@media print{body{background:white;}}</style></head><body><div class="cert">
+      <div style="font-size:40px;margin-bottom:8px;">🏦</div>
+      <div style="font-size:12px;font-weight:700;color:#6B7A99;letter-spacing:2px;text-transform:uppercase;margin-bottom:4px;">Union Bank of India</div>
+      <div style="font-size:26px;font-weight:800;color:#003087;margin-bottom:4px;">Certificate of Excellence</div>
+      <div style="width:50px;height:3px;background:linear-gradient(90deg,#1A7F4B,#2ECC71);margin:10px auto;border-radius:2px;"></div>
+      <div style="font-size:13px;color:#6B7A99;margin-bottom:14px;">This is to certify that</div>
+      <div style="font-size:26px;font-weight:800;color:#003087;margin-bottom:6px;">${s.name}</div>
+      <div style="font-size:12px;color:#6B7A99;margin-bottom:18px;">Employee ID: ${s.userId||'—'} | ${s.branch||'Union Bank of India'}</div>
+      <div style="font-size:13px;color:#6B7A99;margin-bottom:6px;">has successfully completed</div>
+      <div style="font-size:15px;font-weight:700;color:#003087;margin-bottom:18px;">${s.program||'Training Program'}</div>
+      <div style="display:flex;justify-content:center;gap:24px;margin-bottom:20px;">
+        <div style="background:#EAF1FF;border-radius:10px;padding:12px 20px;"><div style="font-size:24px;font-weight:800;color:#003087;">${pts}</div><div style="font-size:10px;color:#6B7A99;">Total Points</div></div>
+        <div style="background:#FFFBE6;border-radius:10px;padding:12px 20px;"><div style="font-size:24px;">${b.icon}</div><div style="font-size:10px;color:#6B7A99;">${b.name} Badge</div></div>
+      </div>
+      <div style="display:flex;justify-content:space-between;padding-top:18px;border-top:1px solid #DDE4F0;">
+        <div><div style="font-size:11px;color:#6B7A99;">Date of Issue</div><div style="font-size:12px;font-weight:700;color:#003087;">${s.date||today}</div></div>
+        <div style="font-size:20px;">🏦</div>
+        <div style="text-align:right;"><div style="font-size:11px;color:#6B7A99;">Authorized by</div><div style="font-size:12px;font-weight:700;color:#003087;">HR Department</div></div>
+      </div>
+    </div><script>window.onload=function(){window.print();}<\/script></body></html>`);
+    w.document.close();
+  } catch(e){ alert('Could not load certificate data.'); }
+}
+
+// ─── WINNER POPUP ───────────────────────────────────────
 function showWinnerPopup(){
-  const top3=LEADERBOARD.slice(0,3);if(!top3.length)return;
-  const emp1=EMPLOYEES.find(e=>e.id===top3[0].uid);
+  const top3=LEADERBOARD.slice(0,3); if(!top3.length) return;
+  const emp1=getEmpById(top3[0].uid);
   document.getElementById('w-name1').textContent=top3[0].name;
-  document.getElementById('w-role1').textContent=(emp1?emp1.role:'Manager')+' • '+(emp1?emp1.branch:'Coimbatore');
+  document.getElementById('w-role1').textContent=(emp1?emp1.role:'Employee')+' • '+(emp1?emp1.branch:'Union Bank');
   document.getElementById('w-pts1').textContent=top3[0].points;
   document.getElementById('w-badge1').textContent=getBadge(top3[0].points).icon;
   if(top3[1]){document.getElementById('w-name2').textContent=top3[1].name;document.getElementById('w-pts2').textContent=top3[1].points;}
@@ -471,11 +1252,11 @@ function showWinnerPopup(){
 function closeWinner(){document.getElementById('winner-overlay').style.display='none';stopConfetti();}
 
 function showCertificate(rankIndex){
-  const emp=LEADERBOARD[rankIndex];if(!emp)return;
-  const empData=EMPLOYEES.find(e=>e.id===emp.uid);
+  const emp=LEADERBOARD[rankIndex]; if(!emp) return;
+  const empData=getEmpById(emp.uid);
   const b=getBadge(emp.points);
   document.getElementById('cert-name').textContent=emp.name;
-  document.getElementById('cert-role').textContent=(empData?empData.role:'Manager')+' • '+(empData?empData.branch:'Coimbatore');
+  document.getElementById('cert-role').textContent=(empData?empData.role:'Employee')+' • '+(empData?empData.branch:'Union Bank');
   document.getElementById('cert-prog').textContent=emp.prog;
   document.getElementById('cert-pts').textContent=emp.points;
   document.getElementById('cert-rank').textContent='#'+(rankIndex+1);
@@ -490,243 +1271,116 @@ function printCert(){
   const cert=document.getElementById('certificate');
   const w=window.open('','_blank');
   w.document.write('<html><head><title>Certificate</title><style>body{margin:20px;font-family:sans-serif;}@media print{button{display:none}}</style></head><body>');
-  w.document.write(cert.outerHTML);w.document.write('</body></html>');w.document.close();w.print();
+  w.document.write(cert.outerHTML);
+  w.document.write('</body></html>');
+  w.document.close();
+  w.print();
 }
 
-let confettiRunning=false,confettiFrames=[];
+// ─── CONFETTI ───────────────────────────────────────────
+let confettiRunning=false, confettiFrames=[];
 function startConfetti(){
-  const canvas=document.getElementById('confetti-canvas');canvas.style.display='block';
-  const ctx=canvas.getContext('2d');canvas.width=window.innerWidth;canvas.height=window.innerHeight;confettiRunning=true;
+  const canvas=document.getElementById('confetti-canvas');
+  canvas.style.display='block';
+  const ctx=canvas.getContext('2d');
+  canvas.width=window.innerWidth; canvas.height=window.innerHeight;
+  confettiRunning=true;
   const colors=['#003087','#F5A623','#1A7F4B','#C0392B','#6B2FA0','#FFD700'];
   const pieces=Array.from({length:150},()=>({x:Math.random()*canvas.width,y:Math.random()*canvas.height-canvas.height,r:Math.random()*8+4,d:Math.random()*150,color:colors[Math.floor(Math.random()*colors.length)],tilt:Math.random()*10-10,tiltAngle:0,tiltSpeed:Math.random()*0.1+0.05}));
-  function draw(){if(!confettiRunning)return;ctx.clearRect(0,0,canvas.width,canvas.height);pieces.forEach(p=>{ctx.beginPath();ctx.lineWidth=p.r/2;ctx.strokeStyle=p.color;ctx.moveTo(p.x+p.tilt+p.r/4,p.y);ctx.lineTo(p.x+p.tilt,p.y+p.tilt+p.r/4);ctx.stroke();p.tiltAngle+=p.tiltSpeed;p.y+=(Math.cos(p.d)+3+p.r/2)/2;p.tilt=Math.sin(p.tiltAngle)*15;if(p.y>canvas.height){p.y=-20;p.x=Math.random()*canvas.width;}});confettiFrames.push(requestAnimationFrame(draw));}
-  draw();setTimeout(stopConfetti,5000);
+  function draw(){
+    if(!confettiRunning) return;
+    ctx.clearRect(0,0,canvas.width,canvas.height);
+    pieces.forEach(p=>{ctx.beginPath();ctx.lineWidth=p.r/2;ctx.strokeStyle=p.color;ctx.moveTo(p.x+p.tilt+p.r/4,p.y);ctx.lineTo(p.x+p.tilt,p.y+p.tilt+p.r/4);ctx.stroke();p.tiltAngle+=p.tiltSpeed;p.y+=(Math.cos(p.d)+3+p.r/2)/2;p.tilt=Math.sin(p.tiltAngle)*15;if(p.y>canvas.height){p.y=-20;p.x=Math.random()*canvas.width;}});
+    confettiFrames.push(requestAnimationFrame(draw));
+  }
+  draw();
+  setTimeout(stopConfetti,5000);
 }
-function stopConfetti(){confettiRunning=false;confettiFrames.forEach(f=>cancelAnimationFrame(f));confettiFrames=[];const canvas=document.getElementById('confetti-canvas');canvas.getContext('2d').clearRect(0,0,canvas.width,canvas.height);canvas.style.display='none';}
+function stopConfetti(){
+  confettiRunning=false;
+  confettiFrames.forEach(f=>cancelAnimationFrame(f));
+  confettiFrames=[];
+  const canvas=document.getElementById('confetti-canvas');
+  canvas.getContext('2d').clearRect(0,0,canvas.width,canvas.height);
+  canvas.style.display='none';
+}
 
-function openModal(uid){const emp=EMPLOYEES.find(e=>e.id===uid);const logs=POINTS.filter(p=>p.uid===uid);if(!emp)return;document.getElementById('modal-name').textContent=emp.name;document.getElementById('modal-role').textContent=emp.role+' • '+emp.branch;const totalPts=logs.reduce((s,p)=>s+p.points,0);const avgImp=logs.length?(logs.reduce((s,p)=>s+p.impPct,0)/logs.length).toFixed(1):'0';const rank=LEADERBOARD.findIndex(p=>p.uid===uid)+1;const b=getBadge(totalPts),s=getStatus(totalPts);document.getElementById('modal-stats').innerHTML='<div class="modal-stat"><div class="modal-stat-label">Total Points</div><div class="modal-stat-value" style="color:'+ptsColor(totalPts)+'">'+totalPts+'</div></div><div class="modal-stat"><div class="modal-stat-label">Rank</div><div class="modal-stat-value">'+(rank===1?'⭐ #1':'#'+rank)+'</div></div><div class="modal-stat"><div class="modal-stat-label">Badge</div><div style="margin-top:8px"><span class="badge" style="background:'+b.bg+';color:'+b.color+'">'+b.icon+' '+b.name+'</span></div></div><div class="modal-stat"><div class="modal-stat-label">Status</div><div style="margin-top:8px"><span class="badge" style="background:'+s.bg+';color:'+s.color+'">'+s.label+'</span></div></div><div class="modal-stat"><div class="modal-stat-label">Avg Improvement</div><div class="modal-stat-value">'+avgImp+'%</div></div><div class="modal-stat"><div class="modal-stat-label">Trainings Attended</div><div class="modal-stat-value">'+logs.length+'</div></div>';const hist=document.getElementById('modal-history');hist.innerHTML='';if(!logs.length){hist.innerHTML='<tr><td colspan="7" style="text-align:center;color:#6B7A99;padding:20px">No training records found</td></tr>';}else{logs.forEach(p=>{const st=getStatus(p.points);hist.innerHTML+='<tr><td style="font-weight:600;font-size:12px">'+p.prog+'</td><td>'+p.comp+'%</td><td>'+p.preTotal+'</td><td>'+p.postTotal+'</td><td style="font-weight:700;color:'+(p.impPct>=0?'#1A7F4B':'#C0392B')+'">'+p.impPct.toFixed(1)+'%</td><td style="font-weight:800;color:'+ptsColor(p.points)+';font-size:15px">'+p.points+'</td><td><span class="badge" style="background:'+st.bg+';color:'+st.color+'">'+st.label+'</span></td></tr>';});}document.getElementById('modal-overlay').classList.add('open');}
-function closeModal(){document.getElementById('modal-overlay').classList.remove('open');}
-
-function updateDateTime(){const now=new Date();document.getElementById('live-date').textContent=now.toLocaleDateString('en-IN',{weekday:'long',year:'numeric',month:'long',day:'numeric'});document.getElementById('live-time').textContent=now.toLocaleTimeString('en-IN');}
-updateDateTime();setInterval(updateDateTime,1000);
-const avgPre3=POINTS.reduce((s,p)=>s+p.preTotal,0)/POINTS.length;
-const avgPost3=POINTS.reduce((s,p)=>s+p.postTotal,0)/POINTS.length;
-document.getElementById('t-eff').textContent=Math.round((avgPost3/avgPre3)*100)+'%';
-const rank1=LEADERBOARD[0];
-document.getElementById('rank1-name').textContent=rank1.name.split(' ').slice(0,2).join(' ');
-document.getElementById('rank1-pts').textContent='⭐ '+rank1.points+' points';
-document.getElementById('need-count').textContent=POINTS.filter(p=>p.points<500).length;
-const t5=document.getElementById('top5-body');
-LEADERBOARD.slice(0,5).forEach(p=>{const b=getBadge(p.points),s=getStatus(p.points);t5.innerHTML+='<tr onclick="openModal(\''+p.uid+'\')"><td><span style="font-weight:'+(p.rank===1?900:600)+';color:'+(p.rank===1?'#F5A623':'#6B7A99')+';font-size:'+(p.rank===1?'16px':'13px')+'">'+(p.rank===1?'⭐ 1':p.rank)+'</span></td><td><div style="display:flex;align-items:center;gap:9px"><div style="width:30px;height:30px;border-radius:50%;background:'+getAvatarColor(p.name)+';color:white;font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center">'+getInitials(p.name)+'</div><span style="font-weight:600">'+p.name+'</span></div></td><td>'+getBranch(p.uid)+'</td><td style="font-weight:800;color:'+ptsColor(p.points)+';font-size:15px">'+p.points+'</td><td><span class="badge" style="background:'+b.bg+';color:'+b.color+'">'+b.icon+' '+b.name+'</span></td><td><span class="badge" style="background:'+s.bg+';color:'+s.color+'">'+s.label+'</span></td></tr>';});
-
-const exc=POINTS.filter(p=>p.points>=750).length,good=POINTS.filter(p=>p.points>=500&&p.points<750).length,need=POINTS.filter(p=>p.points<500).length;
-new Chart(document.getElementById('c-perf'),{type:'doughnut',data:{labels:['Excellent (≥750)','Good (500-749)','Needs Improvement (<500)'],datasets:[{data:[exc,good,need],backgroundColor:['#1A7F4B','#1A56DB','#C0392B'],borderWidth:3,borderColor:'#fff'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{font:{size:11},boxWidth:12}}}}});
-const cbeAvg=Math.round(POINTS.filter(p=>getBranch(p.uid)==='Coimbatore').reduce((s,p)=>s+p.points,0)/POINTS.filter(p=>getBranch(p.uid)==='Coimbatore').length);
-const dhmAvg=Math.round(POINTS.filter(p=>getBranch(p.uid)==='Dharmapuri').reduce((s,p)=>s+p.points,0)/POINTS.filter(p=>getBranch(p.uid)==='Dharmapuri').length);
-new Chart(document.getElementById('c-br'),{type:'bar',data:{labels:['Coimbatore','Dharmapuri'],datasets:[{data:[cbeAvg,dhmAvg],backgroundColor:['#003087','#F5A623'],borderRadius:8,barThickness:50}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,max:1000}}}});
-const badgeNames=['Platinum','Gold','Silver','Bronze','—'],badgeCounts=badgeNames.map(n=>POINTS.filter(p=>getBadge(p.points).name===n).length);
-new Chart(document.getElementById('c-badge'),{type:'bar',data:{labels:badgeNames,datasets:[{data:badgeCounts,backgroundColor:['#3A3AFF','#B8860B','#546E7A','#A0522D','#999'],borderRadius:6}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}}}});
-const avgComp=Math.round(POINTS.reduce((s,p)=>s+p.comp*2,0)/POINTS.length),avgPerf=Math.round(POINTS.reduce((s,p)=>s+Math.max(0,p.perfScore),0)/POINTS.length);
-new Chart(document.getElementById('c-comp'),{type:'bar',data:{labels:['Completion','Pre Score','Post Score','Perf Score'],datasets:[{data:[avgComp,Math.round(avgPre3),Math.round(avgPost3),avgPerf],backgroundColor:['#003087','#C0392B','#1A7F4B','#6B2FA0'],borderRadius:6}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}}}});
-const allBranches=[...new Set(EMPLOYEES.map(e=>e.branch))],branchAvgData=allBranches.map(br=>{const emps=POINTS.filter(p=>getBranch(p.uid)===br);return emps.length?Math.round(emps.reduce((s,p)=>s+p.points,0)/emps.length):0;});
-new Chart(document.getElementById('c-allbr'),{type:'bar',data:{labels:allBranches,datasets:[{data:branchAvgData,backgroundColor:['#003087','#F5A623','#1A7F4B'],borderRadius:8,barThickness:50}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,max:1000}}}});
-const sortedEmps=[...POINTS].sort((a,b)=>a.points-b.points);
-new Chart(document.getElementById('c-emp'),{type:'bar',data:{labels:sortedEmps.map(p=>p.name.split(' ')[0]),datasets:[{data:sortedEmps.map(p=>p.points),backgroundColor:sortedEmps.map(p=>p.points>=750?'#1A7F4B':p.points>=500?'#F5A623':'#C0392B'),borderRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:function(c){return sortedEmps[c.dataIndex].name+': '+c.raw+' pts';}}}},scales:{y:{beginAtZero:true,max:1000},x:{ticks:{font:{size:9},maxRotation:45}}}}});
-
-function buildLeaderboard(data){const tb=document.getElementById('lb-body');tb.innerHTML='';(data||LEADERBOARD).forEach(p=>{const b=getBadge(p.points),s=getStatus(p.points),pct=Math.min(100,Math.round(p.points/10)),barColor=p.points>=750?'#1A7F4B':p.points>=500?'#F5A623':'#C0392B';tb.innerHTML+='<tr onclick="openModal(\''+p.uid+'\')"><td><span style="font-weight:'+(p.rank===1?900:600)+';color:'+(p.rank===1?'#F5A623':'#6B7A99')+';font-size:'+(p.rank===1?'16px':'13px')+'">'+(p.rank===1?'⭐ 1':p.rank)+'</span></td><td><div style="display:flex;align-items:center;gap:9px"><div style="width:28px;height:28px;border-radius:50%;background:'+getAvatarColor(p.name)+';color:white;font-size:10px;font-weight:800;display:flex;align-items:center;justify-content:center">'+getInitials(p.name)+'</div><span style="font-weight:600">'+p.name+'</span></div></td><td>'+getBranch(p.uid)+'</td><td style="font-size:11px;color:#6B7A99">'+p.prog+'</td><td><span style="font-weight:800;color:'+ptsColor(p.points)+';font-size:15px">'+p.points+'</span></td><td><div style="display:flex;align-items:center;gap:7px"><div class="prog-wrap"><div class="prog-bar" style="background:'+barColor+';width:'+pct+'%"></div></div><span style="font-size:11px;color:#6B7A99">'+pct+'%</span></div></td><td><span class="badge" style="background:'+b.bg+';color:'+b.color+'">'+b.icon+' '+b.name+'</span></td><td style="font-weight:700;color:#003087">'+getLevel(p.points)+'</td><td><span class="badge" style="background:'+s.bg+';color:'+s.color+'">'+s.label+'</span></td><td><button onclick="event.stopPropagation();showCertificate('+(p.rank-1)+')" style="background:#EAF1FF;border:none;padding:4px 10px;border-radius:6px;font-size:11px;font-weight:700;cursor:pointer;color:#003087;">🎖️ Cert</button></td></tr>';});}
-function filterLeaderboard(){const q=document.getElementById('lb-search').value.toLowerCase(),br=document.getElementById('lb-branch').value,st=document.getElementById('lb-status').value;buildLeaderboard(LEADERBOARD.filter(p=>(!q||p.name.toLowerCase().includes(q))&&(!br||getBranch(p.uid)===br)&&(!st||getStatus(p.points).label===st)));}
-buildLeaderboard();
-
-function buildEmployees(data){const tb=document.getElementById('emp-body');tb.innerHTML='';(data||EMPLOYEES).forEach(u=>{const pl=POINTS.find(p=>p.uid===u.id),pts=pl?pl.points:0,b=getBadge(pts),s=getStatus(pts);tb.innerHTML+='<tr onclick="openModal(\''+u.id+'\')"><td><div style="display:flex;align-items:center;gap:9px"><div style="width:30px;height:30px;border-radius:50%;background:'+getAvatarColor(u.name)+';color:white;font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center">'+getInitials(u.name)+'</div><span style="font-weight:600">'+u.name+'</span></div></td><td style="font-size:12px;color:#6B7A99;font-family:monospace">'+u.id+'</td><td>'+u.branch+'</td><td style="font-size:12px;color:#6B7A99">'+u.role+'</td><td><span style="font-weight:800;color:'+ptsColor(pts)+';font-size:15px">'+pts+'</span></td><td><span class="badge" style="background:'+b.bg+';color:'+b.color+'">'+b.icon+' '+b.name+'</span></td><td><span class="badge" style="background:'+s.bg+';color:'+s.color+'">'+s.label+'</span></td></tr>';});}
-function filterEmployees(){const q=document.getElementById('emp-search').value.toLowerCase(),br=document.getElementById('emp-branch').value;buildEmployees(EMPLOYEES.filter(u=>(!q||u.name.toLowerCase().includes(q)||u.id.includes(q))&&(!br||u.branch===br)));}
-buildEmployees();
-
-const progs=[...new Set(POINTS.map(p=>p.prog))];
-const pt=document.getElementById('prog-body');
-const PROG_DEPT={'Sales & Marketing':'Marketing','Compliance & Regulatory Training':'Compliance','Credit Training':'Credit','Karmayogi':'HRM','Welcoming Program':'Operations','Customer Orientation & Excellence':'Operations','Welcomming wellness':'HRM','Risk Management in practice':'Risk','Basics of Credit Monitoring':'Credit','Comprehensive Operational Resource Efficiency':'Operations','Digital Banking':'Technology','Agriculture Lending Excellence (ALEXA)':'Credit','Appraisal tools':'Credit','Diagnosis & Cure of Stressed Assets':'Credit','Training in NRI Banking':'Operations','Pragati for Women Employees':'HRM','Training related to MS Office':'Technology'};
-progs.forEach(pg=>{const rows=POINTS.filter(p=>p.prog===pg);const avg2=Math.round(rows.reduce((s,p)=>s+p.points,0)/rows.length);const dept=PROG_DEPT[pg]||'General';pt.innerHTML+='<tr><td style="font-weight:600">'+pg+'</td><td><span class="badge" style="background:#EAF1FF;color:#1A56DB">'+dept+'</span></td><td>'+rows.length+'</td><td><span style="font-weight:700;color:'+ptsColor(avg2)+'">'+avg2+'</span></td><td style="font-weight:700;color:#003087">1000</td></tr>';});
-
-function buildPointsLog(data){const tb=document.getElementById('pl-body');tb.innerHTML='';(data||POINTS).forEach(p=>{const ic=p.impPct>=20?'#1A7F4B':p.impPct>=0?'#B8860B':'#C0392B';tb.innerHTML+='<tr onclick="openModal(\''+p.uid+'\')"><td style="font-weight:600">'+p.name+'</td><td style="font-size:11px;color:#6B7A99">'+p.prog+'</td><td>'+p.comp+'%</td><td>'+p.preTotal+'</td><td>'+p.postTotal+'</td><td style="font-weight:700;color:'+ic+'">'+p.impPct.toFixed(1)+'%</td><td>'+p.perfScore.toFixed(1)+'</td><td><span style="font-weight:800;color:'+ptsColor(p.points)+';font-size:15px">'+p.points+'</span></td></tr>';});}
-function filterPointsLog(){const q=document.getElementById('pl-search').value.toLowerCase();buildPointsLog(POINTS.filter(p=>p.name.toLowerCase().includes(q)||p.prog.toLowerCase().includes(q)));}
-buildPointsLog();
-
-function buildQuestionsForm(){const div=document.getElementById('questions-form');div.innerHTML='';for(let i=1;i<=5;i++){div.innerHTML+='<div style="background:#F8FBFF;border-radius:12px;border:1px solid #DDE4F0;padding:16px 20px;margin-bottom:14px;"><div style="font-size:12px;font-weight:700;color:#003087;margin-bottom:10px;">Question '+i+'</div><div class="form-group"><label class="form-label">Question Text</label><input type="text" class="form-input" id="q'+i+'-text" placeholder="Enter question '+i+'"></div><div class="form-row"><div class="form-group"><label class="form-label">Option A</label><input type="text" class="form-input" id="q'+i+'-a" placeholder="Option A"></div><div class="form-group"><label class="form-label">Option B</label><input type="text" class="form-input" id="q'+i+'-b" placeholder="Option B"></div></div><div class="form-row"><div class="form-group"><label class="form-label">Option C</label><input type="text" class="form-input" id="q'+i+'-c" placeholder="Option C"></div><div class="form-group"><label class="form-label">Option D</label><input type="text" class="form-input" id="q'+i+'-d" placeholder="Option D"></div></div><div class="form-group"><label class="form-label">Correct Answer</label><select class="form-select" id="q'+i+'-correct"><option value="0">Option A</option><option value="1">Option B</option><option value="2">Option C</option><option value="3">Option D</option></select></div></div>';}}
+// ─── ADD PROGRAM ────────────────────────────────────────
+function buildQuestionsForm(){
+  const div=document.getElementById('questions-form');
+  div.innerHTML='';
+  for(let i=1;i<=5;i++){
+    div.innerHTML+=`<div style="background:#F8FBFF;border-radius:12px;border:1px solid #DDE4F0;padding:16px 20px;margin-bottom:14px;">
+      <div style="font-size:12px;font-weight:700;color:#003087;margin-bottom:10px;">Question ${i}</div>
+      <div class="form-group"><label class="form-label">Question Text</label><input type="text" class="form-input" id="q${i}-text" placeholder="Enter question ${i}"></div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Option A</label><input type="text" class="form-input" id="q${i}-a" placeholder="Option A"></div>
+        <div class="form-group"><label class="form-label">Option B</label><input type="text" class="form-input" id="q${i}-b" placeholder="Option B"></div>
+      </div>
+      <div class="form-row">
+        <div class="form-group"><label class="form-label">Option C</label><input type="text" class="form-input" id="q${i}-c" placeholder="Option C"></div>
+        <div class="form-group"><label class="form-label">Option D</label><input type="text" class="form-input" id="q${i}-d" placeholder="Option D"></div>
+      </div>
+      <div class="form-group"><label class="form-label">Correct Answer</label><select class="form-select" id="q${i}-correct"><option value="0">Option A</option><option value="1">Option B</option><option value="2">Option C</option><option value="3">Option D</option></select></div>
+    </div>`;
+  }
+}
 buildQuestionsForm();
 
-function addProgram(){const name=document.getElementById('prog-name').value.trim();const dept=document.getElementById('prog-dept').value;const content=document.getElementById('prog-content').value.trim();const assignment=document.getElementById('prog-assignment').value.trim();if(!name||!dept||!content||!assignment){showAddMsg('Please fill all fields!','error');return;}const questions=[];for(let i=1;i<=5;i++){const q=document.getElementById('q'+i+'-text').value.trim();const a=document.getElementById('q'+i+'-a').value.trim();const b=document.getElementById('q'+i+'-b').value.trim();const c=document.getElementById('q'+i+'-c').value.trim();const d=document.getElementById('q'+i+'-d').value.trim();const correct=parseInt(document.getElementById('q'+i+'-correct').value);if(!q||!a||!b||!c||!d){showAddMsg('Please fill all 5 questions!','error');return;}questions.push({q,options:[a,b,c,d],correct});}const newProg={id:'TP'+Date.now(),name,dept,content,questions,assignment};const saved=JSON.parse(localStorage.getItem('added_programs')||'[]');saved.push(newProg);localStorage.setItem('added_programs',JSON.stringify(saved));showAddMsg('✅ Program added!','success');document.getElementById('prog-name').value='';document.getElementById('prog-dept').value='';document.getElementById('prog-content').value='';document.getElementById('prog-assignment').value='';buildQuestionsForm();loadAddedPrograms();}
-function showAddMsg(text,type){const el=document.getElementById('add-msg');el.textContent=text;el.style.display='block';el.style.background=type==='success'?'#E6F9F0':'#FFF0EE';el.style.color=type==='success'?'#1A7F4B':'#C0392B';}
-function loadAddedPrograms(){const saved=JSON.parse(localStorage.getItem('added_programs')||'[]');const div=document.getElementById('added-programs-list');if(!saved.length){div.innerHTML='<p style="color:#6B7A99;font-size:13px;">No programs added yet.</p>';return;}div.innerHTML='';saved.forEach(p=>{div.innerHTML+='<div style="background:#F8FBFF;border-radius:10px;border:1px solid #DDE4F0;padding:14px 18px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;"><div><div style="font-size:14px;font-weight:700;color:#003087">'+p.name+'</div><div style="font-size:12px;color:#6B7A99">'+p.dept+' Department</div></div><span style="background:#E6F9F0;color:#1A7F4B;padding:4px 12px;border-radius:20px;font-size:11px;font-weight:700;">✅ Active</span></div>';});}
-
-async function loadLiveScores(){document.getElementById('live-scores-loading').style.display='block';document.getElementById('live-scores-wrap').style.display='none';try{const res=await fetch(API+'?action=getScores');const data=await res.json();const tbody=document.getElementById('live-scores-body');tbody.innerHTML='';if(data.success&&data.data&&data.data.length){data.data.forEach(s=>{const assessScore=Number(s.assessScore)||0;const assignScore=Number(s.assignScore)||0;const totalPts=Number(s.totalPoints)||0;const displayPts=totalPts>500?totalPts:200+assessScore+assignScore;const b=getBadge(displayPts);tbody.innerHTML+='<tr><td style="font-weight:600">'+s.name+'</td><td style="font-size:11px;color:#6B7A99">'+s.program+'</td><td>'+(s.comp||100)+'%</td><td style="font-weight:600">'+assessScore+'</td><td style="font-weight:600">'+assignScore+'</td><td><span style="font-weight:800;color:'+ptsColor(displayPts)+';font-size:15px">'+displayPts+'</span></td><td><span class="badge" style="background:'+b.bg+';color:'+b.color+'">'+b.icon+' '+b.name+'</span></td><td style="font-size:11px;color:#6B7A99">'+(s.date||'—')+'</td></tr>';});}else{tbody.innerHTML='<tr><td colspan="8" style="text-align:center;color:#6B7A99;padding:20px">No scores yet!</td></tr>';}document.getElementById('live-scores-loading').style.display='none';document.getElementById('live-scores-wrap').style.display='block';}catch(err){document.getElementById('live-scores-loading').textContent='❌ Error loading scores.';}}
-
-const avgPre=Math.round(POINTS.reduce((s,p)=>s+p.preTotal,0)/POINTS.length);
-const avgPost=Math.round(POINTS.reduce((s,p)=>s+p.postTotal,0)/POINTS.length);
-const avgImpAll=(POINTS.reduce((s,p)=>s+p.impPct,0)/POINTS.length).toFixed(1);
-const eff=Math.round((avgPost/avgPre)*100);
-document.getElementById('sg-pre').textContent=avgPre;
-document.getElementById('sg-post').textContent=avgPost;
-document.getElementById('sg-imp').textContent=avgImpAll+'%';
-document.getElementById('sg-eff').textContent=eff+'%';
-const skills=[{name:'Accuracy in Documentation',pre:Math.round(POINTS.reduce((s,p)=>s+p.preDoc,0)/POINTS.length),post:Math.round(POINTS.reduce((s,p)=>s+p.postDoc,0)/POINTS.length)},{name:'Customer Handling Quality',pre:Math.round(POINTS.reduce((s,p)=>s+p.preCust,0)/POINTS.length),post:Math.round(POINTS.reduce((s,p)=>s+p.postCust,0)/POINTS.length)},{name:'Compliance Adherence',pre:Math.round(POINTS.reduce((s,p)=>s+p.preComp,0)/POINTS.length),post:Math.round(POINTS.reduce((s,p)=>s+p.postComp,0)/POINTS.length)},{name:'Timeliness / Productivity',pre:Math.round(POINTS.reduce((s,p)=>s+p.preProd,0)/POINTS.length),post:Math.round(POINTS.reduce((s,p)=>s+p.postProd,0)/POINTS.length)},{name:'Knowledge Application',pre:Math.round(POINTS.reduce((s,p)=>s+p.preKnow,0)/POINTS.length),post:Math.round(POINTS.reduce((s,p)=>s+p.postKnow,0)/POINTS.length)}];
-const gg=document.getElementById('gap-grid');
-skills.forEach(sk=>{const gap=sk.post-sk.pre,prePct=Math.round(sk.pre/20*100),postPct=Math.round(sk.post/20*100);gg.innerHTML+='<div class="gap-card"><div style="font-size:13px;font-weight:700;margin-bottom:10px">'+sk.name+'</div><div style="font-size:11px;color:#6B7A99;margin-bottom:4px">Pre: <strong>'+sk.pre+'/20</strong></div><div style="display:flex;align-items:center;gap:8px;margin-bottom:8px"><div class="prog-wrap" style="flex:1"><div class="prog-bar" style="background:#C0392B;width:'+prePct+'%"></div></div><span style="font-size:11px">'+prePct+'%</span></div><div style="font-size:11px;color:#6B7A99;margin-bottom:4px">Post: <strong>'+sk.post+'/20</strong></div><div style="display:flex;align-items:center;gap:8px;margin-bottom:8px"><div class="prog-wrap" style="flex:1"><div class="prog-bar" style="background:#1A7F4B;width:'+postPct+'%"></div></div><span style="font-size:11px">'+postPct+'%</span></div><div style="font-size:12px;font-weight:700;color:'+(gap>=0?'#1A7F4B':'#C0392B')+'">'+(gap>=0?'↑ +':'↓ ')+gap+' pts</div></div>';});
-function buildSGTable(data){const tb=document.getElementById('sg-emp-body');tb.innerHTML='';(data||POINTS).forEach(p=>{const s=getStatus(p.points),ic=p.impPct>=20?'#1A7F4B':p.impPct>=0?'#B8860B':'#C0392B';tb.innerHTML+='<tr onclick="openSGModal(\''+p.uid+'\')"><td><div style="display:flex;align-items:center;gap:9px"><div style="width:28px;height:28px;border-radius:50%;background:'+getAvatarColor(p.name)+';color:white;font-size:10px;font-weight:800;display:flex;align-items:center;justify-content:center">'+getInitials(p.name)+'</div><span style="font-weight:600;color:#003087;text-decoration:underline">'+p.name+'</span></div></td><td>'+getBranch(p.uid)+'</td><td>'+p.preTotal+'</td><td>'+p.postTotal+'</td><td style="font-weight:700;color:'+ic+'">'+p.impPct.toFixed(1)+'%</td><td style="font-weight:800;color:'+ptsColor(p.points)+'">'+p.points+'</td><td><span class="badge" style="background:'+getStatus(p.points).bg+';color:'+getStatus(p.points).color+'">'+getStatus(p.points).label+'</span></td></tr>';});}
-function filterSkillGap(){const q=document.getElementById('sg-search').value.toLowerCase();buildSGTable(POINTS.filter(p=>p.name.toLowerCase().includes(q)));}
-buildSGTable();
-const sgb=document.getElementById('sg-body');
-POINTS.filter(p=>p.points<500).sort((a,b)=>a.points-b.points).forEach(p=>{sgb.innerHTML+='<tr onclick="openSGModal(\''+p.uid+'\')"><td style="font-weight:600">'+p.name+'</td><td>'+getBranch(p.uid)+'</td><td style="font-size:11px;color:#6B7A99">'+p.prog+'</td><td><span style="font-weight:800;color:#C0392B">'+p.points+'</span></td><td style="color:'+(p.impPct>=0?'#1A7F4B':'#C0392B')+';font-weight:700">'+p.impPct.toFixed(1)+'%</td><td><span class="badge" style="background:#FFF0EE;color:#C0392B">Schedule Retraining</span></td></tr>';});
-function openSGModal(uid){const emp=EMPLOYEES.find(e=>e.id===uid),p=POINTS.find(x=>x.uid===uid);if(!emp||!p)return;document.getElementById('sg-modal-name').textContent=emp.name;document.getElementById('sg-modal-role').textContent=emp.role+' • '+emp.branch+' • '+p.prog;const s=getStatus(p.points),b=getBadge(p.points);document.getElementById('sg-modal-stats').innerHTML='<div class="modal-stat"><div class="modal-stat-label">Total Points</div><div class="modal-stat-value" style="color:'+ptsColor(p.points)+'">'+p.points+'</div></div><div class="modal-stat"><div class="modal-stat-label">Pre Score</div><div class="modal-stat-value">'+p.preTotal+'/100</div></div><div class="modal-stat"><div class="modal-stat-label">Post Score</div><div class="modal-stat-value" style="color:#1A7F4B">'+p.postTotal+'/100</div></div><div class="modal-stat"><div class="modal-stat-label">Improvement</div><div class="modal-stat-value" style="color:'+(p.impPct>=0?'#1A7F4B':'#C0392B')+'">'+p.impPct.toFixed(1)+'%</div></div><div class="modal-stat"><div class="modal-stat-label">Badge</div><div style="margin-top:8px"><span class="badge" style="background:'+b.bg+';color:'+b.color+'">'+b.icon+' '+b.name+'</span></div></div><div class="modal-stat"><div class="modal-stat-label">Status</div><div style="margin-top:8px"><span class="badge" style="background:'+s.bg+';color:'+s.color+'">'+s.label+'</span></div></div>';const skillData=[{name:'Accuracy in Documentation',pre:p.preDoc,post:p.postDoc},{name:'Customer Handling Quality',pre:p.preCust,post:p.postCust},{name:'Compliance Adherence',pre:p.preComp,post:p.postComp},{name:'Timeliness / Productivity',pre:p.preProd,post:p.postProd},{name:'Knowledge Application',pre:p.preKnow,post:p.postKnow}];const sb=document.getElementById('sg-skill-bars');sb.innerHTML='';skillData.forEach(sk=>{const gap=sk.post-sk.pre,prePct=Math.round(sk.pre/20*100),postPct=Math.round(sk.post/20*100),gapColor=gap>0?'#1A7F4B':gap<0?'#C0392B':'#B8860B',gapText=gap>0?'↑ Improved by '+gap:gap<0?'↓ Decreased by '+Math.abs(gap):'→ No Change';sb.innerHTML+='<div style="background:#F8FBFF;border-radius:10px;padding:16px 18px;margin-bottom:12px;border:1px solid #DDE4F0;"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;"><span style="font-size:13px;font-weight:700">'+sk.name+'</span><span style="font-size:12px;font-weight:700;color:'+gapColor+'">'+gapText+'</span></div><div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;"><span style="font-size:11px;color:#6B7A99;min-width:90px;">Pre-training:</span><div class="prog-wrap" style="flex:1"><div class="prog-bar" style="background:#C0392B;width:'+prePct+'%"></div></div><span style="font-size:12px;font-weight:700;min-width:50px;text-align:right">'+sk.pre+'/20</span></div><div style="display:flex;align-items:center;gap:10px;"><span style="font-size:11px;color:#6B7A99;min-width:90px;">Post-training:</span><div class="prog-wrap" style="flex:1"><div class="prog-bar" style="background:#1A7F4B;width:'+postPct+'%"></div></div><span style="font-size:12px;font-weight:700;min-width:50px;text-align:right">'+sk.post+'/20</span></div></div>';});document.getElementById('sg-modal').classList.add('open');}
-function closeSGModal(){document.getElementById('sg-modal').classList.remove('open');}
-
-const branches=[{name:'Coimbatore',col:'#003087'},{name:'Dharmapuri',col:'#F5A623'}];
-const bc=document.getElementById('branch-cards');const branchAvgs=[];
-branches.forEach(function(item){const name=item.name,col=item.col;const emps=POINTS.filter(p=>getBranch(p.uid)===name);if(!emps.length)return;const avg3=Math.round(emps.reduce((s,p)=>s+p.points,0)/emps.length);branchAvgs.push({name,avg:avg3,col});const exc2=emps.filter(p=>p.points>=750).length,good2=emps.filter(p=>p.points>=500&&p.points<750).length,need2=emps.filter(p=>p.points<500).length,ai=(emps.reduce((s,p)=>s+p.impPct,0)/emps.length).toFixed(1);bc.innerHTML+='<div class="branch-card"><div style="font-size:16px;font-weight:800;color:'+col+';margin-bottom:12px;display:flex;align-items:center;gap:8px"><span style="width:10px;height:10px;border-radius:50%;background:'+col+';display:inline-block"></span>'+name+' Branch</div><div class="branch-row"><span>Total Employees</span><span class="branch-val">'+emps.length+'</span></div><div class="branch-row"><span>Average Points</span><span class="branch-val" style="color:'+col+'">'+avg3+'</span></div><div class="branch-row"><span>Excellent Performers</span><span class="branch-val" style="color:#1A7F4B">'+exc2+'</span></div><div class="branch-row"><span>Good Performers</span><span class="branch-val" style="color:#1A56DB">'+good2+'</span></div><div class="branch-row"><span>Needs Improvement</span><span class="branch-val" style="color:#C0392B">'+need2+'</span></div><div class="branch-row"><span>Avg Improvement %</span><span class="branch-val">'+ai+'%</span></div></div>';});
-new Chart(document.getElementById('c-br2'),{type:'bar',data:{labels:branchAvgs.map(b=>b.name),datasets:[{data:branchAvgs.map(b=>b.avg),backgroundColor:branchAvgs.map(b=>b.col),borderRadius:10,barThickness:70}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,max:1000}}}});
-
-const top1=LEADERBOARD[0],needEmp=POINTS.filter(p=>p.points<500),bestImp=POINTS.reduce((a,b)=>a.impPct>b.impPct?a:b);
-const insights=[{icon:'🏆',title:'Who Are The Top Performers?',text:'<strong>'+top1.name+'</strong> leads with <strong>'+top1.points+' points</strong>. '+POINTS.filter(p=>p.points>=750).length+' out of 37 employees are Excellent Performers. These employees can be considered for <strong>promotions, mentoring roles, or incentives</strong>.'},{icon:'⚠️',title:'Who Needs Training Support?',text:'<strong>'+needEmp.length+' employees</strong> scored below 500 points. Key concern: <strong>Smitha Rakesh (109 pts)</strong> and <strong>Krishnan M (279 pts)</strong> show negative improvement. HR should schedule <strong>targeted re-training sessions</strong>.'},{icon:'📈',title:'Is Training Actually Working?',text:'Average improvement is <strong>'+avgImpAll+'%</strong>. Best performer was <strong>'+bestImp.name+' ('+bestImp.impPct.toFixed(1)+'% improvement)</strong>. Training programs are <strong>effective and impactful</strong>.'},{icon:'🎯',title:'Which Skills Need More Focus?',text:'Pre-training scores in <strong>Timeliness/Productivity</strong> and <strong>Knowledge Application</strong> are lower. HR should design <strong>focused workshops</strong> on these two skills.'},{icon:'🏢',title:'Branch-wise Insight',text:'Coimbatore has 35 employees with strong performance. Dharmapuri has 2 employees — <strong>P M Senthil Kumar (686 pts)</strong> and <strong>Vinoth Kumar (501 pts)</strong>. Consider <strong>cross-branch knowledge sharing</strong>.'},{icon:'🔄',title:'How Does Auto-Update Work?',text:'When employees complete training, their scores automatically save to Google Sheet. HR can view all live scores in the <strong>🔴 Live Scores</strong> page!'}];
-const ig=document.getElementById('insight-grid');
-insights.forEach(ins=>{ig.innerHTML+='<div class="insight-card"><div style="font-size:28px;margin-bottom:10px">'+ins.icon+'</div><div style="font-size:14px;font-weight:800;color:#003087;margin-bottom:6px">'+ins.title+'</div><div style="font-size:12.5px;color:#6B7A99;line-height:1.7">'+ins.text+'</div></div>';});
-const recs=[{title:'🥇 Reward Top 3 Performers',text:'RamaGopalan Kannan (802), Abhinav Mishra (798), Divya Jeesmol Jose (764) — Recommend for recognition awards and certificates.'},{title:'📋 Schedule Re-training for Bottom Performers',text:'Smitha Rakesh (109 pts) and Krishnan M (279 pts) show negative improvement. Schedule one-on-one coaching.'},{title:'💡 Focus Training on Weak Skills',text:'Design targeted workshops for Timeliness/Productivity and Knowledge Application.'},{title:'🏢 Cross-Branch Learning Program',text:'Organize knowledge sharing sessions between Coimbatore and Dharmapuri branches.'},{title:'📊 Use Points as Promotion Criteria',text:'Employees with Gold badge (750+ pts) and Level 4-5 are ready for higher responsibilities.'}];
-const rl=document.getElementById('rec-list');
-recs.forEach(r=>{rl.innerHTML+='<div class="rec-card"><div style="font-size:13px;font-weight:700;margin-bottom:4px">'+r.title+'</div><div style="font-size:12px;color:#6B7A99;line-height:1.6">'+r.text+'</div></div>';});
-
-function buildHRCertificates(){
-  const grid=document.getElementById('hr-cert-grid');
-  if(!grid)return;
-  grid.innerHTML='<div style="text-align:center;padding:20px;color:#6B7A99;">⏳ Loading certificates...</div>';
-  const today=new Date().toLocaleDateString('en-IN',{day:'numeric',month:'long',year:'numeric'});
-
-  // First show existing 37 employees from POINTS data
-  function renderCerts(liveData){
-    grid.innerHTML='';
-
-    // Show live completed employees from Google Sheet first
-    if(liveData&&liveData.length){
-      liveData.forEach(function(s,idx){
-        const assessScore=Number(s.assessScore)||0;
-        const assignScore=Number(s.assignScore)||0;
-        const totalPts=Number(s.totalPoints)||0;
-        const pts=totalPts>500?totalPts:200+assessScore+assignScore;
-        const b=getBadge(pts);
-        grid.innerHTML+='<div style="background:white;border-radius:16px;border:6px solid #1A7F4B;padding:28px 22px;text-align:center;position:relative;">'
-          +'<div style="position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,#1A7F4B,#2ECC71,#1A7F4B);border-radius:10px 10px 0 0;"></div>'
-          +'<div style="position:absolute;top:6px;right:8px;background:#1A7F4B;color:white;border-radius:20px;padding:2px 8px;font-size:9px;font-weight:700;">🔴 LIVE</div>'
-          +'<div style="position:absolute;top:8px;left:8px;width:24px;height:24px;border-top:3px solid #1A7F4B;border-left:3px solid #1A7F4B;border-radius:3px 0 0 0;"></div>'
-          +'<div style="position:absolute;bottom:8px;left:8px;width:24px;height:24px;border-bottom:3px solid #1A7F4B;border-left:3px solid #1A7F4B;border-radius:0 0 0 3px;"></div>'
-          +'<div style="position:absolute;bottom:8px;right:8px;width:24px;height:24px;border-bottom:3px solid #1A7F4B;border-right:3px solid #1A7F4B;border-radius:0 0 3px 0;"></div>'
-          +'<div style="font-size:28px;margin-bottom:4px;">🏦</div>'
-          +'<div style="font-size:10px;font-weight:700;color:#6B7A99;letter-spacing:2px;text-transform:uppercase;margin-bottom:4px;">Union Bank of India</div>'
-          +'<div style="font-size:15px;font-weight:800;color:#003087;margin-bottom:3px;">Certificate of Excellence</div>'
-          +'<div style="width:36px;height:2px;background:linear-gradient(90deg,#F5A623,#FFD700);margin:7px auto;border-radius:2px;"></div>'
-          +'<div style="font-size:11px;color:#6B7A99;margin-bottom:7px;">This is to certify that</div>'
-          +'<div style="font-size:17px;font-weight:800;color:#003087;margin-bottom:3px;">'+s.name+'</div>'
-          +'<div style="font-size:10px;color:#6B7A99;margin-bottom:12px;">Employee ID: '+(s.userId||'—')+'</div>'
-          +'<div style="font-size:10px;color:#6B7A99;margin-bottom:3px;">has successfully completed</div>'
-          +'<div style="font-size:12px;font-weight:700;color:#003087;margin-bottom:12px;">'+s.program+'</div>'
-          +'<div style="display:flex;justify-content:center;gap:10px;margin-bottom:12px;">'
-          +'<div style="background:#EAF1FF;border-radius:8px;padding:8px 12px;"><div style="font-size:16px;font-weight:800;color:'+ptsColor(pts)+';">'+pts+'</div><div style="font-size:9px;color:#6B7A99;">Points</div></div>'
-          +'<div style="background:#FFFBE6;border-radius:8px;padding:8px 12px;"><div style="font-size:16px;">'+b.icon+'</div><div style="font-size:9px;color:#6B7A99;">'+b.name+'</div></div>'
-          +'</div>'
-          +'<div style="display:flex;justify-content:space-between;padding-top:10px;border-top:1px solid #DDE4F0;font-size:9px;color:#6B7A99;margin-bottom:10px;">'
-          +'<div><div>Date</div><div style="font-weight:700;color:#003087;font-size:10px;">'+(s.date||today)+'</div></div>'
-          +'<div style="font-size:14px;">🏦</div>'
-          +'<div style="text-align:right;"><div>Authorized by</div><div style="font-weight:700;color:#003087;font-size:10px;">HR Dept</div></div>'
-          +'</div>'
-          +'<button onclick="printLiveCert('+idx+')" style="background:#1A7F4B;color:white;border:none;padding:8px 18px;border-radius:8px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;width:100%;">🖨️ Print / Download</button>'
-          +'</div>';
-      });
-    }
-
-    // Then show all 37 employees from POINTS data
-    LEADERBOARD.forEach(function(p,idx){
-      const emp=EMPLOYEES.find(e=>e.id===p.uid);
-      const b=getBadge(p.points);
-      grid.innerHTML+='<div style="background:white;border-radius:16px;border:6px solid #F5A623;padding:28px 22px;text-align:center;position:relative;">'
-        +'<div style="position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,#F5A623,#FFD700,#F5A623);border-radius:10px 10px 0 0;"></div>'
-        +'<div style="position:absolute;top:8px;left:8px;width:24px;height:24px;border-top:3px solid #F5A623;border-left:3px solid #F5A623;border-radius:3px 0 0 0;"></div>'
-        +'<div style="position:absolute;top:8px;right:8px;width:24px;height:24px;border-top:3px solid #F5A623;border-right:3px solid #F5A623;border-radius:0 3px 0 0;"></div>'
-        +'<div style="position:absolute;bottom:8px;left:8px;width:24px;height:24px;border-bottom:3px solid #F5A623;border-left:3px solid #F5A623;border-radius:0 0 0 3px;"></div>'
-        +'<div style="position:absolute;bottom:8px;right:8px;width:24px;height:24px;border-bottom:3px solid #F5A623;border-right:3px solid #F5A623;border-radius:0 0 3px 0;"></div>'
-        +'<div style="font-size:28px;margin-bottom:4px;">🏦</div>'
-        +'<div style="font-size:10px;font-weight:700;color:#6B7A99;letter-spacing:2px;text-transform:uppercase;margin-bottom:4px;">Union Bank of India</div>'
-        +'<div style="font-size:15px;font-weight:800;color:#003087;margin-bottom:3px;">Certificate of Excellence</div>'
-        +'<div style="width:36px;height:2px;background:linear-gradient(90deg,#F5A623,#FFD700);margin:7px auto;border-radius:2px;"></div>'
-        +'<div style="font-size:11px;color:#6B7A99;margin-bottom:7px;">This is to certify that</div>'
-        +'<div style="font-size:17px;font-weight:800;color:#003087;margin-bottom:3px;">'+p.name+'</div>'
-        +'<div style="font-size:10px;color:#6B7A99;margin-bottom:12px;">'+(emp?emp.role:'Manager')+' • '+(emp?emp.branch:'Coimbatore')+'</div>'
-        +'<div style="font-size:10px;color:#6B7A99;margin-bottom:3px;">has successfully completed</div>'
-        +'<div style="font-size:12px;font-weight:700;color:#003087;margin-bottom:12px;">'+p.prog+'</div>'
-        +'<div style="display:flex;justify-content:center;gap:10px;margin-bottom:12px;">'
-        +'<div style="background:#EAF1FF;border-radius:8px;padding:8px 12px;"><div style="font-size:16px;font-weight:800;color:'+ptsColor(p.points)+';">'+p.points+'</div><div style="font-size:9px;color:#6B7A99;">Points</div></div>'
-        +'<div style="background:#FFFBE6;border-radius:8px;padding:8px 12px;"><div style="font-size:16px;">'+b.icon+'</div><div style="font-size:9px;color:#6B7A99;">'+b.name+'</div></div>'
-        +'<div style="background:#E6F9F0;border-radius:8px;padding:8px 12px;"><div style="font-size:16px;font-weight:800;color:#003087;">#'+p.rank+'</div><div style="font-size:9px;color:#6B7A99;">Rank</div></div>'
-        +'</div>'
-        +'<div style="display:flex;justify-content:space-between;padding-top:10px;border-top:1px solid #DDE4F0;font-size:9px;color:#6B7A99;margin-bottom:10px;">'
-        +'<div><div>Date</div><div style="font-weight:700;color:#003087;font-size:10px;">'+today+'</div></div>'
-        +'<div style="font-size:14px;">🏦</div>'
-        +'<div style="text-align:right;"><div>Authorized by</div><div style="font-weight:700;color:#003087;font-size:10px;">HR Dept</div></div>'
-        +'</div>'
-        +'<button onclick="printHRCert('+idx+')" style="background:#003087;color:white;border:none;padding:8px 18px;border-radius:8px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;width:100%;">🖨️ Print / Download</button>'
-        +'</div>';
-    });
+function addProgram(){
+  const name=document.getElementById('prog-name').value.trim();
+  const dept=document.getElementById('prog-dept').value;
+  const content=document.getElementById('prog-content').value.trim();
+  const assignment=document.getElementById('prog-assignment').value.trim();
+  if(!name||!dept||!content||!assignment){showAddMsg('Please fill all fields!','error');return;}
+  const questions=[];
+  for(let i=1;i<=5;i++){
+    const q=document.getElementById('q'+i+'-text').value.trim();
+    const a=document.getElementById('q'+i+'-a').value.trim();
+    const b=document.getElementById('q'+i+'-b').value.trim();
+    const c=document.getElementById('q'+i+'-c').value.trim();
+    const d=document.getElementById('q'+i+'-d').value.trim();
+    const correct=parseInt(document.getElementById('q'+i+'-correct').value);
+    if(!q||!a||!b||!c||!d){showAddMsg('Please fill all 5 questions!','error');return;}
+    questions.push({q,options:[a,b,c,d],correct});
   }
-
-  // Fetch live scores from Google Sheet
-  fetch(API+'?action=getScores').then(r=>r.json()).then(data=>{
-    renderCerts(data.success&&data.data?data.data:[]);
-  }).catch(()=>{renderCerts([]);});
+  const newProg={id:'TP'+Date.now(),name,dept,content,questions,assignment};
+  const saved=JSON.parse(localStorage.getItem('added_programs')||'[]');
+  saved.push(newProg);
+  localStorage.setItem('added_programs',JSON.stringify(saved));
+  showAddMsg('✅ Program added! Employees will see it on next login.','success');
+  document.getElementById('prog-name').value='';
+  document.getElementById('prog-dept').value='';
+  document.getElementById('prog-content').value='';
+  document.getElementById('prog-assignment').value='';
+  buildQuestionsForm();
+  loadAddedPrograms();
 }
-
-function printHRCert(idx){
-  const p=LEADERBOARD[idx];const emp=EMPLOYEES.find(e=>e.id===p.uid);const b=getBadge(p.points);
-  const today=new Date().toLocaleDateString('en-IN',{day:'numeric',month:'long',year:'numeric'});
-  const w=window.open('','_blank');
-  w.document.write('<html><head><title>Certificate - '+p.name+'</title><style>body{margin:0;display:flex;justify-content:center;align-items:center;min-height:100vh;font-family:sans-serif;background:#f0f0f0;}.cert{background:white;border:8px solid #F5A623;padding:50px 40px;max-width:620px;width:100%;text-align:center;}@media print{body{background:white;}}</style></head><body><div class="cert">');
-  w.document.write('<div style="font-size:40px;margin-bottom:8px;">🏦</div>');
-  w.document.write('<div style="font-size:12px;font-weight:700;color:#6B7A99;letter-spacing:2px;text-transform:uppercase;margin-bottom:4px;">Union Bank of India</div>');
-  w.document.write('<div style="font-size:26px;font-weight:800;color:#003087;margin-bottom:4px;">Certificate of Excellence</div>');
-  w.document.write('<div style="width:50px;height:3px;background:linear-gradient(90deg,#F5A623,#FFD700);margin:10px auto;border-radius:2px;"></div>');
-  w.document.write('<div style="font-size:13px;color:#6B7A99;margin-bottom:14px;">This is to certify that</div>');
-  w.document.write('<div style="font-size:26px;font-weight:800;color:#003087;margin-bottom:6px;">'+p.name+'</div>');
-  w.document.write('<div style="font-size:12px;color:#6B7A99;margin-bottom:18px;">'+(emp?emp.role:'Manager')+' • '+(emp?emp.branch:'Coimbatore')+'</div>');
-  w.document.write('<div style="font-size:13px;color:#6B7A99;margin-bottom:6px;">has successfully completed</div>');
-  w.document.write('<div style="font-size:15px;font-weight:700;color:#003087;margin-bottom:18px;">'+p.prog+'</div>');
-  w.document.write('<div style="display:flex;justify-content:center;gap:24px;margin-bottom:20px;"><div style="background:#EAF1FF;border-radius:10px;padding:12px 20px;"><div style="font-size:24px;font-weight:800;color:#003087;">'+p.points+'</div><div style="font-size:10px;color:#6B7A99;">Total Points</div></div><div style="background:#FFFBE6;border-radius:10px;padding:12px 20px;"><div style="font-size:24px;">'+b.icon+'</div><div style="font-size:10px;color:#6B7A99;">'+b.name+' Badge</div></div><div style="background:#E6F9F0;border-radius:10px;padding:12px 20px;"><div style="font-size:24px;font-weight:800;color:#1A7F4B;">#'+p.rank+'</div><div style="font-size:10px;color:#6B7A99;">Overall Rank</div></div></div>');
-  w.document.write('<div style="display:flex;justify-content:space-between;padding-top:18px;border-top:1px solid #DDE4F0;"><div><div style="font-size:11px;color:#6B7A99;">Date of Issue</div><div style="font-size:12px;font-weight:700;color:#003087;">'+today+'</div></div><div style="font-size:20px;">🏦</div><div style="text-align:right;"><div style="font-size:11px;color:#6B7A99;">Authorized by</div><div style="font-size:12px;font-weight:700;color:#003087;">HR Department</div><div style="font-size:10px;color:#6B7A99;">Union Bank of India</div></div></div>');
-  w.document.write('</div><script>window.onload=function(){window.print();}<\/script></body></html>');
-  w.document.close();
+function showAddMsg(text,type){
+  const el=document.getElementById('add-msg');
+  el.textContent=text; el.style.display='block';
+  el.style.background=type==='success'?'#E6F9F0':'#FFF0EE';
+  el.style.color=type==='success'?'#1A7F4B':'#C0392B';
 }
-
-function printLiveCert(idx){
-  fetch(API+'?action=getScores').then(r=>r.json()).then(data=>{
-    if(!data.success||!data.data)return;
-    const s=data.data[idx];if(!s)return;
-    const assessScore=Number(s.assessScore)||0;
-    const assignScore=Number(s.assignScore)||0;
-    const totalPts=Number(s.totalPoints)||0;
-    const pts=totalPts>500?totalPts:200+assessScore+assignScore;
-    const b=getBadge(pts);
-    const today=new Date().toLocaleDateString('en-IN',{day:'numeric',month:'long',year:'numeric'});
-    const w=window.open('','_blank');
-    w.document.write('<html><head><title>Certificate - '+s.name+'</title><style>body{margin:0;display:flex;justify-content:center;align-items:center;min-height:100vh;font-family:sans-serif;background:#f0f0f0;}.cert{background:white;border:8px solid #1A7F4B;padding:50px 40px;max-width:620px;width:100%;text-align:center;}@media print{body{background:white;}}</style></head><body><div class="cert">');
-    w.document.write('<div style="font-size:40px;margin-bottom:8px;">🏦</div>');
-    w.document.write('<div style="font-size:12px;font-weight:700;color:#6B7A99;letter-spacing:2px;text-transform:uppercase;margin-bottom:4px;">Union Bank of India</div>');
-    w.document.write('<div style="font-size:26px;font-weight:800;color:#003087;margin-bottom:4px;">Certificate of Excellence</div>');
-    w.document.write('<div style="width:50px;height:3px;background:linear-gradient(90deg,#1A7F4B,#2ECC71);margin:10px auto;border-radius:2px;"></div>');
-    w.document.write('<div style="font-size:13px;color:#6B7A99;margin-bottom:14px;">This is to certify that</div>');
-    w.document.write('<div style="font-size:26px;font-weight:800;color:#003087;margin-bottom:6px;">'+s.name+'</div>');
-    w.document.write('<div style="font-size:12px;color:#6B7A99;margin-bottom:18px;">Employee ID: '+(s.userId||'—')+'</div>');
-    w.document.write('<div style="font-size:13px;color:#6B7A99;margin-bottom:6px;">has successfully completed</div>');
-    w.document.write('<div style="font-size:15px;font-weight:700;color:#003087;margin-bottom:18px;">'+s.program+'</div>');
-    w.document.write('<div style="display:flex;justify-content:center;gap:24px;margin-bottom:20px;"><div style="background:#EAF1FF;border-radius:10px;padding:12px 20px;"><div style="font-size:24px;font-weight:800;color:#003087;">'+pts+'</div><div style="font-size:10px;color:#6B7A99;">Total Points</div></div><div style="background:#FFFBE6;border-radius:10px;padding:12px 20px;"><div style="font-size:24px;">'+b.icon+'</div><div style="font-size:10px;color:#6B7A99;">'+b.name+' Badge</div></div></div>');
-    w.document.write('<div style="display:flex;justify-content:space-between;padding-top:18px;border-top:1px solid #DDE4F0;"><div><div style="font-size:11px;color:#6B7A99;">Date of Issue</div><div style="font-size:12px;font-weight:700;color:#003087;">'+(s.date||today)+'</div></div><div style="font-size:20px;">🏦</div><div style="text-align:right;"><div style="font-size:11px;color:#6B7A99;">Authorized by</div><div style="font-size:12px;font-weight:700;color:#003087;">HR Department</div><div style="font-size:10px;color:#6B7A99;">Union Bank of India</div></div></div>');
-    w.document.write('</div><script>window.onload=function(){window.print();}<\/script></body></html>');
-    w.document.close();
+function loadAddedPrograms(){
+  const saved=JSON.parse(localStorage.getItem('added_programs')||'[]');
+  const div=document.getElementById('added-programs-list');
+  if(!saved.length){div.innerHTML='<p style="color:#6B7A99;font-size:13px;">No programs added yet.</p>';return;}
+  div.innerHTML='';
+  saved.forEach(p=>{
+    div.innerHTML+=`<div style="background:#F8FBFF;border-radius:10px;border:1px solid #DDE4F0;padding:14px 18px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;">
+      <div><div style="font-size:14px;font-weight:700;color:#003087">${p.name}</div><div style="font-size:12px;color:#6B7A99">${p.dept} Department</div></div>
+      <span style="background:#E6F9F0;color:#1A7F4B;padding:4px 12px;border-radius:20px;font-size:11px;font-weight:700;">✅ Active</span>
+    </div>`;
   });
 }
 
-setTimeout(showWinnerPopup,1000);
+// ─── INIT: FETCH LIVE DATA THEN RENDER ──────────────────
+(async function init(){
+  await fetchAndMergeData();
+  buildDashboard();
+  setTimeout(showWinnerPopup, 1200);
+})();
 </script>
 </body>
 </html>
