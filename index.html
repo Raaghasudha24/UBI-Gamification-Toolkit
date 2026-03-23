@@ -88,7 +88,6 @@ tbody td { padding:11px 14px; vertical-align:middle; }
 </head>
 <body>
 
-<!-- SIDEBAR -->
 <div class="sidebar">
   <div class="sb-logo">
     <div style="font-size:15px;font-weight:800;color:white;margin-bottom:4px;">🏦 Union Bank of India</div>
@@ -113,7 +112,6 @@ tbody td { padding:11px 14px; vertical-align:middle; }
   <div class="sb-footer">Union Bank of India<br>Coimbatore & Dharmapuri<br>© 2024 HR Gamification Toolkit</div>
 </div>
 
-<!-- MAIN -->
 <div class="main">
   <div class="topbar">
     <div class="topbar-title" id="page-title">📊 HR Dashboard</div>
@@ -126,7 +124,7 @@ tbody td { padding:11px 14px; vertical-align:middle; }
   </div>
   <div class="content">
 
-    <!-- PAGE 1: DASHBOARD -->
+    <!-- DASHBOARD -->
     <div class="page active" id="page-dashboard">
       <div class="stat-grid">
         <div class="stat-card"><div class="stat-label">📅 Today</div><div style="font-size:16px;font-weight:800;color:#003087;margin-top:4px;" id="live-date">—</div><div style="font-size:13px;color:#1A7F4B;font-weight:600;margin-top:2px;" id="live-time">—</div></div>
@@ -150,30 +148,26 @@ tbody td { padding:11px 14px; vertical-align:middle; }
       </div>
     </div>
 
-    <!-- PAGE 2: LEADERBOARD -->
+    <!-- LEADERBOARD -->
     <div class="page" id="page-leaderboard">
       <div class="toolbar">
         <div class="search-wrap"><span class="search-icon">🔍</span><input type="text" id="lb-search" placeholder="Search employee..." oninput="filterLeaderboard()"></div>
         <select class="filter-select" id="lb-branch" onchange="filterLeaderboard()"><option value="">All Branches</option><option>Coimbatore</option><option>Dharmapuri</option></select>
         <select class="filter-select" id="lb-status" onchange="filterLeaderboard()"><option value="">All Status</option><option>Excellent Performer</option><option>Good Performer</option><option>Needs Improvement</option></select>
       </div>
-      <div class="card">
-        <div class="table-wrap"><table><thead><tr><th>Rank</th><th>Employee</th><th>Branch</th><th>Program</th><th>Points</th><th>Progress</th><th>Badge</th><th>Level</th><th>Status</th><th>Certificate</th></tr></thead><tbody id="lb-body"></tbody></table></div>
-      </div>
+      <div class="card"><div class="table-wrap"><table><thead><tr><th>Rank</th><th>Employee</th><th>Branch</th><th>Program</th><th>Points</th><th>Progress</th><th>Badge</th><th>Level</th><th>Status</th><th>Certificate</th></tr></thead><tbody id="lb-body"></tbody></table></div></div>
     </div>
 
-    <!-- PAGE 3: EMPLOYEES -->
+    <!-- EMPLOYEES -->
     <div class="page" id="page-employees">
       <div class="toolbar">
         <div class="search-wrap"><span class="search-icon">🔍</span><input type="text" id="emp-search" placeholder="Search employee..." oninput="filterEmployees()"></div>
         <select class="filter-select" id="emp-branch" onchange="filterEmployees()"><option value="">All Branches</option><option>Coimbatore</option><option>Dharmapuri</option></select>
       </div>
-      <div class="card">
-        <div class="table-wrap"><table><thead><tr><th>Employee</th><th>User ID</th><th>Branch</th><th>Role</th><th>Points</th><th>Badge</th><th>Status</th></tr></thead><tbody id="emp-body"></tbody></table></div>
-      </div>
+      <div class="card"><div class="table-wrap"><table><thead><tr><th>Employee</th><th>User ID</th><th>Branch</th><th>Role</th><th>Points</th><th>Badge</th><th>Status</th></tr></thead><tbody id="emp-body"></tbody></table></div></div>
     </div>
 
-    <!-- PAGE 4: PROGRAMS -->
+    <!-- PROGRAMS -->
     <div class="page" id="page-programs">
       <div class="card">
         <div style="font-size:15px;font-weight:800;margin-bottom:16px;">📚 Training Programs</div>
@@ -181,36 +175,32 @@ tbody td { padding:11px 14px; vertical-align:middle; }
       </div>
     </div>
 
-    <!-- PAGE 5: POINTS LOG -->
+    <!-- POINTS LOG -->
     <div class="page" id="page-pointslog">
-      <div class="toolbar"><div class="search-wrap"><span class="search-icon">🔍</span><input type="text" id="pl-search" placeholder="Search employee or program..." oninput="filterPointsLog()"></div></div>
-      <div class="card">
-        <div class="table-wrap"><table><thead><tr><th>Employee</th><th>Program</th><th>Completion %</th><th>Pre Score</th><th>Post Score</th><th>Improvement %</th><th>Perf Score</th><th>Total Points</th></tr></thead><tbody id="pl-body"></tbody></table></div>
-      </div>
+      <div class="toolbar"><div class="search-wrap"><span class="search-icon">🔍</span><input type="text" id="pl-search" placeholder="Search..." oninput="filterPointsLog()"></div></div>
+      <div class="card"><div class="table-wrap"><table><thead><tr><th>Employee</th><th>Program</th><th>Completion %</th><th>Pre Score</th><th>Post Score</th><th>Improvement %</th><th>Perf Score</th><th>Total Points</th></tr></thead><tbody id="pl-body"></tbody></table></div></div>
     </div>
 
-    <!-- PAGE 6: ADD PROGRAM -->
+    <!-- ADD PROGRAM -->
     <div class="page" id="page-addprogram">
       <div class="card">
         <div style="font-size:15px;font-weight:800;margin-bottom:6px;">➕ Add New Training Program</div>
-        <div style="font-size:12px;color:#6B7A99;margin-bottom:20px;">Fill the details below to add a new training program for employees</div>
+        <div style="font-size:12px;color:#6B7A99;margin-bottom:20px;">Fill the details below to add a new training program</div>
         <div class="form-row">
           <div class="form-group"><label class="form-label">Program Name</label><input type="text" class="form-input" id="prog-name" placeholder="e.g. Leadership Training"></div>
-          <div class="form-group"><label class="form-label">Department</label>
-            <select class="form-select" id="prog-dept"><option value="">Select Department</option><option>Operations</option><option>Compliance</option><option>Technology</option><option>Credit</option><option>Risk</option><option>HRM</option><option>Marketing</option><option>Finance</option></select>
-          </div>
+          <div class="form-group"><label class="form-label">Department</label><select class="form-select" id="prog-dept"><option value="">Select Department</option><option>Operations</option><option>Compliance</option><option>Technology</option><option>Credit</option><option>Risk</option><option>HRM</option><option>Marketing</option><option>Finance</option></select></div>
         </div>
-        <div class="form-group"><label class="form-label">Training Content</label><textarea class="form-input" id="prog-content" rows="5" placeholder="Enter the training content..."></textarea></div>
+        <div class="form-group"><label class="form-label">Training Content</label><textarea class="form-input" id="prog-content" rows="5" placeholder="Enter training content..."></textarea></div>
         <div style="font-size:13px;font-weight:700;color:#003087;margin-bottom:12px;">📝 Assessment Questions (5 Required)</div>
         <div id="questions-form"></div>
-        <div class="form-group"><label class="form-label">Assignment Question</label><textarea class="form-input" id="prog-assignment" rows="3" placeholder="Enter the assignment question..."></textarea></div>
+        <div class="form-group"><label class="form-label">Assignment Question</label><textarea class="form-input" id="prog-assignment" rows="3" placeholder="Enter assignment question..."></textarea></div>
         <div id="add-msg" style="display:none;padding:12px;border-radius:10px;margin-bottom:16px;font-size:13px;font-weight:600;"></div>
         <button class="btn-primary" onclick="addProgram()">➕ Add Training Program</button>
       </div>
       <div class="card"><div style="font-size:15px;font-weight:800;margin-bottom:16px;">📋 All Added Programs</div><div id="added-programs-list"></div></div>
     </div>
 
-    <!-- PAGE 7: SKILL GAP -->
+    <!-- SKILL GAP -->
     <div class="page" id="page-skillgap">
       <div class="stat-grid">
         <div class="stat-card"><div class="stat-label">Avg Pre-Training</div><div class="stat-value" id="sg-pre">—</div><div class="stat-sub">out of 100</div></div>
@@ -231,13 +221,13 @@ tbody td { padding:11px 14px; vertical-align:middle; }
       </div>
     </div>
 
-    <!-- PAGE 8: BRANCH -->
+    <!-- BRANCH -->
     <div class="page" id="page-branch">
       <div class="branch-grid" id="branch-cards"></div>
       <div class="chart-box"><div class="chart-title">Branch Performance Comparison</div><div style="position:relative;height:260px"><canvas id="c-br2"></canvas></div></div>
     </div>
 
-    <!-- PAGE 9: HR INSIGHTS -->
+    <!-- HR INSIGHTS -->
     <div class="page" id="page-insights">
       <div class="card" style="border-left:4px solid #003087;margin-bottom:20px;">
         <div style="font-size:15px;font-weight:800;margin-bottom:8px;">💡 What This Toolkit Tells HR</div>
@@ -248,7 +238,7 @@ tbody td { padding:11px 14px; vertical-align:middle; }
       <div id="rec-list"></div>
     </div>
 
-    <!-- PAGE 10: LIVE SCORES -->
+    <!-- LIVE SCORES -->
     <div class="page" id="page-livescores">
       <div class="live-score-card">
         <div style="font-size:16px;font-weight:800;margin-bottom:4px;">🔴 Live Employee Training Scores</div>
@@ -262,10 +252,10 @@ tbody td { padding:11px 14px; vertical-align:middle; }
       </div>
     </div>
 
-    <!-- PAGE 11: CERTIFICATES -->
+    <!-- CERTIFICATES -->
     <div class="page" id="page-certificates">
       <div style="font-size:16px;font-weight:800;color:#003087;margin-bottom:6px;">🎖️ All Employee Certificates</div>
-      <div style="font-size:12px;color:#6B7A99;margin-bottom:20px;">HR can view and print any employee certificate</div>
+      <div style="font-size:12px;color:#6B7A99;margin-bottom:20px;">HR can view and print any employee certificate. Click Print to download.</div>
       <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:20px;" id="hr-cert-grid"></div>
     </div>
 
@@ -310,20 +300,8 @@ tbody td { padding:11px 14px; vertical-align:middle; }
       </div>
     </div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:24px;">
-      <div style="background:#F8F9FF;border-radius:12px;padding:16px;border:2px solid #E0E7FF;">
-        <div style="font-size:20px;">🥈</div>
-        <div style="font-size:11px;color:#6B7A99;font-weight:700;margin-top:4px;">RANK 2</div>
-        <div style="font-size:14px;font-weight:800;color:#003087;margin-top:4px;" id="w-name2">—</div>
-        <div style="font-size:18px;font-weight:800;color:#546E7A;margin-top:4px;" id="w-pts2">—</div>
-        <div style="font-size:11px;color:#6B7A99;">Points</div>
-      </div>
-      <div style="background:#FFF8F0;border-radius:12px;padding:16px;border:2px solid #FFE0B2;">
-        <div style="font-size:20px;">🥉</div>
-        <div style="font-size:11px;color:#6B7A99;font-weight:700;margin-top:4px;">RANK 3</div>
-        <div style="font-size:14px;font-weight:800;color:#003087;margin-top:4px;" id="w-name3">—</div>
-        <div style="font-size:18px;font-weight:800;color:#A0522D;margin-top:4px;" id="w-pts3">—</div>
-        <div style="font-size:11px;color:#6B7A99;">Points</div>
-      </div>
+      <div style="background:#F8F9FF;border-radius:12px;padding:16px;border:2px solid #E0E7FF;"><div style="font-size:20px;">🥈</div><div style="font-size:11px;color:#6B7A99;font-weight:700;margin-top:4px;">RANK 2</div><div style="font-size:14px;font-weight:800;color:#003087;margin-top:4px;" id="w-name2">—</div><div style="font-size:18px;font-weight:800;color:#546E7A;margin-top:4px;" id="w-pts2">—</div><div style="font-size:11px;color:#6B7A99;">Points</div></div>
+      <div style="background:#FFF8F0;border-radius:12px;padding:16px;border:2px solid #FFE0B2;"><div style="font-size:20px;">🥉</div><div style="font-size:11px;color:#6B7A99;font-weight:700;margin-top:4px;">RANK 3</div><div style="font-size:14px;font-weight:800;color:#003087;margin-top:4px;" id="w-name3">—</div><div style="font-size:18px;font-weight:800;color:#A0522D;margin-top:4px;" id="w-pts3">—</div><div style="font-size:11px;color:#6B7A99;">Points</div></div>
     </div>
     <div style="display:flex;gap:12px;justify-content:center;">
       <button onclick="closeWinner()" style="background:#F0F4FA;border:none;padding:12px 24px;border-radius:10px;font-size:14px;font-weight:700;cursor:pointer;font-family:inherit;color:#003087;">Close</button>
@@ -345,9 +323,8 @@ tbody td { padding:11px 14px; vertical-align:middle; }
     <div style="font-size:14px;color:#6B7A99;margin-bottom:16px;">This is to certify that</div>
     <div style="font-size:28px;font-weight:800;color:#003087;margin-bottom:8px;" id="cert-name">—</div>
     <div style="font-size:13px;color:#6B7A99;margin-bottom:20px;" id="cert-role">—</div>
-    <div style="font-size:14px;color:#6B7A99;margin-bottom:8px;">has successfully completed the</div>
-    <div style="font-size:16px;font-weight:700;color:#003087;margin-bottom:16px;">HR Gamification Training Program</div>
-    <div style="font-size:14px;color:#6B7A99;margin-bottom:20px;">and achieved</div>
+    <div style="font-size:14px;color:#6B7A99;margin-bottom:8px;">has successfully completed</div>
+    <div style="font-size:16px;font-weight:700;color:#003087;margin-bottom:16px;" id="cert-prog">—</div>
     <div style="display:flex;justify-content:center;gap:30px;margin-bottom:24px;">
       <div style="background:#EAF1FF;border-radius:12px;padding:14px 24px;"><div style="font-size:28px;font-weight:800;color:#003087;" id="cert-pts">—</div><div style="font-size:11px;color:#6B7A99;margin-top:2px;">Total Points</div></div>
       <div style="background:#FFFBE6;border-radius:12px;padding:14px 24px;"><div style="font-size:28px;" id="cert-badge-icon">🥇</div><div style="font-size:11px;color:#6B7A99;margin-top:2px;" id="cert-badge-name">Gold Badge</div></div>
@@ -365,12 +342,10 @@ tbody td { padding:11px 14px; vertical-align:middle; }
   </div>
 </div>
 
-<!-- CONFETTI -->
 <canvas id="confetti-canvas" style="position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:998;display:none;"></canvas>
 
 <script>
 const API='https://script.google.com/macros/s/AKfycbzZwpWwyPtAXJvOMD9ic7xfH7-31uheI8g_gRnv2dmOtZ7vlY-0CpurCSr184JbKb0Mow/exec';
-
 function hrLogout(){localStorage.removeItem('ubi_user');window.location.href='login.html';}
 const _u=localStorage.getItem('ubi_user');
 if(!_u){window.location.href='login.html';}
@@ -466,11 +441,12 @@ function getBranch(uid){const e=EMPLOYEES.find(x=>x.id===uid);return e?e.branch:
 const LEADERBOARD=[...POINTS].sort((a,b)=>b.points-a.points).map((p,i)=>({...p,rank:i+1}));
 
 const PAGE_TITLES={dashboard:'📊 HR Dashboard',leaderboard:'🏆 Leaderboard',employees:'👥 Employee Directory',programs:'📚 Training Programs',pointslog:'📋 Points Log',addprogram:'➕ Add Training Program',skillgap:'🎯 Skill Gap Analysis',branch:'🏢 Branch Report',insights:'💡 HR Insights',livescores:'🔴 Live Employee Scores',certificates:'🎖️ Employee Certificates'};
+
 function showPage(id){
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
   document.getElementById('page-'+id).classList.add('active');
-  document.querySelector(`.nav-item[onclick="showPage('${id}')"]`).classList.add('active');
+  document.querySelector('.nav-item[onclick="showPage(\''+id+'\')"]').classList.add('active');
   document.getElementById('page-title').textContent=PAGE_TITLES[id];
   if(id==='livescores')loadLiveScores();
   if(id==='addprogram')loadAddedPrograms();
@@ -497,6 +473,7 @@ function showCertificate(rankIndex){
   const b=getBadge(emp.points);
   document.getElementById('cert-name').textContent=emp.name;
   document.getElementById('cert-role').textContent=(empData?empData.role:'Manager')+' • '+(empData?empData.branch:'Coimbatore');
+  document.getElementById('cert-prog').textContent=emp.prog;
   document.getElementById('cert-pts').textContent=emp.points;
   document.getElementById('cert-rank').textContent='#'+(rankIndex+1);
   document.getElementById('cert-badge-icon').textContent=b.icon;
@@ -515,9 +492,8 @@ function printCert(){
 
 let confettiRunning=false,confettiFrames=[];
 function startConfetti(){
-  const canvas=document.getElementById('confetti-canvas');
-  canvas.style.display='block';const ctx=canvas.getContext('2d');
-  canvas.width=window.innerWidth;canvas.height=window.innerHeight;confettiRunning=true;
+  const canvas=document.getElementById('confetti-canvas');canvas.style.display='block';
+  const ctx=canvas.getContext('2d');canvas.width=window.innerWidth;canvas.height=window.innerHeight;confettiRunning=true;
   const colors=['#003087','#F5A623','#1A7F4B','#C0392B','#6B2FA0','#FFD700'];
   const pieces=Array.from({length:150},()=>({x:Math.random()*canvas.width,y:Math.random()*canvas.height-canvas.height,r:Math.random()*8+4,d:Math.random()*150,color:colors[Math.floor(Math.random()*colors.length)],tilt:Math.random()*10-10,tiltAngle:0,tiltSpeed:Math.random()*0.1+0.05}));
   function draw(){if(!confettiRunning)return;ctx.clearRect(0,0,canvas.width,canvas.height);pieces.forEach(p=>{ctx.beginPath();ctx.lineWidth=p.r/2;ctx.strokeStyle=p.color;ctx.moveTo(p.x+p.tilt+p.r/4,p.y);ctx.lineTo(p.x+p.tilt,p.y+p.tilt+p.r/4);ctx.stroke();p.tiltAngle+=p.tiltSpeed;p.y+=(Math.cos(p.d)+3+p.r/2)/2;p.tilt=Math.sin(p.tiltAngle)*15;if(p.y>canvas.height){p.y=-20;p.x=Math.random()*canvas.width;}});confettiFrames.push(requestAnimationFrame(draw));}
@@ -525,7 +501,7 @@ function startConfetti(){
 }
 function stopConfetti(){confettiRunning=false;confettiFrames.forEach(f=>cancelAnimationFrame(f));confettiFrames=[];const canvas=document.getElementById('confetti-canvas');canvas.getContext('2d').clearRect(0,0,canvas.width,canvas.height);canvas.style.display='none';}
 
-function openModal(uid){const emp=EMPLOYEES.find(e=>e.id===uid);const logs=POINTS.filter(p=>p.uid===uid);if(!emp)return;document.getElementById('modal-name').textContent=emp.name;document.getElementById('modal-role').textContent=emp.role+' • '+emp.branch;const totalPts=logs.reduce((s,p)=>s+p.points,0);const avgImp=logs.length?(logs.reduce((s,p)=>s+p.impPct,0)/logs.length).toFixed(1):'0';const rank=LEADERBOARD.findIndex(p=>p.uid===uid)+1;const b=getBadge(totalPts),s=getStatus(totalPts);document.getElementById('modal-stats').innerHTML=`<div class="modal-stat"><div class="modal-stat-label">Total Points</div><div class="modal-stat-value" style="color:${ptsColor(totalPts)}">${totalPts}</div></div><div class="modal-stat"><div class="modal-stat-label">Rank</div><div class="modal-stat-value">${rank===1?'⭐ #1':'#'+rank}</div></div><div class="modal-stat"><div class="modal-stat-label">Badge</div><div style="margin-top:8px"><span class="badge" style="background:${b.bg};color:${b.color}">${b.icon} ${b.name}</span></div></div><div class="modal-stat"><div class="modal-stat-label">Status</div><div style="margin-top:8px"><span class="badge" style="background:${s.bg};color:${s.color}">${s.label}</span></div></div><div class="modal-stat"><div class="modal-stat-label">Avg Improvement</div><div class="modal-stat-value">${avgImp}%</div></div><div class="modal-stat"><div class="modal-stat-label">Trainings Attended</div><div class="modal-stat-value">${logs.length}</div></div>`;const hist=document.getElementById('modal-history');hist.innerHTML='';if(!logs.length){hist.innerHTML='<tr><td colspan="7" style="text-align:center;color:#6B7A99;padding:20px">No training records found</td></tr>';}else{logs.forEach(p=>{const st=getStatus(p.points);hist.innerHTML+=`<tr><td style="font-weight:600;font-size:12px">${p.prog}</td><td>${p.comp}%</td><td>${p.preTotal}</td><td>${p.postTotal}</td><td style="font-weight:700;color:${p.impPct>=0?'#1A7F4B':'#C0392B'}">${p.impPct.toFixed(1)}%</td><td style="font-weight:800;color:${ptsColor(p.points)};font-size:15px">${p.points}</td><td><span class="badge" style="background:${st.bg};color:${st.color}">${st.label}</span></td></tr>`;});}document.getElementById('modal-overlay').classList.add('open');}
+function openModal(uid){const emp=EMPLOYEES.find(e=>e.id===uid);const logs=POINTS.filter(p=>p.uid===uid);if(!emp)return;document.getElementById('modal-name').textContent=emp.name;document.getElementById('modal-role').textContent=emp.role+' • '+emp.branch;const totalPts=logs.reduce((s,p)=>s+p.points,0);const avgImp=logs.length?(logs.reduce((s,p)=>s+p.impPct,0)/logs.length).toFixed(1):'0';const rank=LEADERBOARD.findIndex(p=>p.uid===uid)+1;const b=getBadge(totalPts),s=getStatus(totalPts);document.getElementById('modal-stats').innerHTML='<div class="modal-stat"><div class="modal-stat-label">Total Points</div><div class="modal-stat-value" style="color:'+ptsColor(totalPts)+'">'+totalPts+'</div></div><div class="modal-stat"><div class="modal-stat-label">Rank</div><div class="modal-stat-value">'+(rank===1?'⭐ #1':'#'+rank)+'</div></div><div class="modal-stat"><div class="modal-stat-label">Badge</div><div style="margin-top:8px"><span class="badge" style="background:'+b.bg+';color:'+b.color+'">'+b.icon+' '+b.name+'</span></div></div><div class="modal-stat"><div class="modal-stat-label">Status</div><div style="margin-top:8px"><span class="badge" style="background:'+s.bg+';color:'+s.color+'">'+s.label+'</span></div></div><div class="modal-stat"><div class="modal-stat-label">Avg Improvement</div><div class="modal-stat-value">'+avgImp+'%</div></div><div class="modal-stat"><div class="modal-stat-label">Trainings Attended</div><div class="modal-stat-value">'+logs.length+'</div></div>';const hist=document.getElementById('modal-history');hist.innerHTML='';if(!logs.length){hist.innerHTML='<tr><td colspan="7" style="text-align:center;color:#6B7A99;padding:20px">No training records found</td></tr>';}else{logs.forEach(p=>{const st=getStatus(p.points);hist.innerHTML+='<tr><td style="font-weight:600;font-size:12px">'+p.prog+'</td><td>'+p.comp+'%</td><td>'+p.preTotal+'</td><td>'+p.postTotal+'</td><td style="font-weight:700;color:'+(p.impPct>=0?'#1A7F4B':'#C0392B')+'">'+p.impPct.toFixed(1)+'%</td><td style="font-weight:800;color:'+ptsColor(p.points)+';font-size:15px">'+p.points+'</td><td><span class="badge" style="background:'+st.bg+';color:'+st.color+'">'+st.label+'</span></td></tr>';});}document.getElementById('modal-overlay').classList.add('open');}
 function closeModal(){document.getElementById('modal-overlay').classList.remove('open');}
 
 function updateDateTime(){const now=new Date();document.getElementById('live-date').textContent=now.toLocaleDateString('en-IN',{weekday:'long',year:'numeric',month:'long',day:'numeric'});document.getElementById('live-time').textContent=now.toLocaleTimeString('en-IN');}
@@ -538,7 +514,7 @@ document.getElementById('rank1-name').textContent=rank1.name.split(' ').slice(0,
 document.getElementById('rank1-pts').textContent='⭐ '+rank1.points+' points';
 document.getElementById('need-count').textContent=POINTS.filter(p=>p.points<500).length;
 const t5=document.getElementById('top5-body');
-LEADERBOARD.slice(0,5).forEach(p=>{const b=getBadge(p.points),s=getStatus(p.points);t5.innerHTML+=`<tr onclick="openModal('${p.uid}')"><td><span style="font-weight:${p.rank===1?900:600};color:${p.rank===1?'#F5A623':'#6B7A99'};font-size:${p.rank===1?'16px':'13px'}">${p.rank===1?'⭐ 1':p.rank}</span></td><td><div style="display:flex;align-items:center;gap:9px"><div style="width:30px;height:30px;border-radius:50%;background:${getAvatarColor(p.name)};color:white;font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center">${getInitials(p.name)}</div><span style="font-weight:600">${p.name}</span></div></td><td>${getBranch(p.uid)}</td><td style="font-weight:800;color:${ptsColor(p.points)};font-size:15px">${p.points}</td><td><span class="badge" style="background:${b.bg};color:${b.color}">${b.icon} ${b.name}</span></td><td><span class="badge" style="background:${s.bg};color:${s.color}">${s.label}</span></td></tr>`;});
+LEADERBOARD.slice(0,5).forEach(p=>{const b=getBadge(p.points),s=getStatus(p.points);t5.innerHTML+='<tr onclick="openModal(\''+p.uid+'\')"><td><span style="font-weight:'+(p.rank===1?900:600)+';color:'+(p.rank===1?'#F5A623':'#6B7A99')+';font-size:'+(p.rank===1?'16px':'13px')+'">'+(p.rank===1?'⭐ 1':p.rank)+'</span></td><td><div style="display:flex;align-items:center;gap:9px"><div style="width:30px;height:30px;border-radius:50%;background:'+getAvatarColor(p.name)+';color:white;font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center">'+getInitials(p.name)+'</div><span style="font-weight:600">'+p.name+'</span></div></td><td>'+getBranch(p.uid)+'</td><td style="font-weight:800;color:'+ptsColor(p.points)+';font-size:15px">'+p.points+'</td><td><span class="badge" style="background:'+b.bg+';color:'+b.color+'">'+b.icon+' '+b.name+'</span></td><td><span class="badge" style="background:'+s.bg+';color:'+s.color+'">'+s.label+'</span></td></tr>';});
 
 const exc=POINTS.filter(p=>p.points>=750).length,good=POINTS.filter(p=>p.points>=500&&p.points<750).length,need=POINTS.filter(p=>p.points<500).length;
 new Chart(document.getElementById('c-perf'),{type:'doughnut',data:{labels:['Excellent (≥750)','Good (500-749)','Needs Improvement (<500)'],datasets:[{data:[exc,good,need],backgroundColor:['#1A7F4B','#1A56DB','#C0392B'],borderWidth:3,borderColor:'#fff'}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom',labels:{font:{size:11},boxWidth:12}}}}});
@@ -554,31 +530,31 @@ new Chart(document.getElementById('c-allbr'),{type:'bar',data:{labels:allBranche
 const sortedEmps=[...POINTS].sort((a,b)=>a.points-b.points);
 new Chart(document.getElementById('c-emp'),{type:'bar',data:{labels:sortedEmps.map(p=>p.name.split(' ')[0]),datasets:[{data:sortedEmps.map(p=>p.points),backgroundColor:sortedEmps.map(p=>p.points>=750?'#1A7F4B':p.points>=500?'#F5A623':'#C0392B'),borderRadius:4}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false},tooltip:{callbacks:{label:function(c){return sortedEmps[c.dataIndex].name+': '+c.raw+' pts';}}}},scales:{y:{beginAtZero:true,max:1000},x:{ticks:{font:{size:9},maxRotation:45}}}}});
 
-function buildLeaderboard(data){const tb=document.getElementById('lb-body');tb.innerHTML='';(data||LEADERBOARD).forEach(p=>{const b=getBadge(p.points),s=getStatus(p.points),pct=Math.min(100,Math.round(p.points/10)),barColor=p.points>=750?'#1A7F4B':p.points>=500?'#F5A623':'#C0392B';tb.innerHTML+=`<tr onclick="openModal('${p.uid}')"><td><span style="font-weight:${p.rank===1?900:600};color:${p.rank===1?'#F5A623':'#6B7A99'};font-size:${p.rank===1?'16px':'13px'}">${p.rank===1?'⭐ 1':p.rank}</span></td><td><div style="display:flex;align-items:center;gap:9px"><div style="width:28px;height:28px;border-radius:50%;background:${getAvatarColor(p.name)};color:white;font-size:10px;font-weight:800;display:flex;align-items:center;justify-content:center">${getInitials(p.name)}</div><span style="font-weight:600">${p.name}</span></div></td><td>${getBranch(p.uid)}</td><td style="font-size:11px;color:#6B7A99">${p.prog}</td><td><span style="font-weight:800;color:${ptsColor(p.points)};font-size:15px">${p.points}</span></td><td><div style="display:flex;align-items:center;gap:7px"><div class="prog-wrap"><div class="prog-bar" style="background:${barColor};width:${pct}%"></div></div><span style="font-size:11px;color:#6B7A99">${pct}%</span></div></td><td><span class="badge" style="background:${b.bg};color:${b.color}">${b.icon} ${b.name}</span></td><td style="font-weight:700;color:#003087">${getLevel(p.points)}</td><td><span class="badge" style="background:${s.bg};color:${s.color}">${s.label}</span></td><td><button onclick="event.stopPropagation();showCertificate(${p.rank-1})" style="background:#EAF1FF;border:none;padding:4px 10px;border-radius:6px;font-size:11px;font-weight:700;cursor:pointer;color:#003087;">🎖️ Cert</button></td></tr>`;});}
+function buildLeaderboard(data){const tb=document.getElementById('lb-body');tb.innerHTML='';(data||LEADERBOARD).forEach(p=>{const b=getBadge(p.points),s=getStatus(p.points),pct=Math.min(100,Math.round(p.points/10)),barColor=p.points>=750?'#1A7F4B':p.points>=500?'#F5A623':'#C0392B';tb.innerHTML+='<tr onclick="openModal(\''+p.uid+'\')"><td><span style="font-weight:'+(p.rank===1?900:600)+';color:'+(p.rank===1?'#F5A623':'#6B7A99')+';font-size:'+(p.rank===1?'16px':'13px')+'">'+(p.rank===1?'⭐ 1':p.rank)+'</span></td><td><div style="display:flex;align-items:center;gap:9px"><div style="width:28px;height:28px;border-radius:50%;background:'+getAvatarColor(p.name)+';color:white;font-size:10px;font-weight:800;display:flex;align-items:center;justify-content:center">'+getInitials(p.name)+'</div><span style="font-weight:600">'+p.name+'</span></div></td><td>'+getBranch(p.uid)+'</td><td style="font-size:11px;color:#6B7A99">'+p.prog+'</td><td><span style="font-weight:800;color:'+ptsColor(p.points)+';font-size:15px">'+p.points+'</span></td><td><div style="display:flex;align-items:center;gap:7px"><div class="prog-wrap"><div class="prog-bar" style="background:'+barColor+';width:'+pct+'%"></div></div><span style="font-size:11px;color:#6B7A99">'+pct+'%</span></div></td><td><span class="badge" style="background:'+b.bg+';color:'+b.color+'">'+b.icon+' '+b.name+'</span></td><td style="font-weight:700;color:#003087">'+getLevel(p.points)+'</td><td><span class="badge" style="background:'+s.bg+';color:'+s.color+'">'+s.label+'</span></td><td><button onclick="event.stopPropagation();showCertificate('+(p.rank-1)+')" style="background:#EAF1FF;border:none;padding:4px 10px;border-radius:6px;font-size:11px;font-weight:700;cursor:pointer;color:#003087;">🎖️ Cert</button></td></tr>';});}
 function filterLeaderboard(){const q=document.getElementById('lb-search').value.toLowerCase(),br=document.getElementById('lb-branch').value,st=document.getElementById('lb-status').value;buildLeaderboard(LEADERBOARD.filter(p=>(!q||p.name.toLowerCase().includes(q))&&(!br||getBranch(p.uid)===br)&&(!st||getStatus(p.points).label===st)));}
 buildLeaderboard();
 
-function buildEmployees(data){const tb=document.getElementById('emp-body');tb.innerHTML='';(data||EMPLOYEES).forEach(u=>{const pl=POINTS.find(p=>p.uid===u.id),pts=pl?pl.points:0,b=getBadge(pts),s=getStatus(pts);tb.innerHTML+=`<tr onclick="openModal('${u.id}')"><td><div style="display:flex;align-items:center;gap:9px"><div style="width:30px;height:30px;border-radius:50%;background:${getAvatarColor(u.name)};color:white;font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center">${getInitials(u.name)}</div><span style="font-weight:600">${u.name}</span></div></td><td style="font-size:12px;color:#6B7A99;font-family:monospace">${u.id}</td><td>${u.branch}</td><td style="font-size:12px;color:#6B7A99">${u.role}</td><td><span style="font-weight:800;color:${ptsColor(pts)};font-size:15px">${pts}</span></td><td><span class="badge" style="background:${b.bg};color:${b.color}">${b.icon} ${b.name}</span></td><td><span class="badge" style="background:${s.bg};color:${s.color}">${s.label}</span></td></tr>`;});}
+function buildEmployees(data){const tb=document.getElementById('emp-body');tb.innerHTML='';(data||EMPLOYEES).forEach(u=>{const pl=POINTS.find(p=>p.uid===u.id),pts=pl?pl.points:0,b=getBadge(pts),s=getStatus(pts);tb.innerHTML+='<tr onclick="openModal(\''+u.id+'\')"><td><div style="display:flex;align-items:center;gap:9px"><div style="width:30px;height:30px;border-radius:50%;background:'+getAvatarColor(u.name)+';color:white;font-size:11px;font-weight:800;display:flex;align-items:center;justify-content:center">'+getInitials(u.name)+'</div><span style="font-weight:600">'+u.name+'</span></div></td><td style="font-size:12px;color:#6B7A99;font-family:monospace">'+u.id+'</td><td>'+u.branch+'</td><td style="font-size:12px;color:#6B7A99">'+u.role+'</td><td><span style="font-weight:800;color:'+ptsColor(pts)+';font-size:15px">'+pts+'</span></td><td><span class="badge" style="background:'+b.bg+';color:'+b.color+'">'+b.icon+' '+b.name+'</span></td><td><span class="badge" style="background:'+s.bg+';color:'+s.color+'">'+s.label+'</span></td></tr>';});}
 function filterEmployees(){const q=document.getElementById('emp-search').value.toLowerCase(),br=document.getElementById('emp-branch').value;buildEmployees(EMPLOYEES.filter(u=>(!q||u.name.toLowerCase().includes(q)||u.id.includes(q))&&(!br||u.branch===br)));}
 buildEmployees();
 
 const progs=[...new Set(POINTS.map(p=>p.prog))];
 const pt=document.getElementById('prog-body');
 const PROG_DEPT={'Sales & Marketing':'Marketing','Compliance & Regulatory Training':'Compliance','Credit Training':'Credit','Karmayogi':'HRM','Welcoming Program':'Operations','Customer Orientation & Excellence':'Operations','Welcomming wellness':'HRM','Risk Management in practice':'Risk','Basics of Credit Monitoring':'Credit','Comprehensive Operational Resource Efficiency':'Operations','Digital Banking':'Technology','Agriculture Lending Excellence (ALEXA)':'Credit','Appraisal tools':'Credit','Diagnosis & Cure of Stressed Assets':'Credit','Training in NRI Banking':'Operations','Pragati for Women Employees':'HRM','Training related to MS Office':'Technology'};
-progs.forEach(pg=>{const rows=POINTS.filter(p=>p.prog===pg);const avg2=Math.round(rows.reduce((s,p)=>s+p.points,0)/rows.length);const dept=PROG_DEPT[pg]||'General';pt.innerHTML+=`<tr><td style="font-weight:600">${pg}</td><td><span class="badge" style="background:#EAF1FF;color:#1A56DB">${dept}</span></td><td>${rows.length}</td><td><span style="font-weight:700;color:${ptsColor(avg2)}">${avg2}</span></td><td style="font-weight:700;color:#003087">1000</td></tr>`;});
+progs.forEach(pg=>{const rows=POINTS.filter(p=>p.prog===pg);const avg2=Math.round(rows.reduce((s,p)=>s+p.points,0)/rows.length);const dept=PROG_DEPT[pg]||'General';pt.innerHTML+='<tr><td style="font-weight:600">'+pg+'</td><td><span class="badge" style="background:#EAF1FF;color:#1A56DB">'+dept+'</span></td><td>'+rows.length+'</td><td><span style="font-weight:700;color:'+ptsColor(avg2)+'">'+avg2+'</span></td><td style="font-weight:700;color:#003087">1000</td></tr>';});
 
-function buildPointsLog(data){const tb=document.getElementById('pl-body');tb.innerHTML='';(data||POINTS).forEach(p=>{const ic=p.impPct>=20?'#1A7F4B':p.impPct>=0?'#B8860B':'#C0392B';tb.innerHTML+=`<tr onclick="openModal('${p.uid}')"><td style="font-weight:600">${p.name}</td><td style="font-size:11px;color:#6B7A99">${p.prog}</td><td>${p.comp}%</td><td>${p.preTotal}</td><td>${p.postTotal}</td><td style="font-weight:700;color:${ic}">${p.impPct.toFixed(1)}%</td><td>${p.perfScore.toFixed(1)}</td><td><span style="font-weight:800;color:${ptsColor(p.points)};font-size:15px">${p.points}</span></td></tr>`;});}
+function buildPointsLog(data){const tb=document.getElementById('pl-body');tb.innerHTML='';(data||POINTS).forEach(p=>{const ic=p.impPct>=20?'#1A7F4B':p.impPct>=0?'#B8860B':'#C0392B';tb.innerHTML+='<tr onclick="openModal(\''+p.uid+'\')"><td style="font-weight:600">'+p.name+'</td><td style="font-size:11px;color:#6B7A99">'+p.prog+'</td><td>'+p.comp+'%</td><td>'+p.preTotal+'</td><td>'+p.postTotal+'</td><td style="font-weight:700;color:'+ic+'">'+p.impPct.toFixed(1)+'%</td><td>'+p.perfScore.toFixed(1)+'</td><td><span style="font-weight:800;color:'+ptsColor(p.points)+';font-size:15px">'+p.points+'</span></td></tr>';});}
 function filterPointsLog(){const q=document.getElementById('pl-search').value.toLowerCase();buildPointsLog(POINTS.filter(p=>p.name.toLowerCase().includes(q)||p.prog.toLowerCase().includes(q)));}
 buildPointsLog();
 
-function buildQuestionsForm(){const div=document.getElementById('questions-form');div.innerHTML='';for(let i=1;i<=5;i++){div.innerHTML+=`<div style="background:#F8FBFF;border-radius:12px;border:1px solid #DDE4F0;padding:16px 20px;margin-bottom:14px;"><div style="font-size:12px;font-weight:700;color:#003087;margin-bottom:10px;">Question ${i}</div><div class="form-group"><label class="form-label">Question Text</label><input type="text" class="form-input" id="q${i}-text" placeholder="Enter question ${i}"></div><div class="form-row"><div class="form-group"><label class="form-label">Option A</label><input type="text" class="form-input" id="q${i}-a" placeholder="Option A"></div><div class="form-group"><label class="form-label">Option B</label><input type="text" class="form-input" id="q${i}-b" placeholder="Option B"></div></div><div class="form-row"><div class="form-group"><label class="form-label">Option C</label><input type="text" class="form-input" id="q${i}-c" placeholder="Option C"></div><div class="form-group"><label class="form-label">Option D</label><input type="text" class="form-input" id="q${i}-d" placeholder="Option D"></div></div><div class="form-group"><label class="form-label">Correct Answer</label><select class="form-select" id="q${i}-correct"><option value="0">Option A</option><option value="1">Option B</option><option value="2">Option C</option><option value="3">Option D</option></select></div></div>`;}}
+function buildQuestionsForm(){const div=document.getElementById('questions-form');div.innerHTML='';for(let i=1;i<=5;i++){div.innerHTML+='<div style="background:#F8FBFF;border-radius:12px;border:1px solid #DDE4F0;padding:16px 20px;margin-bottom:14px;"><div style="font-size:12px;font-weight:700;color:#003087;margin-bottom:10px;">Question '+i+'</div><div class="form-group"><label class="form-label">Question Text</label><input type="text" class="form-input" id="q'+i+'-text" placeholder="Enter question '+i+'"></div><div class="form-row"><div class="form-group"><label class="form-label">Option A</label><input type="text" class="form-input" id="q'+i+'-a" placeholder="Option A"></div><div class="form-group"><label class="form-label">Option B</label><input type="text" class="form-input" id="q'+i+'-b" placeholder="Option B"></div></div><div class="form-row"><div class="form-group"><label class="form-label">Option C</label><input type="text" class="form-input" id="q'+i+'-c" placeholder="Option C"></div><div class="form-group"><label class="form-label">Option D</label><input type="text" class="form-input" id="q'+i+'-d" placeholder="Option D"></div></div><div class="form-group"><label class="form-label">Correct Answer</label><select class="form-select" id="q'+i+'-correct"><option value="0">Option A</option><option value="1">Option B</option><option value="2">Option C</option><option value="3">Option D</option></select></div></div>';}}
 buildQuestionsForm();
 
-function addProgram(){const name=document.getElementById('prog-name').value.trim();const dept=document.getElementById('prog-dept').value;const content=document.getElementById('prog-content').value.trim();const assignment=document.getElementById('prog-assignment').value.trim();if(!name||!dept||!content||!assignment){showAddMsg('Please fill all fields!','error');return;}const questions=[];for(let i=1;i<=5;i++){const q=document.getElementById('q'+i+'-text').value.trim();const a=document.getElementById('q'+i+'-a').value.trim();const b=document.getElementById('q'+i+'-b').value.trim();const c=document.getElementById('q'+i+'-c').value.trim();const d=document.getElementById('q'+i+'-d').value.trim();const correct=parseInt(document.getElementById('q'+i+'-correct').value);if(!q||!a||!b||!c||!d){showAddMsg('Please fill all 5 questions!','error');return;}questions.push({q,options:[a,b,c,d],correct});}const newProg={id:'TP'+Date.now(),name,dept,content,questions,assignment};const saved=JSON.parse(localStorage.getItem('added_programs')||'[]');saved.push(newProg);localStorage.setItem('added_programs',JSON.stringify(saved));showAddMsg('✅ Program added! Employees can now access it.','success');document.getElementById('prog-name').value='';document.getElementById('prog-dept').value='';document.getElementById('prog-content').value='';document.getElementById('prog-assignment').value='';buildQuestionsForm();loadAddedPrograms();}
+function addProgram(){const name=document.getElementById('prog-name').value.trim();const dept=document.getElementById('prog-dept').value;const content=document.getElementById('prog-content').value.trim();const assignment=document.getElementById('prog-assignment').value.trim();if(!name||!dept||!content||!assignment){showAddMsg('Please fill all fields!','error');return;}const questions=[];for(let i=1;i<=5;i++){const q=document.getElementById('q'+i+'-text').value.trim();const a=document.getElementById('q'+i+'-a').value.trim();const b=document.getElementById('q'+i+'-b').value.trim();const c=document.getElementById('q'+i+'-c').value.trim();const d=document.getElementById('q'+i+'-d').value.trim();const correct=parseInt(document.getElementById('q'+i+'-correct').value);if(!q||!a||!b||!c||!d){showAddMsg('Please fill all 5 questions!','error');return;}questions.push({q,options:[a,b,c,d],correct});}const newProg={id:'TP'+Date.now(),name,dept,content,questions,assignment};const saved=JSON.parse(localStorage.getItem('added_programs')||'[]');saved.push(newProg);localStorage.setItem('added_programs',JSON.stringify(saved));showAddMsg('✅ Program added!','success');document.getElementById('prog-name').value='';document.getElementById('prog-dept').value='';document.getElementById('prog-content').value='';document.getElementById('prog-assignment').value='';buildQuestionsForm();loadAddedPrograms();}
 function showAddMsg(text,type){const el=document.getElementById('add-msg');el.textContent=text;el.style.display='block';el.style.background=type==='success'?'#E6F9F0':'#FFF0EE';el.style.color=type==='success'?'#1A7F4B':'#C0392B';}
-function loadAddedPrograms(){const saved=JSON.parse(localStorage.getItem('added_programs')||'[]');const div=document.getElementById('added-programs-list');if(!saved.length){div.innerHTML='<p style="color:#6B7A99;font-size:13px;">No programs added yet.</p>';return;}div.innerHTML='';saved.forEach(p=>{div.innerHTML+=`<div style="background:#F8FBFF;border-radius:10px;border:1px solid #DDE4F0;padding:14px 18px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;"><div><div style="font-size:14px;font-weight:700;color:#003087">${p.name}</div><div style="font-size:12px;color:#6B7A99">${p.dept} Department</div></div><span style="background:#E6F9F0;color:#1A7F4B;padding:4px 12px;border-radius:20px;font-size:11px;font-weight:700;">✅ Active</span></div>`;});}
+function loadAddedPrograms(){const saved=JSON.parse(localStorage.getItem('added_programs')||'[]');const div=document.getElementById('added-programs-list');if(!saved.length){div.innerHTML='<p style="color:#6B7A99;font-size:13px;">No programs added yet.</p>';return;}div.innerHTML='';saved.forEach(p=>{div.innerHTML+='<div style="background:#F8FBFF;border-radius:10px;border:1px solid #DDE4F0;padding:14px 18px;margin-bottom:10px;display:flex;justify-content:space-between;align-items:center;"><div><div style="font-size:14px;font-weight:700;color:#003087">'+p.name+'</div><div style="font-size:12px;color:#6B7A99">'+p.dept+' Department</div></div><span style="background:#E6F9F0;color:#1A7F4B;padding:4px 12px;border-radius:20px;font-size:11px;font-weight:700;">✅ Active</span></div>';});}
 
-async function loadLiveScores(){document.getElementById('live-scores-loading').style.display='block';document.getElementById('live-scores-wrap').style.display='none';try{const res=await fetch(API+'?action=getScores');const data=await res.json();const tbody=document.getElementById('live-scores-body');tbody.innerHTML='';if(data.success&&data.data&&data.data.length){data.data.forEach(s=>{const assessScore=Number(s.assessScore)||0;const assignScore=Number(s.assignScore)||0;const totalPts=Number(s.totalPoints)||0;const displayPts=totalPts>500?totalPts:200+assessScore+assignScore;const b=getBadge(displayPts);tbody.innerHTML+=`<tr><td style="font-weight:600">${s.name}</td><td style="font-size:11px;color:#6B7A99">${s.program}</td><td>${s.comp||100}%</td><td style="font-weight:600">${assessScore}</td><td style="font-weight:600">${assignScore}</td><td><span style="font-weight:800;color:${ptsColor(displayPts)};font-size:15px">${displayPts}</span></td><td><span class="badge" style="background:${b.bg};color:${b.color}">${b.icon} ${b.name}</span></td><td style="font-size:11px;color:#6B7A99">${s.date||'—'}</td></tr>`;});}else{tbody.innerHTML='<tr><td colspan="8" style="text-align:center;color:#6B7A99;padding:20px">No scores yet!</td></tr>';}document.getElementById('live-scores-loading').style.display='none';document.getElementById('live-scores-wrap').style.display='block';}catch(err){document.getElementById('live-scores-loading').textContent='❌ Error loading scores.';}}
+async function loadLiveScores(){document.getElementById('live-scores-loading').style.display='block';document.getElementById('live-scores-wrap').style.display='none';try{const res=await fetch(API+'?action=getScores');const data=await res.json();const tbody=document.getElementById('live-scores-body');tbody.innerHTML='';if(data.success&&data.data&&data.data.length){data.data.forEach(s=>{const assessScore=Number(s.assessScore)||0;const assignScore=Number(s.assignScore)||0;const totalPts=Number(s.totalPoints)||0;const displayPts=totalPts>500?totalPts:200+assessScore+assignScore;const b=getBadge(displayPts);tbody.innerHTML+='<tr><td style="font-weight:600">'+s.name+'</td><td style="font-size:11px;color:#6B7A99">'+s.program+'</td><td>'+(s.comp||100)+'%</td><td style="font-weight:600">'+assessScore+'</td><td style="font-weight:600">'+assignScore+'</td><td><span style="font-weight:800;color:'+ptsColor(displayPts)+';font-size:15px">'+displayPts+'</span></td><td><span class="badge" style="background:'+b.bg+';color:'+b.color+'">'+b.icon+' '+b.name+'</span></td><td style="font-size:11px;color:#6B7A99">'+(s.date||'—')+'</td></tr>';});}else{tbody.innerHTML='<tr><td colspan="8" style="text-align:center;color:#6B7A99;padding:20px">No scores yet!</td></tr>';}document.getElementById('live-scores-loading').style.display='none';document.getElementById('live-scores-wrap').style.display='block';}catch(err){document.getElementById('live-scores-loading').textContent='❌ Error loading scores.';}}
 
 const avgPre=Math.round(POINTS.reduce((s,p)=>s+p.preTotal,0)/POINTS.length);
 const avgPost=Math.round(POINTS.reduce((s,p)=>s+p.postTotal,0)/POINTS.length);
@@ -590,82 +566,80 @@ document.getElementById('sg-imp').textContent=avgImpAll+'%';
 document.getElementById('sg-eff').textContent=eff+'%';
 const skills=[{name:'Accuracy in Documentation',pre:Math.round(POINTS.reduce((s,p)=>s+p.preDoc,0)/POINTS.length),post:Math.round(POINTS.reduce((s,p)=>s+p.postDoc,0)/POINTS.length)},{name:'Customer Handling Quality',pre:Math.round(POINTS.reduce((s,p)=>s+p.preCust,0)/POINTS.length),post:Math.round(POINTS.reduce((s,p)=>s+p.postCust,0)/POINTS.length)},{name:'Compliance Adherence',pre:Math.round(POINTS.reduce((s,p)=>s+p.preComp,0)/POINTS.length),post:Math.round(POINTS.reduce((s,p)=>s+p.postComp,0)/POINTS.length)},{name:'Timeliness / Productivity',pre:Math.round(POINTS.reduce((s,p)=>s+p.preProd,0)/POINTS.length),post:Math.round(POINTS.reduce((s,p)=>s+p.postProd,0)/POINTS.length)},{name:'Knowledge Application',pre:Math.round(POINTS.reduce((s,p)=>s+p.preKnow,0)/POINTS.length),post:Math.round(POINTS.reduce((s,p)=>s+p.postKnow,0)/POINTS.length)}];
 const gg=document.getElementById('gap-grid');
-skills.forEach(sk=>{const gap=sk.post-sk.pre,prePct=Math.round(sk.pre/20*100),postPct=Math.round(sk.post/20*100);gg.innerHTML+=`<div class="gap-card"><div style="font-size:13px;font-weight:700;margin-bottom:10px">${sk.name}</div><div style="font-size:11px;color:#6B7A99;margin-bottom:4px">Pre: <strong>${sk.pre}/20</strong></div><div style="display:flex;align-items:center;gap:8px;margin-bottom:8px"><div class="prog-wrap" style="flex:1"><div class="prog-bar" style="background:#C0392B;width:${prePct}%"></div></div><span style="font-size:11px">${prePct}%</span></div><div style="font-size:11px;color:#6B7A99;margin-bottom:4px">Post: <strong>${sk.post}/20</strong></div><div style="display:flex;align-items:center;gap:8px;margin-bottom:8px"><div class="prog-wrap" style="flex:1"><div class="prog-bar" style="background:#1A7F4B;width:${postPct}%"></div></div><span style="font-size:11px">${postPct}%</span></div><div style="font-size:12px;font-weight:700;color:${gap>=0?'#1A7F4B':'#C0392B'}">${gap>=0?'↑ +':'↓ '}${gap} pts</div></div>`;});
-function buildSGTable(data){const tb=document.getElementById('sg-emp-body');tb.innerHTML='';(data||POINTS).forEach(p=>{const s=getStatus(p.points),ic=p.impPct>=20?'#1A7F4B':p.impPct>=0?'#B8860B':'#C0392B';tb.innerHTML+=`<tr onclick="openSGModal('${p.uid}')"><td><div style="display:flex;align-items:center;gap:9px"><div style="width:28px;height:28px;border-radius:50%;background:${getAvatarColor(p.name)};color:white;font-size:10px;font-weight:800;display:flex;align-items:center;justify-content:center">${getInitials(p.name)}</div><span style="font-weight:600;color:#003087;text-decoration:underline">${p.name}</span></div></td><td>${getBranch(p.uid)}</td><td>${p.preTotal}</td><td>${p.postTotal}</td><td style="font-weight:700;color:${ic}">${p.impPct.toFixed(1)}%</td><td style="font-weight:800;color:${ptsColor(p.points)}">${p.points}</td><td><span class="badge" style="background:${getStatus(p.points).bg};color:${getStatus(p.points).color}">${getStatus(p.points).label}</span></td></tr>`;});}
+skills.forEach(sk=>{const gap=sk.post-sk.pre,prePct=Math.round(sk.pre/20*100),postPct=Math.round(sk.post/20*100);gg.innerHTML+='<div class="gap-card"><div style="font-size:13px;font-weight:700;margin-bottom:10px">'+sk.name+'</div><div style="font-size:11px;color:#6B7A99;margin-bottom:4px">Pre: <strong>'+sk.pre+'/20</strong></div><div style="display:flex;align-items:center;gap:8px;margin-bottom:8px"><div class="prog-wrap" style="flex:1"><div class="prog-bar" style="background:#C0392B;width:'+prePct+'%"></div></div><span style="font-size:11px">'+prePct+'%</span></div><div style="font-size:11px;color:#6B7A99;margin-bottom:4px">Post: <strong>'+sk.post+'/20</strong></div><div style="display:flex;align-items:center;gap:8px;margin-bottom:8px"><div class="prog-wrap" style="flex:1"><div class="prog-bar" style="background:#1A7F4B;width:'+postPct+'%"></div></div><span style="font-size:11px">'+postPct+'%</span></div><div style="font-size:12px;font-weight:700;color:'+(gap>=0?'#1A7F4B':'#C0392B')+'">'+(gap>=0?'↑ +':'↓ ')+gap+' pts</div></div>';});
+function buildSGTable(data){const tb=document.getElementById('sg-emp-body');tb.innerHTML='';(data||POINTS).forEach(p=>{const s=getStatus(p.points),ic=p.impPct>=20?'#1A7F4B':p.impPct>=0?'#B8860B':'#C0392B';tb.innerHTML+='<tr onclick="openSGModal(\''+p.uid+'\')"><td><div style="display:flex;align-items:center;gap:9px"><div style="width:28px;height:28px;border-radius:50%;background:'+getAvatarColor(p.name)+';color:white;font-size:10px;font-weight:800;display:flex;align-items:center;justify-content:center">'+getInitials(p.name)+'</div><span style="font-weight:600;color:#003087;text-decoration:underline">'+p.name+'</span></div></td><td>'+getBranch(p.uid)+'</td><td>'+p.preTotal+'</td><td>'+p.postTotal+'</td><td style="font-weight:700;color:'+ic+'">'+p.impPct.toFixed(1)+'%</td><td style="font-weight:800;color:'+ptsColor(p.points)+'">'+p.points+'</td><td><span class="badge" style="background:'+getStatus(p.points).bg+';color:'+getStatus(p.points).color+'">'+getStatus(p.points).label+'</span></td></tr>';});}
 function filterSkillGap(){const q=document.getElementById('sg-search').value.toLowerCase();buildSGTable(POINTS.filter(p=>p.name.toLowerCase().includes(q)));}
 buildSGTable();
 const sgb=document.getElementById('sg-body');
-POINTS.filter(p=>p.points<500).sort((a,b)=>a.points-b.points).forEach(p=>{sgb.innerHTML+=`<tr onclick="openSGModal('${p.uid}')"><td style="font-weight:600">${p.name}</td><td>${getBranch(p.uid)}</td><td style="font-size:11px;color:#6B7A99">${p.prog}</td><td><span style="font-weight:800;color:#C0392B">${p.points}</span></td><td style="color:${p.impPct>=0?'#1A7F4B':'#C0392B'};font-weight:700">${p.impPct.toFixed(1)}%</td><td><span class="badge" style="background:#FFF0EE;color:#C0392B">Schedule Retraining</span></td></tr>`;});
-function openSGModal(uid){const emp=EMPLOYEES.find(e=>e.id===uid),p=POINTS.find(x=>x.uid===uid);if(!emp||!p)return;document.getElementById('sg-modal-name').textContent=emp.name;document.getElementById('sg-modal-role').textContent=emp.role+' • '+emp.branch+' • '+p.prog;const s=getStatus(p.points),b=getBadge(p.points);document.getElementById('sg-modal-stats').innerHTML=`<div class="modal-stat"><div class="modal-stat-label">Total Points</div><div class="modal-stat-value" style="color:${ptsColor(p.points)}">${p.points}</div></div><div class="modal-stat"><div class="modal-stat-label">Pre Score</div><div class="modal-stat-value">${p.preTotal}/100</div></div><div class="modal-stat"><div class="modal-stat-label">Post Score</div><div class="modal-stat-value" style="color:#1A7F4B">${p.postTotal}/100</div></div><div class="modal-stat"><div class="modal-stat-label">Improvement</div><div class="modal-stat-value" style="color:${p.impPct>=0?'#1A7F4B':'#C0392B'}">${p.impPct.toFixed(1)}%</div></div><div class="modal-stat"><div class="modal-stat-label">Badge</div><div style="margin-top:8px"><span class="badge" style="background:${b.bg};color:${b.color}">${b.icon} ${b.name}</span></div></div><div class="modal-stat"><div class="modal-stat-label">Status</div><div style="margin-top:8px"><span class="badge" style="background:${s.bg};color:${s.color}">${s.label}</span></div></div>`;const skillData=[{name:'Accuracy in Documentation',pre:p.preDoc,post:p.postDoc},{name:'Customer Handling Quality',pre:p.preCust,post:p.postCust},{name:'Compliance Adherence',pre:p.preComp,post:p.postComp},{name:'Timeliness / Productivity',pre:p.preProd,post:p.postProd},{name:'Knowledge Application',pre:p.preKnow,post:p.postKnow}];const sb=document.getElementById('sg-skill-bars');sb.innerHTML='';skillData.forEach(sk=>{const gap=sk.post-sk.pre,prePct=Math.round(sk.pre/20*100),postPct=Math.round(sk.post/20*100),gapColor=gap>0?'#1A7F4B':gap<0?'#C0392B':'#B8860B',gapText=gap>0?'↑ Improved by '+gap:gap<0?'↓ Decreased by '+Math.abs(gap):'→ No Change';sb.innerHTML+=`<div style="background:#F8FBFF;border-radius:10px;padding:16px 18px;margin-bottom:12px;border:1px solid #DDE4F0;"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;"><span style="font-size:13px;font-weight:700">${sk.name}</span><span style="font-size:12px;font-weight:700;color:${gapColor}">${gapText}</span></div><div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;"><span style="font-size:11px;color:#6B7A99;min-width:90px;">Pre-training:</span><div class="prog-wrap" style="flex:1"><div class="prog-bar" style="background:#C0392B;width:${prePct}%"></div></div><span style="font-size:12px;font-weight:700;min-width:50px;text-align:right">${sk.pre}/20</span></div><div style="display:flex;align-items:center;gap:10px;"><span style="font-size:11px;color:#6B7A99;min-width:90px;">Post-training:</span><div class="prog-wrap" style="flex:1"><div class="prog-bar" style="background:#1A7F4B;width:${postPct}%"></div></div><span style="font-size:12px;font-weight:700;min-width:50px;text-align:right">${sk.post}/20</span></div></div>`;});document.getElementById('sg-modal').classList.add('open');}
+POINTS.filter(p=>p.points<500).sort((a,b)=>a.points-b.points).forEach(p=>{sgb.innerHTML+='<tr onclick="openSGModal(\''+p.uid+'\')"><td style="font-weight:600">'+p.name+'</td><td>'+getBranch(p.uid)+'</td><td style="font-size:11px;color:#6B7A99">'+p.prog+'</td><td><span style="font-weight:800;color:#C0392B">'+p.points+'</span></td><td style="color:'+(p.impPct>=0?'#1A7F4B':'#C0392B')+';font-weight:700">'+p.impPct.toFixed(1)+'%</td><td><span class="badge" style="background:#FFF0EE;color:#C0392B">Schedule Retraining</span></td></tr>';});
+function openSGModal(uid){const emp=EMPLOYEES.find(e=>e.id===uid),p=POINTS.find(x=>x.uid===uid);if(!emp||!p)return;document.getElementById('sg-modal-name').textContent=emp.name;document.getElementById('sg-modal-role').textContent=emp.role+' • '+emp.branch+' • '+p.prog;const s=getStatus(p.points),b=getBadge(p.points);document.getElementById('sg-modal-stats').innerHTML='<div class="modal-stat"><div class="modal-stat-label">Total Points</div><div class="modal-stat-value" style="color:'+ptsColor(p.points)+'">'+p.points+'</div></div><div class="modal-stat"><div class="modal-stat-label">Pre Score</div><div class="modal-stat-value">'+p.preTotal+'/100</div></div><div class="modal-stat"><div class="modal-stat-label">Post Score</div><div class="modal-stat-value" style="color:#1A7F4B">'+p.postTotal+'/100</div></div><div class="modal-stat"><div class="modal-stat-label">Improvement</div><div class="modal-stat-value" style="color:'+(p.impPct>=0?'#1A7F4B':'#C0392B')+'">'+p.impPct.toFixed(1)+'%</div></div><div class="modal-stat"><div class="modal-stat-label">Badge</div><div style="margin-top:8px"><span class="badge" style="background:'+b.bg+';color:'+b.color+'">'+b.icon+' '+b.name+'</span></div></div><div class="modal-stat"><div class="modal-stat-label">Status</div><div style="margin-top:8px"><span class="badge" style="background:'+s.bg+';color:'+s.color+'">'+s.label+'</span></div></div>';const skillData=[{name:'Accuracy in Documentation',pre:p.preDoc,post:p.postDoc},{name:'Customer Handling Quality',pre:p.preCust,post:p.postCust},{name:'Compliance Adherence',pre:p.preComp,post:p.postComp},{name:'Timeliness / Productivity',pre:p.preProd,post:p.postProd},{name:'Knowledge Application',pre:p.preKnow,post:p.postKnow}];const sb=document.getElementById('sg-skill-bars');sb.innerHTML='';skillData.forEach(sk=>{const gap=sk.post-sk.pre,prePct=Math.round(sk.pre/20*100),postPct=Math.round(sk.post/20*100),gapColor=gap>0?'#1A7F4B':gap<0?'#C0392B':'#B8860B',gapText=gap>0?'↑ Improved by '+gap:gap<0?'↓ Decreased by '+Math.abs(gap):'→ No Change';sb.innerHTML+='<div style="background:#F8FBFF;border-radius:10px;padding:16px 18px;margin-bottom:12px;border:1px solid #DDE4F0;"><div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;"><span style="font-size:13px;font-weight:700">'+sk.name+'</span><span style="font-size:12px;font-weight:700;color:'+gapColor+'">'+gapText+'</span></div><div style="display:flex;align-items:center;gap:10px;margin-bottom:8px;"><span style="font-size:11px;color:#6B7A99;min-width:90px;">Pre-training:</span><div class="prog-wrap" style="flex:1"><div class="prog-bar" style="background:#C0392B;width:'+prePct+'%"></div></div><span style="font-size:12px;font-weight:700;min-width:50px;text-align:right">'+sk.pre+'/20</span></div><div style="display:flex;align-items:center;gap:10px;"><span style="font-size:11px;color:#6B7A99;min-width:90px;">Post-training:</span><div class="prog-wrap" style="flex:1"><div class="prog-bar" style="background:#1A7F4B;width:'+postPct+'%"></div></div><span style="font-size:12px;font-weight:700;min-width:50px;text-align:right">'+sk.post+'/20</span></div></div>';});document.getElementById('sg-modal').classList.add('open');}
 function closeSGModal(){document.getElementById('sg-modal').classList.remove('open');}
 
 const branches=[{name:'Coimbatore',col:'#003087'},{name:'Dharmapuri',col:'#F5A623'}];
 const bc=document.getElementById('branch-cards');const branchAvgs=[];
-branches.forEach(({name,col})=>{const emps=POINTS.filter(p=>getBranch(p.uid)===name);if(!emps.length)return;const avg3=Math.round(emps.reduce((s,p)=>s+p.points,0)/emps.length);branchAvgs.push({name,avg:avg3,col});const exc2=emps.filter(p=>p.points>=750).length,good2=emps.filter(p=>p.points>=500&&p.points<750).length,need2=emps.filter(p=>p.points<500).length,ai=(emps.reduce((s,p)=>s+p.impPct,0)/emps.length).toFixed(1);bc.innerHTML+=`<div class="branch-card"><div style="font-size:16px;font-weight:800;color:${col};margin-bottom:12px;display:flex;align-items:center;gap:8px"><span style="width:10px;height:10px;border-radius:50%;background:${col};display:inline-block"></span>${name} Branch</div><div class="branch-row"><span>Total Employees</span><span class="branch-val">${emps.length}</span></div><div class="branch-row"><span>Average Points</span><span class="branch-val" style="color:${col}">${avg3}</span></div><div class="branch-row"><span>Excellent Performers</span><span class="branch-val" style="color:#1A7F4B">${exc2}</span></div><div class="branch-row"><span>Good Performers</span><span class="branch-val" style="color:#1A56DB">${good2}</span></div><div class="branch-row"><span>Needs Improvement</span><span class="branch-val" style="color:#C0392B">${need2}</span></div><div class="branch-row"><span>Avg Improvement %</span><span class="branch-val">${ai}%</span></div></div>`;});
+branches.forEach(function(item){const name=item.name,col=item.col;const emps=POINTS.filter(p=>getBranch(p.uid)===name);if(!emps.length)return;const avg3=Math.round(emps.reduce((s,p)=>s+p.points,0)/emps.length);branchAvgs.push({name,avg:avg3,col});const exc2=emps.filter(p=>p.points>=750).length,good2=emps.filter(p=>p.points>=500&&p.points<750).length,need2=emps.filter(p=>p.points<500).length,ai=(emps.reduce((s,p)=>s+p.impPct,0)/emps.length).toFixed(1);bc.innerHTML+='<div class="branch-card"><div style="font-size:16px;font-weight:800;color:'+col+';margin-bottom:12px;display:flex;align-items:center;gap:8px"><span style="width:10px;height:10px;border-radius:50%;background:'+col+';display:inline-block"></span>'+name+' Branch</div><div class="branch-row"><span>Total Employees</span><span class="branch-val">'+emps.length+'</span></div><div class="branch-row"><span>Average Points</span><span class="branch-val" style="color:'+col+'">'+avg3+'</span></div><div class="branch-row"><span>Excellent Performers</span><span class="branch-val" style="color:#1A7F4B">'+exc2+'</span></div><div class="branch-row"><span>Good Performers</span><span class="branch-val" style="color:#1A56DB">'+good2+'</span></div><div class="branch-row"><span>Needs Improvement</span><span class="branch-val" style="color:#C0392B">'+need2+'</span></div><div class="branch-row"><span>Avg Improvement %</span><span class="branch-val">'+ai+'%</span></div></div>';});
 new Chart(document.getElementById('c-br2'),{type:'bar',data:{labels:branchAvgs.map(b=>b.name),datasets:[{data:branchAvgs.map(b=>b.avg),backgroundColor:branchAvgs.map(b=>b.col),borderRadius:10,barThickness:70}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,max:1000}}}});
 
 const top1=LEADERBOARD[0],needEmp=POINTS.filter(p=>p.points<500),bestImp=POINTS.reduce((a,b)=>a.impPct>b.impPct?a:b);
-const insights=[{icon:'🏆',title:'Who Are The Top Performers?',text:`<strong>${top1.name}</strong> leads with <strong>${top1.points} points</strong>. ${POINTS.filter(p=>p.points>=750).length} out of 37 employees are Excellent Performers. These employees can be considered for <strong>promotions, mentoring roles, or incentives</strong>.`},{icon:'⚠️',title:'Who Needs Training Support?',text:`<strong>${needEmp.length} employees</strong> scored below 500 points. Key concern: <strong>Smitha Rakesh (109 pts)</strong> and <strong>Krishnan M (279 pts)</strong> show negative improvement. HR should schedule <strong>targeted re-training sessions</strong>.`},{icon:'📈',title:'Is Training Actually Working?',text:`Average improvement is <strong>${avgImpAll}%</strong>. Best performer was <strong>${bestImp.name} (${bestImp.impPct.toFixed(1)}% improvement)</strong>. Training programs are <strong>effective and impactful</strong>.`},{icon:'🎯',title:'Which Skills Need More Focus?',text:`Pre-training scores in <strong>Timeliness/Productivity</strong> and <strong>Knowledge Application</strong> are lower. HR should design <strong>focused workshops</strong> on these two skills.`},{icon:'🏢',title:'Branch-wise Insight',text:`Coimbatore has 35 employees with strong performance. Dharmapuri has 2 employees — <strong>P M Senthil Kumar (686 pts)</strong> and <strong>Vinoth Kumar (501 pts)</strong>. Consider <strong>cross-branch knowledge sharing</strong>.`},{icon:'🔄',title:'How Does Auto-Update Work?',text:`When employees complete training, their scores automatically save to Google Sheet. HR can view all live scores in the <strong>🔴 Live Scores</strong> page!`}];
+const insights=[{icon:'🏆',title:'Who Are The Top Performers?',text:'<strong>'+top1.name+'</strong> leads with <strong>'+top1.points+' points</strong>. '+POINTS.filter(p=>p.points>=750).length+' out of 37 employees are Excellent Performers. These employees can be considered for <strong>promotions, mentoring roles, or incentives</strong>.'},{icon:'⚠️',title:'Who Needs Training Support?',text:'<strong>'+needEmp.length+' employees</strong> scored below 500 points. Key concern: <strong>Smitha Rakesh (109 pts)</strong> and <strong>Krishnan M (279 pts)</strong> show negative improvement. HR should schedule <strong>targeted re-training sessions</strong>.'},{icon:'📈',title:'Is Training Actually Working?',text:'Average improvement is <strong>'+avgImpAll+'%</strong>. Best performer was <strong>'+bestImp.name+' ('+bestImp.impPct.toFixed(1)+'% improvement)</strong>. Training programs are <strong>effective and impactful</strong>.'},{icon:'🎯',title:'Which Skills Need More Focus?',text:'Pre-training scores in <strong>Timeliness/Productivity</strong> and <strong>Knowledge Application</strong> are lower. HR should design <strong>focused workshops</strong> on these two skills.'},{icon:'🏢',title:'Branch-wise Insight',text:'Coimbatore has 35 employees with strong performance. Dharmapuri has 2 employees — <strong>P M Senthil Kumar (686 pts)</strong> and <strong>Vinoth Kumar (501 pts)</strong>. Consider <strong>cross-branch knowledge sharing</strong>.'},{icon:'🔄',title:'How Does Auto-Update Work?',text:'When employees complete training, their scores automatically save to Google Sheet. HR can view all live scores in the <strong>🔴 Live Scores</strong> page!'}];
 const ig=document.getElementById('insight-grid');
-insights.forEach(ins=>{ig.innerHTML+=`<div class="insight-card"><div style="font-size:28px;margin-bottom:10px">${ins.icon}</div><div style="font-size:14px;font-weight:800;color:#003087;margin-bottom:6px">${ins.title}</div><div style="font-size:12.5px;color:#6B7A99;line-height:1.7">${ins.text}</div></div>`;});
+insights.forEach(ins=>{ig.innerHTML+='<div class="insight-card"><div style="font-size:28px;margin-bottom:10px">'+ins.icon+'</div><div style="font-size:14px;font-weight:800;color:#003087;margin-bottom:6px">'+ins.title+'</div><div style="font-size:12.5px;color:#6B7A99;line-height:1.7">'+ins.text+'</div></div>';});
 const recs=[{title:'🥇 Reward Top 3 Performers',text:'RamaGopalan Kannan (802), Abhinav Mishra (798), Divya Jeesmol Jose (764) — Recommend for recognition awards and certificates.'},{title:'📋 Schedule Re-training for Bottom Performers',text:'Smitha Rakesh (109 pts) and Krishnan M (279 pts) show negative improvement. Schedule one-on-one coaching.'},{title:'💡 Focus Training on Weak Skills',text:'Design targeted workshops for Timeliness/Productivity and Knowledge Application.'},{title:'🏢 Cross-Branch Learning Program',text:'Organize knowledge sharing sessions between Coimbatore and Dharmapuri branches.'},{title:'📊 Use Points as Promotion Criteria',text:'Employees with Gold badge (750+ pts) and Level 4-5 are ready for higher responsibilities.'}];
 const rl=document.getElementById('rec-list');
-recs.forEach(r=>{rl.innerHTML+=`<div class="rec-card"><div style="font-size:13px;font-weight:700;margin-bottom:4px">${r.title}</div><div style="font-size:12px;color:#6B7A99;line-height:1.6">${r.text}</div></div>`;});
+recs.forEach(r=>{rl.innerHTML+='<div class="rec-card"><div style="font-size:13px;font-weight:700;margin-bottom:4px">'+r.title+'</div><div style="font-size:12px;color:#6B7A99;line-height:1.6">'+r.text+'</div></div>';});
 
 function buildHRCertificates(){
   const grid=document.getElementById('hr-cert-grid');
   if(!grid)return;
   grid.innerHTML='';
   const today=new Date().toLocaleDateString('en-IN',{day:'numeric',month:'long',year:'numeric'});
-  LEADERBOARD.forEach((p,idx)=>{
+  LEADERBOARD.forEach(function(p,idx){
     const emp=EMPLOYEES.find(e=>e.id===p.uid);
     const b=getBadge(p.points);
-    grid.innerHTML+=`<div style="background:white;border-radius:16px;border:6px solid #F5A623;padding:28px 22px;text-align:center;position:relative;">
-      <div style="position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,#F5A623,#FFD700,#F5A623);border-radius:10px 10px 0 0;"></div>
-      <div style="position:absolute;top:8px;left:8px;width:24px;height:24px;border-top:3px solid #F5A623;border-left:3px solid #F5A623;border-radius:3px 0 0 0;"></div>
-      <div style="position:absolute;top:8px;right:8px;width:24px;height:24px;border-top:3px solid #F5A623;border-right:3px solid #F5A623;border-radius:0 3px 0 0;"></div>
-      <div style="position:absolute;bottom:8px;left:8px;width:24px;height:24px;border-bottom:3px solid #F5A623;border-left:3px solid #F5A623;border-radius:0 0 0 3px;"></div>
-      <div style="position:absolute;bottom:8px;right:8px;width:24px;height:24px;border-bottom:3px solid #F5A623;border-right:3px solid #F5A623;border-radius:0 0 3px 0;"></div>
-      <div style="font-size:10px;font-weight:700;color:#6B7A99;letter-spacing:2px;text-transform:uppercase;margin-bottom:4px;">Union Bank of India</div>
-      <div style="font-size:16px;font-weight:800;color:#003087;margin-bottom:3px;">Certificate of Excellence</div>
-      <div style="width:36px;height:2px;background:linear-gradient(90deg,#F5A623,#FFD700);margin:7px auto;border-radius:2px;"></div>
-      <div style="font-size:11px;color:#6B7A99;margin-bottom:7px;">This is to certify that</div>
-      <div style="font-size:17px;font-weight:800;color:#003087;margin-bottom:3px;">${p.name}</div>
-      <div style="font-size:10px;color:#6B7A99;margin-bottom:12px;">${emp?emp.role:'Manager'} • ${emp?emp.branch:'Coimbatore'}</div>
-      <div style="font-size:10px;color:#6B7A99;margin-bottom:3px;">has successfully attended</div>
-      <div style="font-size:12px;font-weight:700;color:#003087;margin-bottom:12px;">${p.prog}</div>
-      <div style="display:flex;justify-content:center;gap:10px;margin-bottom:12px;">
-        <div style="background:#EAF1FF;border-radius:8px;padding:8px 12px;"><div style="font-size:16px;font-weight:800;color:${ptsColor(p.points)};">${p.points}</div><div style="font-size:9px;color:#6B7A99;">Points</div></div>
-        <div style="background:#FFFBE6;border-radius:8px;padding:8px 12px;"><div style="font-size:16px;">${b.icon}</div><div style="font-size:9px;color:#6B7A99;">${b.name}</div></div>
-        <div style="background:#E6F9F0;border-radius:8px;padding:8px 12px;"><div style="font-size:16px;font-weight:800;color:#003087;">#${p.rank}</div><div style="font-size:9px;color:#6B7A99;">Rank</div></div>
-      </div>
-      <div style="display:flex;justify-content:space-between;padding-top:10px;border-top:1px solid #DDE4F0;font-size:9px;color:#6B7A99;margin-bottom:10px;">
-        <div><div>Date</div><div style="font-weight:700;color:#003087;font-size:10px;">${today}</div></div>
-        <div style="font-size:14px;">🏦</div>
-        <div style="text-align:right;"><div>Authorized by</div><div style="font-weight:700;color:#003087;font-size:10px;">HR Dept</div></div>
-      </div>
-      <button onclick="printHRCert(${idx})" style="background:#003087;color:white;border:none;padding:8px 18px;border-radius:8px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;width:100%;">🖨️ Print / Download</button>
-    </div>`;
+    grid.innerHTML+='<div style="background:white;border-radius:16px;border:6px solid #F5A623;padding:28px 22px;text-align:center;position:relative;">'
+      +'<div style="position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,#F5A623,#FFD700,#F5A623);border-radius:10px 10px 0 0;"></div>'
+      +'<div style="position:absolute;top:8px;left:8px;width:24px;height:24px;border-top:3px solid #F5A623;border-left:3px solid #F5A623;border-radius:3px 0 0 0;"></div>'
+      +'<div style="position:absolute;top:8px;right:8px;width:24px;height:24px;border-top:3px solid #F5A623;border-right:3px solid #F5A623;border-radius:0 3px 0 0;"></div>'
+      +'<div style="position:absolute;bottom:8px;left:8px;width:24px;height:24px;border-bottom:3px solid #F5A623;border-left:3px solid #F5A623;border-radius:0 0 0 3px;"></div>'
+      +'<div style="position:absolute;bottom:8px;right:8px;width:24px;height:24px;border-bottom:3px solid #F5A623;border-right:3px solid #F5A623;border-radius:0 0 3px 0;"></div>'
+      +'<div style="font-size:10px;font-weight:700;color:#6B7A99;letter-spacing:2px;text-transform:uppercase;margin-bottom:4px;">Union Bank of India</div>'
+      +'<div style="font-size:16px;font-weight:800;color:#003087;margin-bottom:3px;">Certificate of Excellence</div>'
+      +'<div style="width:36px;height:2px;background:linear-gradient(90deg,#F5A623,#FFD700);margin:7px auto;border-radius:2px;"></div>'
+      +'<div style="font-size:11px;color:#6B7A99;margin-bottom:7px;">This is to certify that</div>'
+      +'<div style="font-size:17px;font-weight:800;color:#003087;margin-bottom:3px;">'+p.name+'</div>'
+      +'<div style="font-size:10px;color:#6B7A99;margin-bottom:12px;">'+(emp?emp.role:'Manager')+' • '+(emp?emp.branch:'Coimbatore')+'</div>'
+      +'<div style="font-size:10px;color:#6B7A99;margin-bottom:3px;">has successfully completed</div>'
+      +'<div style="font-size:12px;font-weight:700;color:#003087;margin-bottom:12px;">'+p.prog+'</div>'
+      +'<div style="display:flex;justify-content:center;gap:10px;margin-bottom:12px;">'
+      +'<div style="background:#EAF1FF;border-radius:8px;padding:8px 12px;"><div style="font-size:16px;font-weight:800;color:'+ptsColor(p.points)+';">'+p.points+'</div><div style="font-size:9px;color:#6B7A99;">Points</div></div>'
+      +'<div style="background:#FFFBE6;border-radius:8px;padding:8px 12px;"><div style="font-size:16px;">'+b.icon+'</div><div style="font-size:9px;color:#6B7A99;">'+b.name+'</div></div>'
+      +'<div style="background:#E6F9F0;border-radius:8px;padding:8px 12px;"><div style="font-size:16px;font-weight:800;color:#003087;">#'+p.rank+'</div><div style="font-size:9px;color:#6B7A99;">Rank</div></div>'
+      +'</div>'
+      +'<div style="display:flex;justify-content:space-between;padding-top:10px;border-top:1px solid #DDE4F0;font-size:9px;color:#6B7A99;margin-bottom:10px;">'
+      +'<div><div>Date</div><div style="font-weight:700;color:#003087;font-size:10px;">'+today+'</div></div>'
+      +'<div style="font-size:14px;">🏦</div>'
+      +'<div style="text-align:right;"><div>Authorized by</div><div style="font-weight:700;color:#003087;font-size:10px;">HR Dept</div></div>'
+      +'</div>'
+      +'<button onclick="printHRCert('+idx+')" style="background:#003087;color:white;border:none;padding:8px 18px;border-radius:8px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;width:100%;">🖨️ Print / Download</button>'
+      +'</div>';
   });
 }
 
 function printHRCert(idx){
-  const p=LEADERBOARD[idx];
-  const emp=EMPLOYEES.find(e=>e.id===p.uid);
-  const b=getBadge(p.points);
+  const p=LEADERBOARD[idx];const emp=EMPLOYEES.find(e=>e.id===p.uid);const b=getBadge(p.points);
   const today=new Date().toLocaleDateString('en-IN',{day:'numeric',month:'long',year:'numeric'});
   const w=window.open('','_blank');
-  w.document.write('<html><head><title>Certificate - '+p.name+'</title><style>body{margin:0;display:flex;justify-content:center;align-items:center;min-height:100vh;font-family:sans-serif;background:#f0f0f0;}.cert{background:white;border:8px solid #F5A623;padding:50px 40px;max-width:620px;width:100%;text-align:center;position:relative;}@media print{body{background:white;}}</style></head><body><div class="cert">');
+  w.document.write('<html><head><title>Certificate - '+p.name+'</title><style>body{margin:0;display:flex;justify-content:center;align-items:center;min-height:100vh;font-family:sans-serif;background:#f0f0f0;}.cert{background:white;border:8px solid #F5A623;padding:50px 40px;max-width:620px;width:100%;text-align:center;}@media print{body{background:white;}}</style></head><body><div class="cert">');
   w.document.write('<div style="font-size:12px;font-weight:700;color:#6B7A99;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px;">Union Bank of India</div>');
   w.document.write('<div style="font-size:26px;font-weight:800;color:#003087;margin-bottom:4px;">Certificate of Excellence</div>');
   w.document.write('<div style="width:50px;height:3px;background:linear-gradient(90deg,#F5A623,#FFD700);margin:10px auto;border-radius:2px;"></div>');
   w.document.write('<div style="font-size:13px;color:#6B7A99;margin-bottom:14px;">This is to certify that</div>');
   w.document.write('<div style="font-size:26px;font-weight:800;color:#003087;margin-bottom:6px;">'+p.name+'</div>');
   w.document.write('<div style="font-size:12px;color:#6B7A99;margin-bottom:18px;">'+(emp?emp.role:'Manager')+' • '+(emp?emp.branch:'Coimbatore')+'</div>');
-  w.document.write('<div style="font-size:13px;color:#6B7A99;margin-bottom:6px;">has successfully completed the training program</div>');
+  w.document.write('<div style="font-size:13px;color:#6B7A99;margin-bottom:6px;">has successfully completed</div>');
   w.document.write('<div style="font-size:15px;font-weight:700;color:#003087;margin-bottom:18px;">'+p.prog+'</div>');
   w.document.write('<div style="display:flex;justify-content:center;gap:24px;margin-bottom:20px;"><div style="background:#EAF1FF;border-radius:10px;padding:12px 20px;"><div style="font-size:24px;font-weight:800;color:#003087;">'+p.points+'</div><div style="font-size:10px;color:#6B7A99;">Total Points</div></div><div style="background:#FFFBE6;border-radius:10px;padding:12px 20px;"><div style="font-size:24px;">'+b.icon+'</div><div style="font-size:10px;color:#6B7A99;">'+b.name+' Badge</div></div><div style="background:#E6F9F0;border-radius:10px;padding:12px 20px;"><div style="font-size:24px;font-weight:800;color:#1A7F4B;">#'+p.rank+'</div><div style="font-size:10px;color:#6B7A99;">Overall Rank</div></div></div>');
-  w.document.write('<div style="display:flex;justify-content:space-between;padding-top:18px;border-top:1px solid #DDE4F0;"><div><div style="font-size:11px;color:#6B7A99;">Date</div><div style="font-size:12px;font-weight:700;color:#003087;">'+today+'</div></div><div style="font-size:20px;">🏦</div><div style="text-align:right;"><div style="font-size:11px;color:#6B7A99;">Authorized by</div><div style="font-size:12px;font-weight:700;color:#003087;">HR Department</div></div></div>');
+  w.document.write('<div style="display:flex;justify-content:space-between;padding-top:18px;border-top:1px solid #DDE4F0;"><div><div style="font-size:11px;color:#6B7A99;">Date of Issue</div><div style="font-size:12px;font-weight:700;color:#003087;">'+today+'</div></div><div style="font-size:20px;">🏦</div><div style="text-align:right;"><div style="font-size:11px;color:#6B7A99;">Authorized by</div><div style="font-size:12px;font-weight:700;color:#003087;">HR Department</div><div style="font-size:10px;color:#6B7A99;">Union Bank of India</div></div></div>');
   w.document.write('</div><script>window.onload=function(){window.print();}<\/script></body></html>');
   w.document.close();
 }
