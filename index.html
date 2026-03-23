@@ -253,11 +253,14 @@ tbody td { padding:11px 14px; vertical-align:middle; }
     </div>
 
     <!-- CERTIFICATES -->
-    <div class="page" id="page-certificates">
-      <div style="font-size:16px;font-weight:800;color:#003087;margin-bottom:6px;">🎖️ All Employee Certificates</div>
-      <div style="font-size:12px;color:#6B7A99;margin-bottom:20px;">HR can view and print any employee certificate. Click Print to download.</div>
-      <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:20px;" id="hr-cert-grid"></div>
-    </div>
+<div class="page" id="page-certificates">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;">
+    <div style="font-size:16px;font-weight:800;color:#003087;">🎖️ All Employee Certificates</div>
+    <button onclick="buildHRCertificates()" style="background:#003087;color:white;border:none;padding:8px 18px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;">🔄 Refresh</button>
+  </div>
+  <div style="font-size:12px;color:#6B7A99;margin-bottom:20px;">🔴 Green border = newly completed by employees live | 🟡 Gold border = existing 37 employees</div>
+  <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:20px;" id="hr-cert-grid"></div>
+</div>
 
   </div>
 </div>
@@ -591,38 +594,88 @@ recs.forEach(r=>{rl.innerHTML+='<div class="rec-card"><div style="font-size:13px
 function buildHRCertificates(){
   const grid=document.getElementById('hr-cert-grid');
   if(!grid)return;
-  grid.innerHTML='';
+  grid.innerHTML='<div style="text-align:center;padding:20px;color:#6B7A99;">⏳ Loading certificates...</div>';
   const today=new Date().toLocaleDateString('en-IN',{day:'numeric',month:'long',year:'numeric'});
-  LEADERBOARD.forEach(function(p,idx){
-    const emp=EMPLOYEES.find(e=>e.id===p.uid);
-    const b=getBadge(p.points);
-    grid.innerHTML+='<div style="background:white;border-radius:16px;border:6px solid #F5A623;padding:28px 22px;text-align:center;position:relative;">'
-      +'<div style="position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,#F5A623,#FFD700,#F5A623);border-radius:10px 10px 0 0;"></div>'
-      +'<div style="position:absolute;top:8px;left:8px;width:24px;height:24px;border-top:3px solid #F5A623;border-left:3px solid #F5A623;border-radius:3px 0 0 0;"></div>'
-      +'<div style="position:absolute;top:8px;right:8px;width:24px;height:24px;border-top:3px solid #F5A623;border-right:3px solid #F5A623;border-radius:0 3px 0 0;"></div>'
-      +'<div style="position:absolute;bottom:8px;left:8px;width:24px;height:24px;border-bottom:3px solid #F5A623;border-left:3px solid #F5A623;border-radius:0 0 0 3px;"></div>'
-      +'<div style="position:absolute;bottom:8px;right:8px;width:24px;height:24px;border-bottom:3px solid #F5A623;border-right:3px solid #F5A623;border-radius:0 0 3px 0;"></div>'
-      +'<div style="font-size:10px;font-weight:700;color:#6B7A99;letter-spacing:2px;text-transform:uppercase;margin-bottom:4px;">Union Bank of India</div>'
-      +'<div style="font-size:16px;font-weight:800;color:#003087;margin-bottom:3px;">Certificate of Excellence</div>'
-      +'<div style="width:36px;height:2px;background:linear-gradient(90deg,#F5A623,#FFD700);margin:7px auto;border-radius:2px;"></div>'
-      +'<div style="font-size:11px;color:#6B7A99;margin-bottom:7px;">This is to certify that</div>'
-      +'<div style="font-size:17px;font-weight:800;color:#003087;margin-bottom:3px;">'+p.name+'</div>'
-      +'<div style="font-size:10px;color:#6B7A99;margin-bottom:12px;">'+(emp?emp.role:'Manager')+' • '+(emp?emp.branch:'Coimbatore')+'</div>'
-      +'<div style="font-size:10px;color:#6B7A99;margin-bottom:3px;">has successfully completed</div>'
-      +'<div style="font-size:12px;font-weight:700;color:#003087;margin-bottom:12px;">'+p.prog+'</div>'
-      +'<div style="display:flex;justify-content:center;gap:10px;margin-bottom:12px;">'
-      +'<div style="background:#EAF1FF;border-radius:8px;padding:8px 12px;"><div style="font-size:16px;font-weight:800;color:'+ptsColor(p.points)+';">'+p.points+'</div><div style="font-size:9px;color:#6B7A99;">Points</div></div>'
-      +'<div style="background:#FFFBE6;border-radius:8px;padding:8px 12px;"><div style="font-size:16px;">'+b.icon+'</div><div style="font-size:9px;color:#6B7A99;">'+b.name+'</div></div>'
-      +'<div style="background:#E6F9F0;border-radius:8px;padding:8px 12px;"><div style="font-size:16px;font-weight:800;color:#003087;">#'+p.rank+'</div><div style="font-size:9px;color:#6B7A99;">Rank</div></div>'
-      +'</div>'
-      +'<div style="display:flex;justify-content:space-between;padding-top:10px;border-top:1px solid #DDE4F0;font-size:9px;color:#6B7A99;margin-bottom:10px;">'
-      +'<div><div>Date</div><div style="font-weight:700;color:#003087;font-size:10px;">'+today+'</div></div>'
-      +'<div style="font-size:14px;">🏦</div>'
-      +'<div style="text-align:right;"><div>Authorized by</div><div style="font-weight:700;color:#003087;font-size:10px;">HR Dept</div></div>'
-      +'</div>'
-      +'<button onclick="printHRCert('+idx+')" style="background:#003087;color:white;border:none;padding:8px 18px;border-radius:8px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;width:100%;">🖨️ Print / Download</button>'
-      +'</div>';
-  });
+
+  // First show existing 37 employees from POINTS data
+  function renderCerts(liveData){
+    grid.innerHTML='';
+
+    // Show live completed employees from Google Sheet first
+    if(liveData&&liveData.length){
+      liveData.forEach(function(s,idx){
+        const assessScore=Number(s.assessScore)||0;
+        const assignScore=Number(s.assignScore)||0;
+        const totalPts=Number(s.totalPoints)||0;
+        const pts=totalPts>500?totalPts:200+assessScore+assignScore;
+        const b=getBadge(pts);
+        grid.innerHTML+='<div style="background:white;border-radius:16px;border:6px solid #1A7F4B;padding:28px 22px;text-align:center;position:relative;">'
+          +'<div style="position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,#1A7F4B,#2ECC71,#1A7F4B);border-radius:10px 10px 0 0;"></div>'
+          +'<div style="position:absolute;top:6px;right:8px;background:#1A7F4B;color:white;border-radius:20px;padding:2px 8px;font-size:9px;font-weight:700;">🔴 LIVE</div>'
+          +'<div style="position:absolute;top:8px;left:8px;width:24px;height:24px;border-top:3px solid #1A7F4B;border-left:3px solid #1A7F4B;border-radius:3px 0 0 0;"></div>'
+          +'<div style="position:absolute;bottom:8px;left:8px;width:24px;height:24px;border-bottom:3px solid #1A7F4B;border-left:3px solid #1A7F4B;border-radius:0 0 0 3px;"></div>'
+          +'<div style="position:absolute;bottom:8px;right:8px;width:24px;height:24px;border-bottom:3px solid #1A7F4B;border-right:3px solid #1A7F4B;border-radius:0 0 3px 0;"></div>'
+          +'<div style="font-size:28px;margin-bottom:4px;">🏦</div>'
+          +'<div style="font-size:10px;font-weight:700;color:#6B7A99;letter-spacing:2px;text-transform:uppercase;margin-bottom:4px;">Union Bank of India</div>'
+          +'<div style="font-size:15px;font-weight:800;color:#003087;margin-bottom:3px;">Certificate of Excellence</div>'
+          +'<div style="width:36px;height:2px;background:linear-gradient(90deg,#F5A623,#FFD700);margin:7px auto;border-radius:2px;"></div>'
+          +'<div style="font-size:11px;color:#6B7A99;margin-bottom:7px;">This is to certify that</div>'
+          +'<div style="font-size:17px;font-weight:800;color:#003087;margin-bottom:3px;">'+s.name+'</div>'
+          +'<div style="font-size:10px;color:#6B7A99;margin-bottom:12px;">Employee ID: '+(s.userId||'—')+'</div>'
+          +'<div style="font-size:10px;color:#6B7A99;margin-bottom:3px;">has successfully completed</div>'
+          +'<div style="font-size:12px;font-weight:700;color:#003087;margin-bottom:12px;">'+s.program+'</div>'
+          +'<div style="display:flex;justify-content:center;gap:10px;margin-bottom:12px;">'
+          +'<div style="background:#EAF1FF;border-radius:8px;padding:8px 12px;"><div style="font-size:16px;font-weight:800;color:'+ptsColor(pts)+';">'+pts+'</div><div style="font-size:9px;color:#6B7A99;">Points</div></div>'
+          +'<div style="background:#FFFBE6;border-radius:8px;padding:8px 12px;"><div style="font-size:16px;">'+b.icon+'</div><div style="font-size:9px;color:#6B7A99;">'+b.name+'</div></div>'
+          +'</div>'
+          +'<div style="display:flex;justify-content:space-between;padding-top:10px;border-top:1px solid #DDE4F0;font-size:9px;color:#6B7A99;margin-bottom:10px;">'
+          +'<div><div>Date</div><div style="font-weight:700;color:#003087;font-size:10px;">'+(s.date||today)+'</div></div>'
+          +'<div style="font-size:14px;">🏦</div>'
+          +'<div style="text-align:right;"><div>Authorized by</div><div style="font-weight:700;color:#003087;font-size:10px;">HR Dept</div></div>'
+          +'</div>'
+          +'<button onclick="printLiveCert('+idx+')" style="background:#1A7F4B;color:white;border:none;padding:8px 18px;border-radius:8px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;width:100%;">🖨️ Print / Download</button>'
+          +'</div>';
+      });
+    }
+
+    // Then show all 37 employees from POINTS data
+    LEADERBOARD.forEach(function(p,idx){
+      const emp=EMPLOYEES.find(e=>e.id===p.uid);
+      const b=getBadge(p.points);
+      grid.innerHTML+='<div style="background:white;border-radius:16px;border:6px solid #F5A623;padding:28px 22px;text-align:center;position:relative;">'
+        +'<div style="position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,#F5A623,#FFD700,#F5A623);border-radius:10px 10px 0 0;"></div>'
+        +'<div style="position:absolute;top:8px;left:8px;width:24px;height:24px;border-top:3px solid #F5A623;border-left:3px solid #F5A623;border-radius:3px 0 0 0;"></div>'
+        +'<div style="position:absolute;top:8px;right:8px;width:24px;height:24px;border-top:3px solid #F5A623;border-right:3px solid #F5A623;border-radius:0 3px 0 0;"></div>'
+        +'<div style="position:absolute;bottom:8px;left:8px;width:24px;height:24px;border-bottom:3px solid #F5A623;border-left:3px solid #F5A623;border-radius:0 0 0 3px;"></div>'
+        +'<div style="position:absolute;bottom:8px;right:8px;width:24px;height:24px;border-bottom:3px solid #F5A623;border-right:3px solid #F5A623;border-radius:0 0 3px 0;"></div>'
+        +'<div style="font-size:28px;margin-bottom:4px;">🏦</div>'
+        +'<div style="font-size:10px;font-weight:700;color:#6B7A99;letter-spacing:2px;text-transform:uppercase;margin-bottom:4px;">Union Bank of India</div>'
+        +'<div style="font-size:15px;font-weight:800;color:#003087;margin-bottom:3px;">Certificate of Excellence</div>'
+        +'<div style="width:36px;height:2px;background:linear-gradient(90deg,#F5A623,#FFD700);margin:7px auto;border-radius:2px;"></div>'
+        +'<div style="font-size:11px;color:#6B7A99;margin-bottom:7px;">This is to certify that</div>'
+        +'<div style="font-size:17px;font-weight:800;color:#003087;margin-bottom:3px;">'+p.name+'</div>'
+        +'<div style="font-size:10px;color:#6B7A99;margin-bottom:12px;">'+(emp?emp.role:'Manager')+' • '+(emp?emp.branch:'Coimbatore')+'</div>'
+        +'<div style="font-size:10px;color:#6B7A99;margin-bottom:3px;">has successfully completed</div>'
+        +'<div style="font-size:12px;font-weight:700;color:#003087;margin-bottom:12px;">'+p.prog+'</div>'
+        +'<div style="display:flex;justify-content:center;gap:10px;margin-bottom:12px;">'
+        +'<div style="background:#EAF1FF;border-radius:8px;padding:8px 12px;"><div style="font-size:16px;font-weight:800;color:'+ptsColor(p.points)+';">'+p.points+'</div><div style="font-size:9px;color:#6B7A99;">Points</div></div>'
+        +'<div style="background:#FFFBE6;border-radius:8px;padding:8px 12px;"><div style="font-size:16px;">'+b.icon+'</div><div style="font-size:9px;color:#6B7A99;">'+b.name+'</div></div>'
+        +'<div style="background:#E6F9F0;border-radius:8px;padding:8px 12px;"><div style="font-size:16px;font-weight:800;color:#003087;">#'+p.rank+'</div><div style="font-size:9px;color:#6B7A99;">Rank</div></div>'
+        +'</div>'
+        +'<div style="display:flex;justify-content:space-between;padding-top:10px;border-top:1px solid #DDE4F0;font-size:9px;color:#6B7A99;margin-bottom:10px;">'
+        +'<div><div>Date</div><div style="font-weight:700;color:#003087;font-size:10px;">'+today+'</div></div>'
+        +'<div style="font-size:14px;">🏦</div>'
+        +'<div style="text-align:right;"><div>Authorized by</div><div style="font-weight:700;color:#003087;font-size:10px;">HR Dept</div></div>'
+        +'</div>'
+        +'<button onclick="printHRCert('+idx+')" style="background:#003087;color:white;border:none;padding:8px 18px;border-radius:8px;font-size:11px;font-weight:700;cursor:pointer;font-family:inherit;width:100%;">🖨️ Print / Download</button>'
+        +'</div>';
+    });
+  }
+
+  // Fetch live scores from Google Sheet
+  fetch(API+'?action=getScores').then(r=>r.json()).then(data=>{
+    renderCerts(data.success&&data.data?data.data:[]);
+  }).catch(()=>{renderCerts([]);});
 }
 
 function printHRCert(idx){
@@ -630,7 +683,8 @@ function printHRCert(idx){
   const today=new Date().toLocaleDateString('en-IN',{day:'numeric',month:'long',year:'numeric'});
   const w=window.open('','_blank');
   w.document.write('<html><head><title>Certificate - '+p.name+'</title><style>body{margin:0;display:flex;justify-content:center;align-items:center;min-height:100vh;font-family:sans-serif;background:#f0f0f0;}.cert{background:white;border:8px solid #F5A623;padding:50px 40px;max-width:620px;width:100%;text-align:center;}@media print{body{background:white;}}</style></head><body><div class="cert">');
-  w.document.write('<div style="font-size:12px;font-weight:700;color:#6B7A99;letter-spacing:2px;text-transform:uppercase;margin-bottom:8px;">Union Bank of India</div>');
+  w.document.write('<div style="font-size:40px;margin-bottom:8px;">🏦</div>');
+  w.document.write('<div style="font-size:12px;font-weight:700;color:#6B7A99;letter-spacing:2px;text-transform:uppercase;margin-bottom:4px;">Union Bank of India</div>');
   w.document.write('<div style="font-size:26px;font-weight:800;color:#003087;margin-bottom:4px;">Certificate of Excellence</div>');
   w.document.write('<div style="width:50px;height:3px;background:linear-gradient(90deg,#F5A623,#FFD700);margin:10px auto;border-radius:2px;"></div>');
   w.document.write('<div style="font-size:13px;color:#6B7A99;margin-bottom:14px;">This is to certify that</div>');
@@ -642,6 +696,34 @@ function printHRCert(idx){
   w.document.write('<div style="display:flex;justify-content:space-between;padding-top:18px;border-top:1px solid #DDE4F0;"><div><div style="font-size:11px;color:#6B7A99;">Date of Issue</div><div style="font-size:12px;font-weight:700;color:#003087;">'+today+'</div></div><div style="font-size:20px;">🏦</div><div style="text-align:right;"><div style="font-size:11px;color:#6B7A99;">Authorized by</div><div style="font-size:12px;font-weight:700;color:#003087;">HR Department</div><div style="font-size:10px;color:#6B7A99;">Union Bank of India</div></div></div>');
   w.document.write('</div><script>window.onload=function(){window.print();}<\/script></body></html>');
   w.document.close();
+}
+
+function printLiveCert(idx){
+  fetch(API+'?action=getScores').then(r=>r.json()).then(data=>{
+    if(!data.success||!data.data)return;
+    const s=data.data[idx];if(!s)return;
+    const assessScore=Number(s.assessScore)||0;
+    const assignScore=Number(s.assignScore)||0;
+    const totalPts=Number(s.totalPoints)||0;
+    const pts=totalPts>500?totalPts:200+assessScore+assignScore;
+    const b=getBadge(pts);
+    const today=new Date().toLocaleDateString('en-IN',{day:'numeric',month:'long',year:'numeric'});
+    const w=window.open('','_blank');
+    w.document.write('<html><head><title>Certificate - '+s.name+'</title><style>body{margin:0;display:flex;justify-content:center;align-items:center;min-height:100vh;font-family:sans-serif;background:#f0f0f0;}.cert{background:white;border:8px solid #1A7F4B;padding:50px 40px;max-width:620px;width:100%;text-align:center;}@media print{body{background:white;}}</style></head><body><div class="cert">');
+    w.document.write('<div style="font-size:40px;margin-bottom:8px;">🏦</div>');
+    w.document.write('<div style="font-size:12px;font-weight:700;color:#6B7A99;letter-spacing:2px;text-transform:uppercase;margin-bottom:4px;">Union Bank of India</div>');
+    w.document.write('<div style="font-size:26px;font-weight:800;color:#003087;margin-bottom:4px;">Certificate of Excellence</div>');
+    w.document.write('<div style="width:50px;height:3px;background:linear-gradient(90deg,#1A7F4B,#2ECC71);margin:10px auto;border-radius:2px;"></div>');
+    w.document.write('<div style="font-size:13px;color:#6B7A99;margin-bottom:14px;">This is to certify that</div>');
+    w.document.write('<div style="font-size:26px;font-weight:800;color:#003087;margin-bottom:6px;">'+s.name+'</div>');
+    w.document.write('<div style="font-size:12px;color:#6B7A99;margin-bottom:18px;">Employee ID: '+(s.userId||'—')+'</div>');
+    w.document.write('<div style="font-size:13px;color:#6B7A99;margin-bottom:6px;">has successfully completed</div>');
+    w.document.write('<div style="font-size:15px;font-weight:700;color:#003087;margin-bottom:18px;">'+s.program+'</div>');
+    w.document.write('<div style="display:flex;justify-content:center;gap:24px;margin-bottom:20px;"><div style="background:#EAF1FF;border-radius:10px;padding:12px 20px;"><div style="font-size:24px;font-weight:800;color:#003087;">'+pts+'</div><div style="font-size:10px;color:#6B7A99;">Total Points</div></div><div style="background:#FFFBE6;border-radius:10px;padding:12px 20px;"><div style="font-size:24px;">'+b.icon+'</div><div style="font-size:10px;color:#6B7A99;">'+b.name+' Badge</div></div></div>');
+    w.document.write('<div style="display:flex;justify-content:space-between;padding-top:18px;border-top:1px solid #DDE4F0;"><div><div style="font-size:11px;color:#6B7A99;">Date of Issue</div><div style="font-size:12px;font-weight:700;color:#003087;">'+(s.date||today)+'</div></div><div style="font-size:20px;">🏦</div><div style="text-align:right;"><div style="font-size:11px;color:#6B7A99;">Authorized by</div><div style="font-size:12px;font-weight:700;color:#003087;">HR Department</div><div style="font-size:10px;color:#6B7A99;">Union Bank of India</div></div></div>');
+    w.document.write('</div><script>window.onload=function(){window.print();}<\/script></body></html>');
+    w.document.close();
+  });
 }
 
 setTimeout(showWinnerPopup,1000);
