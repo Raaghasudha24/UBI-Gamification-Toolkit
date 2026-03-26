@@ -444,7 +444,7 @@ function getInitials(name){return name.trim().split(' ').slice(0,2).map(function
 function getAvatarColor(name){var c=['#003087','#1A7F4B','#B8860B','#6B2FA0','#C0392B'];var h=0;for(var i=0;i<name.length;i++)h=(h+name.charCodeAt(i))%c.length;return c[h];}
 function getLevel(pts){return pts>=900?5:pts>=750?4:pts>=600?3:pts>=500?2:1;}
 function getBranch(uid){var e=EMPLOYEES.find(function(x){return x.id===uid;});return e?e.branch:'Coimbatore';}
-function calcPts(s){var a=Number(s.assessScore||0),b=Number(s.assignScore||0),t=Number(s.totalPoints||0);return t>0?t:200+a+b;}
+function calcPts(s){var a=Number(s.assessScore||0),b=Number(s.assignScore||0),t=Number(s.totalPoints||0);var pts=t>0?t:200+a+b;return Math.round(pts);}
 var LEADERBOARD = POINTS.slice().sort(function(a,b){return b.points-a.points;}).map(function(p,i){return Object.assign({},p,{rank:i+1});});
 
 // LIVE DATA GLOBAL
