@@ -462,7 +462,13 @@ function loadLiveData() {
     .then(function(r){return r.json();})
     .then(function(data){
       if (data.success && data.data && data.data.length > 0) {
-        LIVE_DATA = data.data.filter(function(s){ return s.name && s.name.trim() !== ''; });
+        var existingNames = EMPLOYEES.map(function(e){ return e.name.toLowerCase().trim(); });
+LIVE_DATA = data.data.filter(function(s){
+  if (!s.name || s.name.trim() === '') return false;
+  if (s.name.trim() === 'NAME' || s.name.trim() === 'name') return false;
+  if (existingNames.indexOf(s.name.toLowerCase().trim()) !== -1) return false;
+  return true;
+});
       } else {
         LIVE_DATA = [];
       }
