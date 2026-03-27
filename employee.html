@@ -517,20 +517,28 @@ function submitAssignment(){
 }
 
 // SAVE SCORE AND SHOW RESULT
-async function saveScoreAndShow(){
-  const totalPoints=completionScore+assessmentScore+assignmentScore;
-
-  // Save to localStorage
-  const key=getUserKey();
-  const completed=JSON.parse(localStorage.getItem(key)||'[]');
-  if(!completed.includes(currentProgram.id)){completed.push(currentProgram.id);localStorage.setItem(key,JSON.stringify(completed));}
-  localStorage.setItem(getPtsKey(currentProgram.id),totalPoints);
-  // Save full score details for showing result later
-  localStorage.setItem(getScoreKey(currentProgram.id),JSON.stringify({
-    compScore:completionScore,assessScore:assessmentScore,assignScore:assignmentScore,
-    totalPoints,progName:currentProgram.name,date:new Date().toLocaleDateString('en-IN',{day:'numeric',month:'long',year:'numeric'})
-  }));
-
+try {
+  var saveKey = 'saved_api_' + currentProgram.id + '_' + (currentUser.name||'').replace(/\s/g,'');
+  if (!localStorage.getItem(saveKey)) {
+    localStorage.setItem(saveKey, '1');
+    fetch(API, {
+      method: 'POST',
+      body: JSON.stringify({
+        action: 'submitScore',
+        name: currentUser.name,
+        userId: currentUser.userId || '',
+        program: currentProgram.name,
+        comp: 100,
+        compScore: completionScore,
+        assessScore: assessmentScore,
+        assignScore: assignmentScore,
+        totalPoints: totalPoints
+      })
+    });
+  }
+} catch(err) {
+  console.log('Score saved locally.');
+}
   // Save to Google Sheet
  try{
     var alreadySaved = localStorage.getItem('saved_'+currentProgram.id+'_'+(currentUser.userId||currentUser.name));
